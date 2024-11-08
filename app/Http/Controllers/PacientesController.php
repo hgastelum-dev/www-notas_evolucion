@@ -1,0 +1,425 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Paciente;
+use App\Models\PacienteAntecedente;
+use App\Models\PacientePadecimiento;
+use App\Models\PacienteExploracionFisica;
+use App\Models\CitaPaciente;
+use App\Models\TipoPlaneacion;
+use App\Models\CitaPlaneacion;
+use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\ImageManager;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Auth;
+
+class PacientesController extends Controller
+{
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
+    public function getViewAlta(){
+
+        return view('pacientes.alta');
+    }
+
+    public function insertPaciente(Request $request){
+
+        $validated = $request->validate([
+            'nombre_s' => 'required|unique:pacientes|max:255',
+            'email' => 'nullable|unique:pacientes|max:255',
+        ]);
+
+        $paciente = new Paciente();
+
+        $paciente->nombre_s = $request->nombre_s;
+        $paciente->email = $request->email;
+
+        // datos predeterminados de la ficha de identificacion 
+        $paciente->tipo_sangre = 'Vacio';
+        $paciente->fecha_nacimiento = 'Vacio';
+        $paciente->direccion = 'Vacio';
+        $paciente->telefono = 'Vacio';
+        $paciente->lugar_nacimiento = 'Vacio';
+        $paciente->lugar_residencia = 'Vacio';
+        $paciente->genero_id = 'Vacio';
+        $paciente->ocupacion = 'Vacio';
+        $paciente->escolaridad = 'Vacio';
+        $paciente->religion = 'Vacio';
+        $paciente->estado_civil_id = 'Vacio';
+        $paciente->fecha_ingreso = 'Vacio';
+        $paciente->fecha_elaboracion = 'Vacio';
+        $paciente->user_id = Auth::user()->id;
+        $paciente->activo = true;
+        $paciente->created_at = Carbon::now('America/Los_Angeles');
+
+        $paciente->save();
+
+        $nuevoPaciente = Paciente::find($paciente->id);
+
+        $nuevoPaciente->numero_expediente = 'EXP_' . $paciente->id;
+
+        $nuevoPaciente->save();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Nuevo registro de paciente:', 'mensaje' => $paciente->nombre_s, 'icono' => 'success']);
+
+        return redirect('/pacientes');
+    }
+
+    public function getViewPacientes(){
+
+        $pacientes = Paciente::select('id', 'numero_expediente','nombre_s','apellido_paterno', 'apellido_materno', 'email')->whereNotIn('id', [4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])->get();
+
+        return view('pacientes.listado', compact(['pacientes']));
+    }
+
+    public function getViewEditar($pacienteId){
+        $paciente = Paciente::find($pacienteId);
+
+        return view('pacientes.editar', compact(['paciente']));
+    }
+
+    public function updatePaciente(Request $request){
+
+        $validated = $request->validate([
+            'nombre_s' => 'required|string|min:1|max:250|unique:pacientes,nombre_s,' . $request->paciente_id,
+            'email' => 'nullable|string|email|min:1|max:255|unique:pacientes,email,' . $request->paciente_id
+        ]);
+        
+        $paciente = Paciente::find($request->paciente_id);
+
+        $paciente->nombre_s = $request->nombre_s;
+        $paciente->email = $request->email;
+        $paciente->tipo_sangre = $request->tipo_sangre;
+        $paciente->direccion = $request->direccion;
+        $paciente->telefono = $request->telefono;
+        $paciente->fecha_nacimiento = $request->fecha_nacimiento;
+        $paciente->lugar_nacimiento = $request->lugar_nacimiento;
+        $paciente->lugar_residencia = $request->lugar_residencia;
+        $paciente->cat_procedencia_id = $request->cat_procedencia_id;
+        
+        if($request->cat_procedencia_id == 'Doctor' || $request->cat_procedencia_id == 'Enfermero'){
+            $paciente->contacto_procedencia = $request->contacto_procedencia;
+        } else {
+            $paciente->contacto_procedencia = '';
+        }
+
+        if ( $request->foto_path ){
+            $pathFoto = $request->file('foto_path')->store('fotos_pacientes');
+
+            $paciente->foto_path = $pathFoto;
+        }
+
+        $paciente->genero_id = $request->cat_genero_id;
+        $paciente->ocupacion = $request->ocupacion;
+        $paciente->escolaridad = $request->escolaridad;
+        $paciente->religion = $request->religion;
+        $paciente->estado_civil_id = $request->cat_estado_civil_id;
+        $paciente->fecha_ingreso = $request->fecha_ingreso;
+
+        $paciente->save();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Registro de paciente actualizado:', 'mensaje' => $paciente->nombre_s, 'icono' => 'success']);
+
+        return redirect('/paciente/editar/' . $paciente->id);
+    }
+
+    public function viewBorrarPaciente($pacienteId){
+
+        $paciente = Paciente::find($pacienteId);
+
+        return view('pacientes.paciente_borrar', compact(['paciente']));
+    }
+
+    public function deletePaciente(Request $request){
+
+        $user = Paciente::find($request->paciente_id);
+
+        $user->delete();
+
+        CitaPaciente::where('paciente_id', $user->id)->delete();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Registro de paciente eliminado exitosamente:', 'mensaje' => $user->nombre_s, 'icono' => 'info']);
+
+        return redirect('/pacientes');
+    }
+
+    public function getFotoPaciente($pacienteId)
+    {   
+        $paciente = Paciente::find($pacienteId);
+
+        $storagePath = storage_path('app/'.$paciente->foto_path);
+        
+        return Image::make($storagePath)->response();
+    }
+
+    public function getViewAntecedentes($pacienteId){
+        $paciente = Paciente::find( $pacienteId );
+
+        return view("pacientes.paciente_antecedentes", compact(["paciente"]));
+    }
+
+    public function updateAntecedentes(Request $request){
+        $paciente = Paciente::find($request->paciente_id);
+
+        if ( $paciente->getAntecedentes ){
+            $antecedente = PacienteAntecedente::where("paciente_id", $request->paciente_id)->first();
+        } else {
+            $antecedente = new PacienteAntecedente();
+        }
+
+        $antecedente->paciente_id = $request->paciente_id;
+
+        $antecedente->he_diabetes = $request->he_diabetes;
+        $antecedente->he_has = $request->he_has;
+        $antecedente->he_car_izq = $request->he_car_izq;
+        $antecedente->he_cancer = $request->he_cancer;
+        $antecedente->he_neumopatia = $request->he_neumopatia;
+        $antecedente->he_enf_renal = $request->he_enf_renal;
+        $antecedente->he_enf_hepatica = $request->he_enf_hepatica;
+        $antecedente->he_otros = $request->he_otros;
+        $antecedente->pnp_tabaco = $request->pnp_tabaco;
+        $antecedente->pnp_tabaco_cantidad = $request->pnp_tabaco_cantidad;
+        $antecedente->pnp_tabaco_inicio = $request->pnp_tabaco_inicio;
+        $antecedente->pnp_tabaco_fin = $request->pnp_tabaco_fin;
+        $antecedente->pnp_oh = $request->pnp_oh;
+        $antecedente->pnp_oh_cantidad = $request->pnp_oh_cantidad;
+        $antecedente->pnp_oh_inicio = $request->pnp_oh_inicio;
+        $antecedente->pnp_oh_fin = $request->pnp_oh_fin;
+        $antecedente->pnp_toxicos = $request->pnp_toxicos;
+        $antecedente->pnp_toxicos_inicio = $request->pnp_toxicos_inicio;
+        $antecedente->pnp_toxicos_fin = $request->pnp_toxicos_fin;
+        $antecedente->pnp_toxicos_tipo = $request->pnp_toxicos_tipo;
+        $antecedente->pnp_otro = $request->pnp_otro;
+        $antecedente->pp_qx = $request->pp_qx;
+        $antecedente->pp_qx_tipo = $request->pp_qx_tipo;
+        $antecedente->pp_fx = $request->pp_fx;
+        $antecedente->pp_fx_tipo = $request->pp_fx_tipo;
+        $antecedente->pp_alergia = $request->pp_alergia;
+        $antecedente->pp_transfusiones = $request->pp_transfusiones;
+        $antecedente->pp_transfusiones_numero = $request->pp_transfusiones_numero;
+        $antecedente->pp_transfusiones_inicial = $request->pp_transfusiones_inicial;
+        $antecedente->pp_transfusiones_ultima = $request->pp_transfusiones_ultima;
+        $antecedente->pp_patias = $request->pp_patias;
+        $antecedente->pp_anos = $request->pp_anos;
+
+        $antecedente->save();
+        
+        $request->session()->flash('userAlerts', ['titulo' => 'Correcto', 'mensaje' => 'Antecedentes registrados exitosamente...', 'icono' => 'success']);
+
+        return redirect("/paciente/antecedentes/" . $request->paciente_id);
+    }
+
+    public function getViewPadecimientos($pacienteId){
+
+        $paciente = Paciente::find( $pacienteId );
+
+        return view('pacientes.paciente_padecimientos', compact(['paciente']));
+    }
+
+    public function updatePadecimientos(Request $request){
+        $paciente = Paciente::find($request->paciente_id);
+
+        if ( $paciente->getPadecimientos ){
+            $padecimiento = PacientePadecimiento::where("paciente_id", $request->paciente_id)->first();
+
+            
+        } else {
+            $padecimiento = new PacientePadecimiento();
+            
+        }
+
+        $padecimiento->paciente_id = $request->paciente_id;
+        $padecimiento->padecimiento = $request->padecimiento;
+
+        $padecimiento->save();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Correcto', 'mensaje' => 'Padecimientos actualizados exitosamente...', 'icono' => 'success']);
+
+        return redirect('/paciente/padecimientos/' . $paciente->id);
+    }
+
+    public function getViewExpFisica($pacienteId){
+
+        $paciente = Paciente::find( $pacienteId );
+
+        return view('pacientes.paciente_expfisica', compact(['paciente']));
+    }
+
+    public function updateExpFisica(Request $request){
+        $paciente = Paciente::find($request->paciente_id);
+
+        if ( isset($paciente->getExploracionFisica) ){
+            $expFisica = PacienteExploracionFisica::where("paciente_id", $request->paciente_id)->first();
+
+            $expFisica->ta = $request->ta;
+            $expFisica->fc = $request->fc;
+            $expFisica->fr = $request->fr;
+            $expFisica->temp = $request->temp;
+            $expFisica->talla = $request->talla;
+            $expFisica->peso = $request->peso;
+            $expFisica->imc = $request->imc;
+            $expFisica->sat_o2 = $request->sat_o2;
+            $expFisica->hb = $request->hb;
+            $expFisica->hto = $request->hto;
+            $expFisica->vcm = $request->vcm;
+            $expFisica->hcm = $request->hcm;
+            $expFisica->porcentaje_eritrocitos_hipocromicos = $request->porcentaje_eritrocitos_hipocromicos;
+            $expFisica->plaq = $request->plaq;
+            $expFisica->leuc = $request->leuc;
+            $expFisica->cr = $request->cr;
+            $expFisica->ckdepi = $request->ckdepi;
+            $expFisica->bun = $request->bun;
+            $expFisica->g = $request->g;
+            $expFisica->hba1c_porcentaje = $request->hba1c_porcentaje;
+            $expFisica->insulina_serica = $request->insulina_serica;
+            $expFisica->homa = $request->homa;
+            $expFisica->au = $request->au;
+            $expFisica->na = $request->na;
+            $expFisica->k = $request->k;
+            $expFisica->cl = $request->cl;
+            $expFisica->ca = $request->ca;
+            $expFisica->p = $request->p;
+            $expFisica->mg = $request->mg;
+            $expFisica->alb = $request->alb;
+            $expFisica->col = $request->col;
+            $expFisica->tgs = $request->tgs;
+            $expFisica->hdl_col = $request->hdl_col;
+            $expFisica->ldl_col = $request->ldl_col;
+            $expFisica->ego = $request->ego;
+            $expFisica->albu_cru = $request->albu_cru;
+            
+        } else {
+            $expFisica = new PacienteExploracionFisica();
+            
+            $expFisica->ta = $request->ta;
+            $expFisica->fc = $request->fc;
+            $expFisica->fr = $request->fr;
+            $expFisica->temp = $request->temp;
+            $expFisica->talla = $request->talla;
+            $expFisica->peso = $request->peso;
+            $expFisica->imc = $request->imc;
+            $expFisica->sat_o2 = $request->sat_o2;
+            $expFisica->hb = $request->hb;
+            $expFisica->hto = $request->hto;
+            $expFisica->vcm = $request->vcm;
+            $expFisica->hcm = $request->hcm;
+            $expFisica->porcentaje_eritrocitos_hipocromicos = $request->porcentaje_eritrocitos_hipocromicos;
+            $expFisica->plaq = $request->plaq;
+            $expFisica->leuc = $request->leuc;
+            $expFisica->cr = $request->cr;
+            $expFisica->ckdepi = $request->ckdepi;
+            $expFisica->bun = $request->bun;
+            $expFisica->g = $request->g;
+            $expFisica->hba1c_porcentaje = $request->hba1c_porcentaje;
+            $expFisica->insulina_serica = $request->insulina_serica;
+            $expFisica->homa = $request->homa;
+            $expFisica->au = $request->au;
+            $expFisica->na = $request->na;
+            $expFisica->k = $request->k;
+            $expFisica->cl = $request->cl;
+            $expFisica->ca = $request->ca;
+            $expFisica->p = $request->p;
+            $expFisica->mg = $request->mg;
+            $expFisica->alb = $request->alb;
+            $expFisica->col = $request->col;
+            $expFisica->tgs = $request->tgs;
+            $expFisica->hdl_col = $request->hdl_col;
+            $expFisica->ldl_col = $request->ldl_col;
+            $expFisica->ego = $request->ego;
+            $expFisica->albu_cru = $request->albu_cru;
+        }
+
+        $expFisica->paciente_id = $request->paciente_id;
+        $expFisica->padecimiento = $request->exploracion_fisica;
+
+        $expFisica->save();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Correcto', 'mensaje' => 'Exploracion fisica actualizada exitosamente...', 'icono' => 'success']);
+
+        return redirect('/paciente/exp-fisica/' . $paciente->id);
+    }
+
+    public function getViewPlan($pacienteId){
+        $tiposPlaneacion = TipoPlaneacion::all();
+
+        $paciente = Paciente::find( $pacienteId );
+
+        $planeacion = CitaPlaneacion::where('paciente_id', $pacienteId)
+            ->where('indicador_seguimiento', false)
+            ->where('padre_id', 0)
+            ->get();
+
+        $grouped = $planeacion->groupBy(function ($item, $key) {
+            return TipoPlaneacion::find($item['tipo_plan_id'])->tipo_plan;
+            //substr($item['tipo_plan_id'], -3);
+        });
+         
+        $planesAgrupado = $grouped->all();
+
+        return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado']));
+    }
+    
+    public function insertPlan(Request $request){
+        $validated = $request->validate([
+            'plan' => 'required',
+            'tipo_plan_id' => 'required'
+        ]);
+        
+        $citaPlan = new CitaPlaneacion();
+
+        $citaPlan->plan = $request->plan;
+        $citaPlan->cita_paciente_id = 0;
+        $citaPlan->tipo_plan_id = $request->tipo_plan_id;
+        if($request->padre_id){
+            $citaPlan->padre_id = $request->padre_id;
+
+        } else {
+            $citaPlan->padre_id = 0;
+        }
+        
+        $citaPlan->indicador_seguimiento = false;
+        $citaPlan->paciente_id = $request->paciente_id;
+
+        $citaPlan->save();
+        
+        $request->session()->flash('userAlerts', ['titulo' => 'success', 'mensaje' => '', 'icono' => $citaPlan->id]);
+        
+        return redirect('/paciente/plan/' . $citaPlan->paciente_id . '#tr-tp-' . $citaPlan->id);
+    }
+    
+    public function updatePlan(Request $request){
+        $validated = $request->validate([
+            'plan_edit' => 'required',
+            'plan_id_edit' => 'required'
+        ]);
+
+        $citaPlan = CitaPlaneacion::find($request->plan_id_edit);
+
+        $citaPlan->plan = $request->plan_edit;
+
+        $citaPlan->save();
+
+        $request->session()->flash('userAlerts', ['titulo' => 'success', 'mensaje' => '', 'icono' => $citaPlan->id]);
+
+        return redirect('/paciente/plan/' . $citaPlan->paciente_id . '#tr-tp-' . $citaPlan->id);
+    }
+
+    public function deletePlan(Request $request){
+        $citaPlan = CitaPlaneacion::find($request->cita_planeacion_id);
+
+        // elimina los registros hijos anidados
+        if(count($citaPlan->getTipoPlanAnidado) > 0){
+            CitaPlaneacion::where('padre_id', $citaPlan->id)->delete();
+        } 
+
+        CitaPlaneacion::where('id', $citaPlan->id)->delete();
+
+        return redirect('/paciente/plan/' . $citaPlan->paciente_id);
+    }
+
+}
