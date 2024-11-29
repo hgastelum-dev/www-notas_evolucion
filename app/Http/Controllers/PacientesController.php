@@ -80,7 +80,9 @@ class PacientesController extends Controller
     public function getViewEditar($pacienteId){
         $paciente = Paciente::find($pacienteId);
 
-        return view('pacientes.editar', compact(['paciente']));
+        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+
+        return view('pacientes.editar', compact(['paciente', 'primeraCita']));
     }
 
     public function updatePaciente(Request $request){
@@ -160,7 +162,9 @@ class PacientesController extends Controller
     public function getViewAntecedentes($pacienteId){
         $paciente = Paciente::find( $pacienteId );
 
-        return view("pacientes.paciente_antecedentes", compact(["paciente"]));
+        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+
+        return view("pacientes.paciente_antecedentes", compact(["paciente", 'primeraCita']));
     }
 
     public function updateAntecedentes(Request $request){
@@ -218,7 +222,9 @@ class PacientesController extends Controller
 
         $paciente = Paciente::find( $pacienteId );
 
-        return view('pacientes.paciente_padecimientos', compact(['paciente']));
+        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+
+        return view('pacientes.paciente_padecimientos', compact(['paciente', 'primeraCita']));
     }
 
     public function updatePadecimientos(Request $request){
@@ -247,7 +253,9 @@ class PacientesController extends Controller
 
         $paciente = Paciente::find( $pacienteId );
 
-        return view('pacientes.paciente_expfisica', compact(['paciente']));
+        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+
+        return view('pacientes.paciente_expfisica', compact(['paciente', 'primeraCita']));
     }
 
     public function updateExpFisica(Request $request){
@@ -361,7 +369,9 @@ class PacientesController extends Controller
          
         $planesAgrupado = $grouped->all();
 
-        return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado']));
+        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+
+        return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado', 'primeraCita']));
     }
     
     public function insertPlan(Request $request){
@@ -373,7 +383,7 @@ class PacientesController extends Controller
         $citaPlan = new CitaPlaneacion();
 
         $citaPlan->plan = $request->plan;
-        $citaPlan->cita_paciente_id = 0;
+        $citaPlan->cita_paciente_id = $request->cita_inicial_id;
         $citaPlan->tipo_plan_id = $request->tipo_plan_id;
         if($request->padre_id){
             $citaPlan->padre_id = $request->padre_id;

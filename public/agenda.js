@@ -22,10 +22,7 @@ $(function () {
       $('#fechaTerminoCambio').val( $(this).val() );
   });
   
-  $('#horaTerminoCambio').datetimepicker({
-    format: 'HH:mm',
-    sideBySide: true
-  });
+  
 
   $('#fecha-nueva').datetimepicker({
     format: 'YYYY-MM-DD', //  HH:mm
@@ -49,10 +46,7 @@ $(function () {
     sideBySide: true
   });
 
-  $('#hora-termina-nueva').datetimepicker({
-    format: 'HH:mm', // YYYY-MM-DD 
-    sideBySide: true
-  });
+  
 
   $('#inicia-recurrencia').datetimepicker({
     format: 'YYYY-MM-DD',
@@ -113,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var statusCambio = document.getElementById("statusCambio");
         var fechaCambio = document.getElementById("fechaCambio");
         var horaInicioCambio = document.getElementById("horaInicioCambio");
-        var horaTerminoCambio = document.getElementById("horaTerminoCambio");
+        
         var divAlert = document.getElementById("userAlertCambio");
 
         pacienteCambio.innerHTML = info.event.title;
@@ -125,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fechaCambio.value = moment(info.event.start).format("YYYY-MM-DD");
         horaInicioCambio.value = moment(info.event.start).format("HH:mm");
-        horaTerminoCambio.value = moment(info.event.end).format("HH:mm");
+        
 
         statusActualId = info.event.extendedProps.statusSesion;
         var statusArray = [ 2, 3, 4 ];
@@ -213,9 +207,9 @@ document.getElementById("ajuste-sesion-boton").addEventListener("click", functio
 
     var fechaCambio = document.getElementById("fechaCambio").value;
     var horaInicioCambio = document.getElementById("horaInicioCambio").value;
-    var horaTerminoCambio = document.getElementById("horaTerminoCambio").value;
+    
 
-    if ( ! document.getElementById("statusSesionId").value || (horaInicioCambio >= horaTerminoCambio) /*|| (iniciaCambio.substring(0,10) != terminaCambio.substring(0,10))*/ )
+    if ( ! document.getElementById("statusSesionId").value /*|| (iniciaCambio.substring(0,10) != terminaCambio.substring(0,10))*/ )
     { 
         Swal.fire({
           position: 'top-end',
@@ -236,7 +230,7 @@ document.getElementById("ajuste-sesion-boton").addEventListener("click", functio
       sesionId: document.getElementById("idSesionCambio").value,
       fecha: document.getElementById("fechaCambio").value,
       horaInicio: document.getElementById("horaInicioCambio").value,
-      horaTermino: document.getElementById("horaTerminoCambio").value,
+      
       statusId: document.getElementById("statusSesionId").value,
       _token: token
     };
@@ -302,7 +296,6 @@ function getPaciente(pacienteId)
   // se resetea el valor de los inputs cuando el usuario cambia el paciente en el input select
   document.getElementById('fecha-nueva').value = '';
   document.getElementById('hora-inicia-nueva').value = '';
-  document.getElementById('hora-termina-nueva').value = '';
 
   // reinicio de arreglo de objetos (sesiones nuevas del paciente)
   arrayNvasSesiones = [];
@@ -337,10 +330,10 @@ document.getElementById("campos-nva-sesion").addEventListener("click", function(
 
   var fechaNva = document.getElementById("fecha-nueva").value;
   var horaIniciaNva = document.getElementById("hora-inicia-nueva").value;
-  var horaTerminaNva = document.getElementById("hora-termina-nueva").value;
+  //var horaTerminaNva = document.getElementById("hora-termina-nueva").value;
   var pacienteId = document.getElementById("paciente_id").value;
 
-  if( !fechaNva || !horaIniciaNva || !horaTerminaNva || (horaIniciaNva >= horaTerminaNva)/* || (iniciaNva.substring(0,10) != terminaNva.substring(0,10))*/ )
+  if( !fechaNva || !horaIniciaNva /*|| (horaIniciaNva >= horaTerminaNva)*//* || (iniciaNva.substring(0,10) != terminaNva.substring(0,10))*/ )
   {
       Swal.fire({
           position: 'top-end',
@@ -373,8 +366,8 @@ document.getElementById("campos-nva-sesion").addEventListener("click", function(
   nuevaSesion = {
     pacienteId: pacienteId, 
     fechaNva: fechaNva,
-    horaIniciaNva: horaIniciaNva,
-    horaTerminaNva: horaTerminaNva
+    horaIniciaNva: horaIniciaNva//,
+    //horaTerminaNva: horaTerminaNva
   }
 
   arrayNvasSesiones.push(nuevaSesion);
@@ -396,7 +389,7 @@ function actualizarListado(){
         tablaSesionesNuevas += "<tr>";
         tablaSesionesNuevas += "<td><i class='fas fa-arrow-up'></i> "+arrayNvasSesiones[i].fechaNva+"</td>";
         tablaSesionesNuevas += "<td><i class='fas fa-arrow-down'></i> "+arrayNvasSesiones[i].horaIniciaNva+"</td>";
-        tablaSesionesNuevas += "<td><i class='fas fa-arrow-down'></i> "+arrayNvasSesiones[i].horaTerminaNva+"</td>";
+        tablaSesionesNuevas += "<td><i class='fas fa-arrow-down'></i> N/A</td>";
         
         tablaSesionesNuevas += "<td><button class='btn btn-danger' onclick='eliminarSesionObjeto("+i+")'><i class='fas fa-trash'></i></button></td>";
         tablaSesionesNuevas += "</tr>";

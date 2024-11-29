@@ -24,6 +24,7 @@
     <form method="post" action="/paciente/plan">
     @csrf
     <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
+    <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
     <div class="card card-body">
       <div class="row">
         <div class="col-sm-4">

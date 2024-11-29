@@ -55,6 +55,37 @@
             </tr>
         </table>
 
+        @php
+            $citasConcluidas = \App\Models\CitaPaciente::where('paciente_id', $paciente->id)
+                ->where('cita_estado_id', 4);
+
+            $planeacion = \App\Models\CitaPlaneacion::where('paciente_id', $paciente->id)
+                ->where('indicador_seguimiento', false)
+                ->where('padre_id', 0)
+                ->get();
+        @endphp
+
+        @if(count($citasConcluidas->get()) < 1)
+
+          @if(count($planeacion) == 0)
+            <div class="alert alert-primary" role="alert">
+              Favor de capturar su plan inicial para poder iniciar la cita del d&iacute;a <b>{{ $primeraCita->fecha }}</b>
+            </div>
+          @else
+            <div class="alert alert-success" role="alert">
+              Plan inicial capturado! 
+              <form method="post" action="/cita/iniciar">
+              @csrf
+              <input type="hidden" value="{{ $primeraCita->id }}" id="sesion-id-iniciar" name="cita_id">
+              <button class="btn btn-success" type="submit" id="btn-iniciar-cita" onclick="this.classList.add('d-none')">
+                Atender cita
+              </button>
+              </form>
+            </div>
+          @endif
+          
+        @endif
+        
         <p>
             <h4 class="text-center">
                 <b>

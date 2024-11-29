@@ -18,11 +18,12 @@ return new class extends Migration
 
             $table->date('fecha');
             $table->time('hora_inicio');
-            $table->time('hora_termino');
+            $table->time('hora_termino')->nullable();
             $table->integer('paciente_id');
             $table->integer('cita_anterior_id')->default(0);
             $table->integer('cita_estado_id');
             $table->integer('user_id');
+            $table->boolean('en_progreso')->default(0);
             
             $table->timestamps();
         });

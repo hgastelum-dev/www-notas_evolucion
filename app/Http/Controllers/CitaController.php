@@ -105,7 +105,11 @@ class CitaController extends Controller
 
                 $request->session()->flash('userAlerts', ['titulo' => 'Notificacion:', 'mensaje' => 'Favor de capturar el apartado <b>Plan</b> al paciente <b>' . $cita->getPaciente->nombre_s . '</b> antes de recibirlo en consultorio.', 'icono' => '']);
 
-                return redirect('/agenda');
+                $cita->user_id = Auth::user()->id;
+                $cita->en_progreso = true;
+                $cita->save();
+
+                return redirect('/paciente/plan/' . $cita->getPaciente->id);
             } else {
                 // insertar la planeacion de la historia clinica...
                 foreach ($planeacion as $plan) {
@@ -463,6 +467,7 @@ class CitaController extends Controller
         } else {
 
             // 4 = concluido
+            $citaPaciente->en_progreso = false;
             $citaPaciente->cita_estado_id = 4;
 
             $citaPaciente->save();

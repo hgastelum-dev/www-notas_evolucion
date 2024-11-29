@@ -118,10 +118,7 @@
                     <input type="text" id="hora-inicia-nueva" onkeydown="return false;" class="form-control rounded-pill datetimepicker-input" data-toggle="datetimepicker" data-target="#hora-inicia-nueva" placeholder="Hora de inicio" aria-label="Hora de inicio">
                 </div>
 
-                <div class="col text-nowrap">
-                    <i class="fas fa-calendar-alt"></i> Hora de termino<br><br> 
-                    <input type="text" id="hora-termina-nueva" onkeydown="return false;" class="form-control rounded-pill datetimepicker-input" data-toggle="datetimepicker" data-target="#hora-termina-nueva" placeholder="Hora de termino" aria-label="Hora de termino">
-                </div>
+                
             </div>
             
             <p class="text-center">
@@ -260,7 +257,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <h4>
               <b><i class="far fa-calendar-alt"></i> Fecha:</b>
             </h4>
@@ -271,7 +268,7 @@
               </p>
             </h5>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <h4>
               <b><i class="far fa-clock"></i> Hora de inicio:</b>
             </h4>
@@ -279,17 +276,6 @@
             <h5>
               <p>
                 <input type="text" onkeydown="return false;" class="form-control rounded-pill datetimepicker-input" id="horaInicioCambio" data-toggle="datetimepicker" data-target="#horaInicioCambio" value="">
-              </p>
-            </h5>
-          </div>
-          <div class="col-sm-4">
-            <h4>
-              <b><i class="far fa-clock"></i> Hora de termino:</b>
-            </h4>
-            <br>
-            <h5>
-              <p>
-                <input type="text" onkeydown="return false;" class="form-control rounded-pill datetimepicker-input" id="horaTerminoCambio" data-toggle="datetimepicker" data-target="#horaTerminoCambio" value="">
               </p>
             </h5>
           </div>

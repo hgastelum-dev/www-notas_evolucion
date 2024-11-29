@@ -78,7 +78,7 @@ class AgendaController extends Controller
                 $sesion->paciente_id = $nuevaSesion["pacienteId"];
                 $sesion->fecha = $nuevaSesion["fechaNva"];
                 $sesion->hora_inicio = $nuevaSesion["horaIniciaNva"];
-                $sesion->hora_termino = $nuevaSesion["horaTerminaNva"];
+                $sesion->hora_termino = $nuevaSesion["horaIniciaNva"]; //$nuevaSesion["horaTerminaNva"];
                 $sesion->user_id = 0;
                 $sesion->cita_estado_id = 1; // estado inicial 1 = Programado 
 
@@ -109,7 +109,7 @@ class AgendaController extends Controller
         $citasConcluidasPosteriores = CitaPaciente::where('paciente_id', $sesion->paciente_id)
             ->where('cita_estado_id', 4)
             ->whereNotIn('id', [$sesion->id])
-            ->where('fecha', '>=', $sesion->fecha)
+            ->where('fecha', '>=', $request->fecha)
             ->get();
         
         if(count($citasConcluidasPosteriores) > 0 && $request->statusId == 2){
@@ -119,7 +119,6 @@ class AgendaController extends Controller
 
         $sesion->fecha = $request->fecha;
         $sesion->hora_inicio = $request->horaInicio;
-        $sesion->hora_termino = $request->horaTermino;
         $sesion->cita_estado_id = $request->statusId;
         if($request->statusId == '3'){
             $sesion->user_id = 0;
