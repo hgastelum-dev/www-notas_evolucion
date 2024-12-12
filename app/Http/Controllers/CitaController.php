@@ -75,7 +75,7 @@ class CitaController extends Controller
                 $nuevoPlan->cita_paciente_id = $cita->id;
 
                 $nuevoPlan->indicador_seguimiento = true;
-                $nuevoPlan->paciente_id = 0;
+                $nuevoPlan->paciente_id = $plan->paciente_id;
 
                 $nuevoPlan->save();
 
@@ -89,7 +89,7 @@ class CitaController extends Controller
                     $nuevoPlanAnidado->cita_paciente_id = $cita->id;
 
                     $nuevoPlanAnidado->indicador_seguimiento = true;
-                    $nuevoPlanAnidado->paciente_id = 0;
+                    $nuevoPlanAnidado->paciente_id = $plan->paciente_id;
 
                     $nuevoPlanAnidado->save();    
                 }
@@ -122,7 +122,7 @@ class CitaController extends Controller
                     $nuevoPlan->cita_paciente_id = $cita->id;
 
                     $nuevoPlan->indicador_seguimiento = true;
-                    $nuevoPlan->paciente_id = 0;
+                    $nuevoPlan->paciente_id = $plan->paciente_id;
 
                     $nuevoPlan->save();
 
@@ -136,7 +136,7 @@ class CitaController extends Controller
                         $nuevoPlanAnidado->cita_paciente_id = $cita->id;
 
                         $nuevoPlanAnidado->indicador_seguimiento = true;
-                        $nuevoPlanAnidado->paciente_id = 0;
+                        $nuevoPlanAnidado->paciente_id = $plan->paciente_id;
 
                         $nuevoPlanAnidado->save();    
                     }
@@ -146,6 +146,7 @@ class CitaController extends Controller
         
         // asigna el ID del usuario que tomo la cita
         $cita->user_id = Auth::user()->id;
+        $cita->en_progreso = true;
         $cita->save();
         
         return redirect('/cita/soap01/subjetivo/' . $cita->id);
@@ -413,9 +414,16 @@ class CitaController extends Controller
             $citaPlan->padre_id = 0;
         }
         
-        $citaPlan->indicador_seguimiento = true;
-        $citaPlan->paciente_id = 0;
+        $cita = CitaPaciente::find($request->cita_paciente_id);
 
+        if($cita->getCitaAnterior){
+            $citaPlan->indicador_seguimiento = true;
+        
+        } else {
+            $citaPlan->indicador_seguimiento = false;
+        }
+
+        $citaPlan->paciente_id = $cita->paciente_id;
         $citaPlan->save();
         
         $request->session()->flash('userAlerts', ['titulo' => 'success', 'mensaje' => '', 'icono' => $citaPlan->id]);

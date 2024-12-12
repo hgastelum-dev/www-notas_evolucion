@@ -24,7 +24,9 @@
     <form method="post" action="/paciente/plan">
     @csrf
     <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
-    <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
+    @if(isset($primeraCita))
+      <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
+    @endif
     <div class="card card-body">
       <div class="row">
         <div class="col-sm-4">
@@ -127,7 +129,9 @@
                 <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
                 <input type="hidden" name="padre_id" value="{{ $plan->id }}">
                 <input type="hidden" name="tipo_plan_id" value="{{ $plan->getTipoPlan->id }}">
-                
+                @if(isset($primeraCita))
+                  <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
+                @endif
                 <div class="modal-body">
                   <h3>
                     <span class="badge badge-info">{{ $plan->getTipoPlan->tipo_plan }}:</span>

@@ -38,9 +38,14 @@ class AgendaController extends Controller
             $sesionObjeto->end = $citaPaciente->fecha . ' ' . $citaPaciente->hora_termino;
             $sesionObjeto->resourceId = "a"; 
             $sesionObjeto->sesionId = $citaPaciente->id;
-            $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;    
-            $sesionObjeto->color = $citaPaciente->getEstado->class_color;
+            $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;
 
+            if($citaPaciente->en_progreso){
+                $sesionObjeto->color = 'purple';
+            } else {
+                $sesionObjeto->color = $citaPaciente->getEstado->class_color;
+            }
+            
             array_push($citasArreglo, $sesionObjeto);
         }
         return $citasArreglo;
