@@ -379,6 +379,10 @@ class PacientesController extends Controller
             'plan' => 'required',
             'tipo_plan_id' => 'required'
         ]);
+
+        if(!$request->cita_inicial_id){
+            return redirect('/paciente/plan/' . $request->paciente_id);
+        }
         
         $citaPlan = new CitaPlaneacion();
 

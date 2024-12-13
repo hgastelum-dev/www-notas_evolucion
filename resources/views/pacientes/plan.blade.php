@@ -223,10 +223,24 @@
 @endsection
 
 @section('scripts')
+  
+  <script type="text/javascript" src="{{ asset('lib-tmp/js/sweetalert2/dist/sweetalert2.all.min.js') }}"></script>
 
-<script type="text/javascript">
+  <script type="text/javascript">
 
-  $(function () {
+    @if(session('avisoInicioCita'))
+
+      Swal.fire({
+          position: 'top-end',
+          icon: '{!! session('avisoInicioCita')['icono'] !!}',
+          title: '{!! session('avisoInicioCita')['titulo'] !!}',
+          html: '{!! session('avisoInicioCita')['mensaje'] !!}',
+          showConfirmButton: true,
+          confirmButtonText: 'Cerrar aviso'
+        });
+    @endif
+
+    $(function () {
     $('[data-toggle="popover"]').popover({sanitize: false})
   })
 

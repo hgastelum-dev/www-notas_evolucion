@@ -70,17 +70,29 @@
 
               @if(count($planeacion) == 0)
                 <div class="alert alert-primary" role="alert">
-                  Favor de capturar su plan inicial para poder iniciar la cita del d&iacute;a <b>{{ $primeraCita->fecha }}</b>
+                  Primera cita programada: <b>{{ $primeraCita->fecha }}</b> 
+                  @if($primeraCita->en_progreso == 1)
+                    <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                      Ir a la cita inicial 
+                    </a>
+                  @endif
                 </div>
+                
               @else
                 <div class="alert alert-success" role="alert">
-                  Plan inicial capturado! 
+                  Plan inicial guardado 
+                  @if($primeraCita->en_progreso == 1)
+                    <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                      Ir a la cita inicial: <b>{{ $primeraCita->fecha }}</b> 
+                    </a>
+                  @endif
+                  
                   <form method="post" action="/cita/iniciar">
                   @csrf
                   <input type="hidden" value="{{ $primeraCita->id }}" id="sesion-id-iniciar" name="cita_id">
-                  <button class="btn btn-success" type="submit" id="btn-iniciar-cita" onclick="this.classList.add('d-none')">
+                  {{--<button class="btn btn-success" type="submit" id="btn-iniciar-cita" onclick="this.classList.add('d-none')">
                     Atender cita
-                  </button>
+                  </button>--}}
                   </form>
                 </div>
               @endif

@@ -65,6 +65,9 @@
         </div>
         <div class="text-right">
             <p>
+                <a class="btn btn-info" href="/paciente/plan/{{ $cita->paciente_id }}">
+                    <i class="fas fa-user"></i> ir a la historia clinica
+                </a>
                 <button class="btn btn-success" type="button" id="btn-cierre-cita">
                     <i class="fas fa-handshake"></i> Concluir cita del paciente
                 </button>

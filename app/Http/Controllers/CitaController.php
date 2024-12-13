@@ -103,7 +103,7 @@ class CitaController extends Controller
 
             if(count($planeacion) == 0){
 
-                $request->session()->flash('userAlerts', ['titulo' => 'Notificacion:', 'mensaje' => 'Favor de capturar el apartado <b>Plan</b> al paciente <b>' . $cita->getPaciente->nombre_s . '</b> antes de recibirlo en consultorio.', 'icono' => '']);
+                $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
 
                 $cita->user_id = Auth::user()->id;
                 $cita->en_progreso = true;
