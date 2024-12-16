@@ -93,7 +93,7 @@
   </h4>
 
   {{-- agrupado --}}
-  <table class="table table-hover">
+  <table class="table table-hover table-bordered">
     <tbody>
       @foreach($planesAgrupado as $key => $planAnidado)
 
@@ -116,7 +116,7 @@
           @endphp
 
           <tr class="bg-light" id="tr-tp-{{ $plan->id }}">
-            <td class="text-center text-nowrap">
+            <td class="text-center text-nowrap" style="width: 1px;">
 
               <button type="button" class="btn btn-sm btn-primary" value="{{ $plan->id }}" onclick="getModalEdit(event,this.value)" data-toggle="modal" data-target="#modal-editar">
                 <i class="fas fa-pencil-alt"></i>
@@ -127,7 +127,7 @@
               </button>
 
             </td>
-            <td class="text-center text-nowrap">
+            <td class="text-center text-nowrap" style="width: 1px;">
                 @if(session('userAlerts') && session('userAlerts')['icono'] == $plan->id)
                   <span class="badge badge-{{ session('userAlerts')['titulo'] }}">
                     <i class="fas fa-check"></i> {{ session('userAlerts')['mensaje'] }}
@@ -138,7 +138,7 @@
                 </span>
             </td>
             <td class="font-weight-bold">{{ $plan->plan }}</td>
-            <td class="text-center">
+            <td class="text-center" style="width: 1px;">
               <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-subpunto-{{ $plan->id }}">
                 <i class="fas fa-plus"></i>
               </button>
@@ -192,7 +192,7 @@
           @endphp
           
           <tr id="tr-tp-{{ $planHijo->id }}">
-            <td class="text-center">
+            <td class="text-center" style="width: 1px;">
               <button type="button" class="btn btn-sm btn-info" value="{{ $planHijo->id }}" onclick="getModalEdit(event,this.value)" data-toggle="modal" data-target="#modal-editar">
                 <i class="fas fa-pencil-alt"></i>
               </button>
@@ -200,7 +200,7 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </td>
-            <td class="text-center text-nowrap">
+            <td class="text-center text-nowrap" style="width: 1px;">
               @if(session('userAlerts') && session('userAlerts')['icono'] == $planHijo->id)
                 <span class="badge badge-{{ session('userAlerts')['titulo'] }}">
                   <i class="fas fa-check"></i> {{ session('userAlerts')['mensaje'] }}
