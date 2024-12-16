@@ -73,6 +73,28 @@
                 </button>
             </p>
         </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <b>Laboratorio:</b>
+                <textarea class="form-control" name="" rows="3">@if($cita->laboratorio) {{ $cita->laboratorio }} @endif
+                </textarea>
+            </div>
+            <div class="col-sm-6">
+                <b>Gabinete:</b>
+                <textarea class="form-control" name="" rows="3">@if($cita->gabinete) {{ $cita->gabinete }} @endif
+                </textarea>
+            </div>
+            <div class="col-sm-12 text-center">
+                <br>
+                <p>
+                    <button class="btn btn-primary" type="submit">
+                    Guardar laboratorio/gabinete
+                </button>
+                </p>
+            </div>
+        </div>
+        <br>
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('cita/soap01/subjetivo/*') ? 'active' : '' }}" href="/cita/soap01/subjetivo/{{ $cita->id }}">
