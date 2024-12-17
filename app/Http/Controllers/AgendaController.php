@@ -127,6 +127,7 @@ class AgendaController extends Controller
         $sesion->cita_estado_id = $request->statusId;
         if($request->statusId == '3'){
             $sesion->user_id = 0;
+            $sesion->en_progreso = 0;
 
             // eliminar registros de la nota de evolucion
             CitaSubjetivo::where('cita_paciente_id', $sesion->id)->delete();

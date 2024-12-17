@@ -45,6 +45,9 @@
           <i class="fas fa-lightbulb" style="color: {{ $citaEstado->class_color }}"></i> = {{ $citaEstado->cita_estado }}
         </td>
       @endforeach
+        <td>
+          <i class="fas fa-lightbulb" style="color: purple;"></i> = En progreso
+        </td>
       </tr>
     </table>
 
