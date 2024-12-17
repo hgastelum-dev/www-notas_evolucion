@@ -37,7 +37,7 @@
         <b>A</b>nalisis:
     </h3>
   </label>
-  <textarea class="form-control border border-info rounded" id="analisis" name="analisis" rows="15" required autofocus>@if($cita->getAnalisis) {{ $cita->getAnalisis->analisis }} @endif</textarea>
+  <textarea class="form-control border border-info rounded" id="analisis" name="analisis" rows="15" autofocus>@if($cita->getAnalisis) {{ $cita->getAnalisis->analisis }} @endif</textarea>
 </div>
 <p>
   <button type="submit" class="btn btn-success btn-lg btn-block" id="btn-s">
@@ -60,7 +60,8 @@
   $(document).ready(function() {
     $('#analisis').summernote({
       tabsize: 2,
-      height: 500
+      height: 500,
+      focus: true
     });
   });
 </script>
