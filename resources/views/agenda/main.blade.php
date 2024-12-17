@@ -34,8 +34,8 @@
 
     {{-- semaforizacion de citas... datos informativos --}}
     <table class="table">
-      <tr class="text-center">
-        <th colspan="{{ count($citaEstados) }}">
+      <tr class="text-center bg-info text-white">
+        <th colspan="{{ count($citaEstados) + 1 }}">
           <i class="fas fa-sync-alt"></i> Semaforizaci&oacute;n de citas por color
         </th>
       </tr>

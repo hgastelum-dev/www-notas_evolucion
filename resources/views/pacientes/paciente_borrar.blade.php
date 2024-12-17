@@ -11,7 +11,7 @@
     <div class="card-body">
         
         <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="alert alert-info" role="alert">
                 <i class="fas fa-exclamation-triangle"></i> <b>Atento aviso:</b> Est&aacute; intentando eliminar el registro del paciente <b><i class="fas fa-user"></i> {{ $paciente->nombre_s }}</b>, desea proceder? Esta acci&oacute;n no podr&aacute; deshacerse.
                 <br><br>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\DiagnosticoCIE10;
+use App\Models\CitaEstado;
+use App\Models\CitaPaciente;
 
 class TableroPrincipalController extends Controller
 {
@@ -13,7 +15,11 @@ class TableroPrincipalController extends Controller
     }
 
     public function getViewMain(){
-        return view('tablero_principal.main');
+
+        $citaEstados = CitaEstado::all();
+        $enProgreso = CitaPaciente::where('en_progreso', true)->count();
+
+        return view('tablero_principal.main', compact(['citaEstados', 'enProgreso']));
     }
 
     public function getDiagnosticosCie10(Request $request){
