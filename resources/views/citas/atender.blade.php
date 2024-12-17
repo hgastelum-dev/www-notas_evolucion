@@ -74,26 +74,29 @@
             </p>
         </div>
 
-        <div class="row">
+        <form method="post" action="/lab-gab/update">
+          @csrf
+          <input type="hidden" name="cita_id" value="{{ $cita->id }}">
+          <div class="row">
             <div class="col-sm-6">
-                <b>Laboratorio:</b>
-                <textarea class="form-control" name="" rows="3">@if($cita->laboratorio) {{ $cita->laboratorio }} @endif
-                </textarea>
+              <b>Laboratorio:</b>
+              <textarea class="form-control @if($cita->laboratorio) {!! 'border-success' !!} @endif" name="laboratorio" rows="3">@if($cita->laboratorio){{$cita->laboratorio}}@endif</textarea>
             </div>
             <div class="col-sm-6">
-                <b>Gabinete:</b>
-                <textarea class="form-control" name="" rows="3">@if($cita->gabinete) {{ $cita->gabinete }} @endif
-                </textarea>
+              <b>Gabinete:</b>
+              <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="3">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
             </div>
             <div class="col-sm-12 text-center">
-                <br>
-                <p>
-                    <button class="btn btn-primary" type="submit">
-                    Guardar laboratorio/gabinete
+              <br>
+              <p>
+                <button class="btn btn-primary" type="submit">
+                  Guardar laboratorio/gabinete
                 </button>
-                </p>
+              </p>
             </div>
-        </div>
+          </div>
+        </form>
+
         <br>
         <ul class="nav nav-tabs">
             <li class="nav-item">

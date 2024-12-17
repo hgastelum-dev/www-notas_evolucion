@@ -463,6 +463,18 @@ class CitaController extends Controller
         return redirect('/cita/soap04/planeacion/' . $citaPlan->cita_paciente_id);
     }
 
+    public function updateLaboratorio(Request $request){
+
+        $citaPaciente = CitaPaciente::find($request->cita_id);
+
+        $citaPaciente->laboratorio = $request->laboratorio;
+        $citaPaciente->gabinete = $request->gabinete;
+
+        $citaPaciente->save();
+
+        return redirect('/cita/soap01/subjetivo/' . $citaPaciente->id);
+    }
+
     public function cerrarCita(Request $request){
         
         $citaPaciente = CitaPaciente::find($request->citaId);

@@ -77,6 +77,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/cita/delete', [App\Http\Controllers\AgendaController::class, 'deleteCita']);
     Route::post('/cita/iniciar', [App\Http\Controllers\CitaController::class, 'iniciarCita']);
     Route::get('/cita/atender/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewAtenderCita']);
+    Route::post('/lab-gab/update', [App\Http\Controllers\CitaController::class, 'updateLaboratorio']);
     Route::post('/cita/cierre', [App\Http\Controllers\CitaController::class, 'cerrarCita']);
 
     // captura SOAP 01
