@@ -20,7 +20,7 @@
             @csrf
             
             <div class="text-center">
-              <img src="{{ asset('ncbclogo.png') }}">
+              <img src="{{ asset('img/geialogo.jpg') }}" height="150">
             </div>
             <br><br>
             <h4 class="mb-3 fw-normal text-info">
@@ -65,7 +65,7 @@
               </label>
             </div>
 
-            <button class="w-100 btn btn-lg btn-info" type="submit">
+            <button class="w-100 btn btn-lg btn-success" type="submit">
                 Ingresar <i class="fa-solid fa-right-to-bracket"></i>
             </button>
 
