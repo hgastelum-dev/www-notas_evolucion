@@ -29,7 +29,7 @@
                 </td>
                 <th>Nombre del paciente:</th>
                 <td>
-                    <i class="fas fa-user"></i> {{ $paciente->nombre_s }}
+                    <i class="fas fa-user"></i> {{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}
                 </td>
                 <td rowspan="3" class="text-center align-middle" style="width: 220px;">
                     <img src="{{ asset('img/user-icon.png') }}" class="img-responsive" alt="..." height="150">
@@ -38,10 +38,16 @@
             
             <tr>
                 <th>Genero:</th>
-                <td>{{ $paciente->genero_id }}</td>
+                <td>
+                    @if($paciente->genero_id == 2)
+                        Femenino
+                    @else
+                        Masculino
+                    @endif
+                </td>
                 <th>Fecha de nacimiento:</th>
                 <td>
-                    <i class="fas fa-calendar-alt"></i> {{ $paciente->fecha_nacimiento }}
+                    <i class="fas fa-calendar-alt"></i> {{ substr($paciente->fecha_nacimiento, 0, 10) }}
                 </td>
             </tr>
             
@@ -50,7 +56,7 @@
                 <td>{{ $paciente->tipo_sangre }}</td>
                 <th>Fecha de primera cita</th>
                 <td>
-                    <i class="fas fa-calendar-alt"></i> {{ $paciente->fecha_ingreso }}
+                    <i class="fas fa-calendar-alt"></i> {{ substr($paciente->fecha_ingreso, 0, 10) }}
                 </td>
             </tr>
         </table>

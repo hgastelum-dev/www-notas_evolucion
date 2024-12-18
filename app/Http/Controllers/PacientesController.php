@@ -95,6 +95,8 @@ class PacientesController extends Controller
         $paciente = Paciente::find($request->paciente_id);
 
         $paciente->nombre_s = $request->nombre_s;
+        $paciente->apellido_paterno = $request->apellido_paterno;
+        $paciente->apellido_materno = $request->apellido_materno;
         $paciente->email = $request->email;
         $paciente->tipo_sangre = $request->tipo_sangre;
         $paciente->direccion = $request->direccion;
@@ -116,11 +118,11 @@ class PacientesController extends Controller
             $paciente->foto_path = $pathFoto;
         }
 
-        $paciente->genero_id = $request->cat_genero_id;
+        //$paciente->genero_id = $request->cat_genero_id;
         $paciente->ocupacion = $request->ocupacion;
         $paciente->escolaridad = $request->escolaridad;
         $paciente->religion = $request->religion;
-        $paciente->estado_civil_id = $request->cat_estado_civil_id;
+        //$paciente->estado_civil_id = $request->cat_estado_civil_id;
         $paciente->fecha_ingreso = $request->fecha_ingreso;
 
         $paciente->save();

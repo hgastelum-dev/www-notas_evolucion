@@ -38,13 +38,27 @@
 
 <div class="row g-3">
   <div class="col-md-8">      
-    <label for="nombre_s" class="form-label">Nombre(s) y apellido(s)</label>
+    <label for="nombre_s" class="form-label">Nombre(s)</label>
     <input type="text" class="form-control" id="nombre_s" name="nombre_s" value="{{ $paciente->nombre_s }}" onkeydown="">
   </div>
 
   <div class="col-md-4">
     <img src="{{ asset('img/blank.png') }}" class="rounded" alt="Foto del paciente" height="1" id="foto-vista-previa">
     <input type="file" id="foto_path" name="foto_path" accept="image/*" onchange="{{--getFotoPreview(event)--}}">
+  </div>
+</div>
+
+<br>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <label for="apellido_paterno" class="form-label">Apellido paterno</label>
+    <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" value="{{ $paciente->apellido_paterno }}" onkeydown="">
+  </div>
+
+  <div class="col-md-4">
+    <label for="apellido_materno" class="form-label">Apellido materno</label>
+    <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" value="{{ $paciente->apellido_materno }}" onkeydown="">
   </div>
 </div>
 
@@ -78,7 +92,7 @@
 
   <div class="col-md-3">
     <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-    <input type="text" class="form-control datetimepicker-input" id="fecha_nacimiento" name="fecha_nacimiento" data-toggle="datetimepicker" data-target="#fecha_nacimiento" placeholder="" value="{{ $paciente->fecha_nacimiento }}" onkeydown="">
+    <input type="date" class="form-control datetimepicker-input" id="fecha_nacimiento" name="fecha_nacimiento" data-toggle="datetimepicker" data-target="#fecha_nacimiento" placeholder="" value="{{ substr($paciente->fecha_nacimiento, 0, 10) }}" onkeydown="">
   </div>
 </div>
 
@@ -92,7 +106,7 @@
   <div class="col-md-2">
     <br>
     <label for="cat_genero_id" class="form-label">Genero</label>
-    <input type="text" class="form-control" id="cat_genero_id" name="cat_genero_id" value="{{ $paciente->genero_id }}" onkeydown="">
+    <input disabled type="text" class="form-control" id="cat_genero_idx" name="cat_genero_idx" value="@if($paciente->genero_id == 2) {!! 'Femenino' !!} @else {!! 'Masculino' !!} @endif" onkeydown="">
   </div>
 </div>
 
@@ -100,13 +114,13 @@
   <div class="col-md-6">
     <br>
     <label for="fecha_ingreso" class="form-label">Fecha de primera cita</label>
-    <input type="text" class="form-control datetimepicker-input" id="fecha_ingreso" name="fecha_ingreso" data-toggle="datetimepicker" data-target="#fecha_ingreso" placeholder="" value="{{ $paciente->fecha_ingreso }}" onkeydown="">
+    <input type="date" class="form-control datetimepicker-input" id="fecha_ingreso" name="fecha_ingreso" data-toggle="datetimepicker" data-target="#fecha_ingreso" placeholder="" value="{{ substr($paciente->fecha_ingreso, 0, 10) }}" onkeydown="">
   </div>
 
   <div class="col-md-2">
     <br>
     <label for="cat_estado_civil_id" class="form-label">Estado civil</label>
-    <input type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="{{ $paciente->estado_civil_id }}" onkeydown="">
+    <input disabled type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="" onkeydown="">
   </div>
 </div>
 
