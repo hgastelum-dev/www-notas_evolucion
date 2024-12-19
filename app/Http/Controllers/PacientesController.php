@@ -82,8 +82,11 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
-
+        if(isset($primeraCita)){
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        } else {
+            $citaEnProgreso = null;
+        }
         return view('pacientes.editar', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
 
@@ -168,7 +171,11 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        if(isset($primeraCita)){
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        } else {
+            $citaEnProgreso = null;
+        }
 
         return view("pacientes.paciente_antecedentes", compact(["paciente", 'primeraCita', 'citaEnProgreso']));
     }
@@ -230,7 +237,11 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        if(isset($primeraCita)){
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        } else {
+            $citaEnProgreso = null;
+        }
 
         return view('pacientes.paciente_padecimientos', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
@@ -263,7 +274,11 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        if(isset($primeraCita)){
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        } else {
+            $citaEnProgreso = null;
+        }
 
         return view('pacientes.paciente_expfisica', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
@@ -381,7 +396,11 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        if(isset($primeraCita)){
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+        } else {
+            $citaEnProgreso = null;
+        }
 
         return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado', 'primeraCita', 'citaEnProgreso']));
     }
