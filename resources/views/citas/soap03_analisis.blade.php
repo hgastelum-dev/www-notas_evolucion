@@ -60,7 +60,7 @@
   $(document).ready(function() {
     $('#analisis').summernote({
       tabsize: 2,
-      height: 500,
+      height: 200,
       focus: true
     });
   });

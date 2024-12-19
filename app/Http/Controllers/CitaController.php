@@ -94,26 +94,30 @@ class CitaController extends Controller
                     $nuevoPlanAnidado->save();    
                 }
             }
-        } elseif ( count($citasConcluidas->get()) < 1 && $cita->user_id == 0 ) {
-            // aqui se insertan los registros del plan provenientes de la historia clinica del paciente
-            $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+        } elseif ( count($citasConcluidas->get()) < 1 ) {
+
+            $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
+
+            $cita->user_id = Auth::user()->id;
+            $cita->en_progreso = true;
+            $cita->save();
+
+            return redirect('/paciente/plan/' . $cita->getPaciente->id);
+            
+        } else {
+
+            if($cita->en_progreso == 1){
+                
+            } else {
+                // aqui se insertan los registros del plan provenientes de la historia clinica del paciente
+                $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
                 ->where('indicador_seguimiento', false)
                 ->where('padre_id', 0)
                 ->get();
 
-            if(count($planeacion) == 0){
-
-                $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
-
-                $cita->user_id = Auth::user()->id;
-                $cita->en_progreso = true;
-                $cita->save();
-
-                return redirect('/paciente/plan/' . $cita->getPaciente->id);
-            } else {
                 // insertar la planeacion de la historia clinica...
                 foreach ($planeacion as $plan) {
-                    
+                        
                     $nuevoPlan = new CitaPlaneacion();
                     
                     $nuevoPlan->plan = $plan->plan;
@@ -479,20 +483,38 @@ class CitaController extends Controller
         
         $citaPaciente = CitaPaciente::find($request->citaId);
 
-        if(!$citaPaciente->getSubjetivo || !$citaPaciente->getObjetivo || !$citaPaciente->getAnalisis || count($citaPaciente->getPlaneacion) == 0){
+        if($request->primerCita == 1){
+            if(count($citaPaciente->getPlaneacion) == 0){
 
-            $userAlert = ['titulo' => 'Correcto', 'mensaje' => 'Mensaje', 'icono' => 'success', 'operacion' => 'Programadas', 'background' => 'info'];
-            return $userAlert;
-
+                $userAlert = ['titulo' => 'Correcto', 'mensaje' => 'Mensaje', 'icono' => 'success', 'operacion' => 'Programadas', 'background' => 'info'];
+                return $userAlert;
+    
+            } else {
+    
+                // 4 = concluido
+                $citaPaciente->en_progreso = false;
+                $citaPaciente->cita_estado_id = 4;
+    
+                $citaPaciente->save();
+    
+                return $citaPaciente;
+            }
         } else {
+            if(!$citaPaciente->getSubjetivo || !$citaPaciente->getObjetivo || !$citaPaciente->getAnalisis || count($citaPaciente->getPlaneacion) == 0){
 
-            // 4 = concluido
-            $citaPaciente->en_progreso = false;
-            $citaPaciente->cita_estado_id = 4;
-
-            $citaPaciente->save();
-
-            return $citaPaciente;
-        }   
+                $userAlert = ['titulo' => 'Correcto', 'mensaje' => 'Mensaje', 'icono' => 'success', 'operacion' => 'Programadas', 'background' => 'info'];
+                return $userAlert;
+    
+            } else {
+    
+                // 4 = concluido
+                $citaPaciente->en_progreso = false;
+                $citaPaciente->cita_estado_id = 4;
+    
+                $citaPaciente->save();
+    
+                return $citaPaciente;
+            }
+        }
     }
 }

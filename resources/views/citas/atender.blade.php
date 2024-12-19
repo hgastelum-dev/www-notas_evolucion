@@ -78,11 +78,11 @@
           @csrf
           <input type="hidden" name="cita_id" value="{{ $cita->id }}">
           <div class="row">
-            <div class="col-sm-6">
+            {{--<div class="col-sm-6">
               <b>Laboratorio:</b>
               <textarea class="form-control @if($cita->laboratorio) {!! 'border-success' !!} @endif" name="laboratorio" rows="3">@if($cita->laboratorio){{$cita->laboratorio}}@endif</textarea>
-            </div>
-            <div class="col-sm-6">
+            </div>--}}
+            <div class="col-sm-12">
               <b>Gabinete:</b>
               <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="3">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
             </div>
@@ -90,7 +90,7 @@
               <br>
               <p>
                 <button class="btn btn-primary" type="submit">
-                  Guardar laboratorio/gabinete
+                  Guardar gabinete
                 </button>
               </p>
             </div>

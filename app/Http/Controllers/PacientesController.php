@@ -82,7 +82,9 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        return view('pacientes.editar', compact(['paciente', 'primeraCita']));
+        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+
+        return view('pacientes.editar', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
 
     public function updatePaciente(Request $request){
@@ -166,7 +168,9 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        return view("pacientes.paciente_antecedentes", compact(["paciente", 'primeraCita']));
+        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+
+        return view("pacientes.paciente_antecedentes", compact(["paciente", 'primeraCita', 'citaEnProgreso']));
     }
 
     public function updateAntecedentes(Request $request){
@@ -226,7 +230,9 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        return view('pacientes.paciente_padecimientos', compact(['paciente', 'primeraCita']));
+        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+
+        return view('pacientes.paciente_padecimientos', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
 
     public function updatePadecimientos(Request $request){
@@ -257,7 +263,9 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        return view('pacientes.paciente_expfisica', compact(['paciente', 'primeraCita']));
+        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+
+        return view('pacientes.paciente_expfisica', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
 
     public function updateExpFisica(Request $request){
@@ -373,7 +381,9 @@ class PacientesController extends Controller
 
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
-        return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado', 'primeraCita']));
+        $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+
+        return view('pacientes.plan', compact(['paciente', 'tiposPlaneacion', 'planesAgrupado', 'primeraCita', 'citaEnProgreso']));
     }
     
     public function insertPlan(Request $request){

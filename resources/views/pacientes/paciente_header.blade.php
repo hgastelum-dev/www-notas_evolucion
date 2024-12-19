@@ -71,16 +71,58 @@
                 ->get();
         @endphp
 
+        @if(isset($citaEnProgreso))
+          <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $citaEnProgreso->id }}">
+            Ir a la cita en progreso: <b>{{ $citaEnProgreso->fecha }}</b>
+          </a>
+        @endif
+
         @if(isset($primeraCita))
             @if(count($citasConcluidas->get()) < 1)
 
               @if(count($planeacion) == 0)
                 <div class="alert alert-primary" role="alert">
-                  Primera cita programada: <b>{{ $primeraCita->fecha }}</b> 
+                  Primera cita programada: <b>{{ $primeraCita->fecha }}</b>
+                  <button class="btn btn-success" type="button" id="btn-cierre-cita">
+                    <i class="fas fa-handshake"></i> Concluir cita del paciente
+                  </button>
+                  <script type="text/javascript">
+                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
+                            
+                            this.disabled = true;
+
+                            const token = '{{ csrf_token() }}';
+
+                            var data = {
+                              _token: token,
+                              citaId: {{ $primeraCita->id }},
+                              primerCita: 1
+                            }
+
+                            fetch('/cita/cierre', {
+                                method: 'POST',
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(function(response){
+                                
+                                if(response.hasOwnProperty('id')){
+                                    $('#cierreCitaModal').modal('show')
+                                } else {
+                                    $('#errorCierraModal').modal('show')    
+                                }
+                            })
+
+                            this.disabled = false;
+                        })
+                    </script>
                   @if($primeraCita->en_progreso == 1)
-                    <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                    {{--<a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
                       Ir a la cita inicial 
-                    </a>
+                    </a>--}}
                   @endif
                 </div>
                 
@@ -88,9 +130,45 @@
                 <div class="alert alert-success" role="alert">
                   Plan inicial guardado 
                   @if($primeraCita->en_progreso == 1)
-                    <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                    {{--<a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
                       Ir a la cita inicial: <b>{{ $primeraCita->fecha }}</b> 
-                    </a>
+                    </a>--}}
+                    <button class="btn btn-success" type="button" id="btn-cierre-cita">
+                        <i class="fas fa-handshake"></i> Concluir cita del paciente
+                    </button>
+                    <script type="text/javascript">
+                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
+                            
+                            this.disabled = true;
+
+                            const token = '{{ csrf_token() }}';
+
+                            var data = {
+                              _token: token,
+                              citaId: {{ $primeraCita->id }},
+                              primerCita: 1
+                            }
+
+                            fetch('/cita/cierre', {
+                                method: 'POST',
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(function(response){
+                                
+                                if(response.hasOwnProperty('id')){
+                                    $('#cierreCitaModal').modal('show')
+                                } else {
+                                    $('#errorCierraModal').modal('show')    
+                                }
+                            })
+
+                            this.disabled = false;
+                        })
+                    </script>
                   @endif
                   
                   <form method="post" action="/cita/iniciar">
@@ -155,6 +233,59 @@
         <br><br>
         @yield('paciente')
     </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="cierreCitaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p class="text-center">
+            <i class="fas fa-check-circle text-success" style="font-size: 75px;"></i>
+            <p>
+                <h5 class="text-center">
+                    La cita en pantalla ha sido <b>Concluida</b> exitosamente
+                    <br><br>
+                    <a class="btn btn-primary" href="/agenda">
+                        <i class="fas fa-arrow-left"></i> Regresar a la agenda semanal
+                    </a>
+                </h5>
+            </p>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="errorCierraModal" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Atento aviso</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">
+            <i class="fas fa-pencil-alt text-danger" style="font-size: 75px;"></i>
+            <p>
+                <h5 class="text-center">
+                    Favor de capturar el <b>plan inicial</b> del paciente para poder concluir la primer cita del paciente.
+                </h5>
+            </p>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 
 @endsection

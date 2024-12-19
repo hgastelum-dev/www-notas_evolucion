@@ -323,7 +323,7 @@
   $(document).ready(function() {
     $('#exploracion_fisica').summernote({
       tabsize: 2,
-      height: 500
+      height: 200
     });
   });
 
