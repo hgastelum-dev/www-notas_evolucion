@@ -26,4 +26,8 @@ class Paciente extends Model
     public function getExploracionFisica(){
         return $this->hasOne('App\Models\PacienteExploracionFisica', 'paciente_id');
     }
+
+    public function getNotasHistoricas(){
+        return $this->hasMany('App\Models\NotaHistorica', 'paciente_id');
+    }
 }

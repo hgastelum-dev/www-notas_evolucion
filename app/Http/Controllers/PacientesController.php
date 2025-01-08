@@ -10,6 +10,8 @@ use App\Models\PacienteExploracionFisica;
 use App\Models\CitaPaciente;
 use App\Models\TipoPlaneacion;
 use App\Models\CitaPlaneacion;
+use App\Models\NotaHistorica;
+use App\Models\NotaHistoricaPlan;
 use Intervention\Image\ImageManagerStatic as Image;
 use Intervention\Image\ImageManager;
 use Carbon\Carbon;
@@ -467,4 +469,81 @@ class PacientesController extends Controller
         return redirect('/paciente/plan/' . $citaPlan->paciente_id);
     }
 
+    public function getViewNotasHist($pacienteId){
+
+        $paciente = Paciente::find($pacienteId);
+
+        $notasHistoricas = $paciente->getNotasHistoricas;
+
+        return view('pacientes.notas_historicas', compact(['paciente', 'notasHistoricas']));
+    }
+
+    public function insertNotasHist(Request $request){
+
+        $nuevaNota = new NotaHistorica();
+
+        $nuevaNota->fecha = $request->fecha;
+        $nuevaNota->subjetivo = $request->subjetivo;
+        $nuevaNota->obj_ta = $request->ta;
+        $nuevaNota->obj_fc = $request->fc;
+        $nuevaNota->obj_fr = $request->fr;
+        $nuevaNota->obj_temp = $request->temp;
+        $nuevaNota->obj_talla = $request->talla;
+        $nuevaNota->obj_peso = $request->peso;
+        $nuevaNota->obj_imc = $request->imc;
+        $nuevaNota->obj_sat_o2 = $request->sat_o2;
+        $nuevaNota->obj_hb = $request->hb;
+        $nuevaNota->obj_hto = $request->hto;
+        $nuevaNota->obj_vcm = $request->vcm;
+        $nuevaNota->obj_hcm = $request->hcm;
+        $nuevaNota->obj_porcentaje_eritrocitos_hipocromicos = $request->porcentaje_eritrocitos_hipocromicos;
+        $nuevaNota->obj_plaq = $request->plaq;
+        $nuevaNota->obj_leuc = $request->leuc;
+        $nuevaNota->obj_cr = $request->cr;
+        $nuevaNota->obj_ckdepi = $request->ckdepi;
+        $nuevaNota->obj_bun = $request->bun;
+        $nuevaNota->obj_g = $request->g;
+        $nuevaNota->obj_hba1c_porcentaje = $request->hba1c_porcentaje;
+        $nuevaNota->obj_insulina_serica = $request->insulina_serica;
+        $nuevaNota->obj_homa = $request->homa;
+        $nuevaNota->obj_au = $request->au;
+        $nuevaNota->obj_na = $request->na;
+        $nuevaNota->obj_k = $request->k;
+        $nuevaNota->obj_cl = $request->cl;
+        $nuevaNota->obj_ca = $request->ca;
+        $nuevaNota->obj_p = $request->p;
+        $nuevaNota->obj_mg = $request->mg;
+        $nuevaNota->obj_alb = $request->alb;
+        $nuevaNota->obj_col = $request->col;
+        $nuevaNota->obj_tgs = $request->tgs;
+        $nuevaNota->obj_hdl_col = $request->hdl_col;
+        $nuevaNota->obj_ldl_col = $request->ldl_col;
+        $nuevaNota->obj_ego = $request->ego;
+        $nuevaNota->obj_albu_cru = $request->albu_cru;
+        $nuevaNota->obj_exploracion_fisica = $request->exploracion_fisica;
+        $nuevaNota->analisis = $request->analisis;
+        $nuevaNota->paciente_id = $request->paciente_id;
+
+        $nuevaNota->created_at = Carbon::now('America/Los_Angeles');
+        $nuevaNota->updated_at = Carbon::now('America/Los_Angeles');
+
+        $nuevaNota->save();
+
+        foreach($request->plan as $key => $plan){
+            
+            $notaHistPlan = new NotaHistoricaPlan();
+            
+            $notaHistPlan->plan = $plan['plan'];
+            $notaHistPlan->tipo_plan_id = $plan['tipo_plan_id'];
+            $notaHistPlan->paciente_id = $request->paciente_id;
+            $notaHistPlan->nota_historica_id = $nuevaNota->id;
+
+            $notaHistPlan->updated_at = Carbon::now('America/Los_Angeles');
+            $notaHistPlan->updated_at = Carbon::now('America/Los_Angeles');
+
+            $notaHistPlan->save();
+        }
+
+        return redirect('/paciente/notas-hist/' . $request->paciente_id);
+    }
 }

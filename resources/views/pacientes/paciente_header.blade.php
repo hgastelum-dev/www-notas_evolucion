@@ -225,8 +225,15 @@
           
           <li class="nav-item">
             <a class="nav-link border border-primary {{ request()->is('paciente/plan/*') || request()->is('paciente/plan') ? 'active' : '' }}" href="/paciente/plan/{{ $paciente->id }}">
-                <i class="far fa-map"></i> Plan
+                <i class="far fa-map"></i> Plan inicial
             </a>
+          </li>
+
+          &nbsp;
+          <li class="nav-item">
+              <a class="nav-link border border-primary {{ request()->is('paciente/notas-hist/*') || request()->is('paciente/notas-hist') ? 'active' : '' }}" href="/paciente/notas-hist/{{ $paciente->id }}">
+                  <i class="far fa-file"></i> Historico de notas
+              </a>
           </li>
         </ul>
         
