@@ -75,129 +75,36 @@
             </tr>
         </table>
 
-        @php
-            $citasConcluidas = \App\Models\CitaPaciente::where('paciente_id', $paciente->id)
-                ->where('cita_estado_id', 4);
-
-            $planeacion = \App\Models\CitaPlaneacion::where('paciente_id', $paciente->id)
-                ->where('indicador_seguimiento', false)
-                ->where('padre_id', 0)
-                ->get();
-        @endphp
-
+        {{-- cita en progreso que no es la inicial, por lo que solo se activa el hipervinculo --}}
         @if(isset($citaEnProgreso))
           <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $citaEnProgreso->id }}">
-            Ir a la cita en progreso: <b>{{ $citaEnProgreso->fecha }}</b>
+            Volver a la cita en progreso: <b>{{ $citaEnProgreso->fecha }}</b>
           </a>
         @endif
 
         @if(isset($primeraCita))
-            @if(count($citasConcluidas->get()) < 1)
 
-              @if(count($planeacion) == 0)
+            @if($primeraCita->en_progreso == 1)
+
+                @php
+                    $planeacion = \App\Models\CitaPlaneacion::where('paciente_id', $paciente->id)
+                        ->where('indicador_seguimiento', false)
+                        ->where('padre_id', 0)
+                        ->where('cita_paciente_id', $primeraCita->id)
+                        ->get();
+                @endphp
+
                 <div class="alert alert-primary" role="alert">
-                  Primera cita programada: <b>{{ $primeraCita->fecha }}</b>
-                  <button class="btn btn-info" type="button" id="btn-cierre-cita">
-                    <i class="fas fa-handshake"></i> Concluir cita del paciente
-                  </button>
-                  <script type="text/javascript">
-                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
-                            
-                            this.disabled = true;
-
-                            const token = '{{ csrf_token() }}';
-
-                            var data = {
-                              _token: token,
-                              citaId: {{ $primeraCita->id }},
-                              primerCita: 1
-                            }
-
-                            fetch('/cita/cierre', {
-                                method: 'POST',
-                                body: JSON.stringify(data),
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(function(response){
-                                
-                                if(response.hasOwnProperty('id')){
-                                    $('#cierreCitaModal').modal('show')
-                                } else {
-                                    $('#errorCierraModal').modal('show')    
-                                }
-                            })
-
-                            this.disabled = false;
-                        })
-                    </script>
-                  @if($primeraCita->en_progreso == 1)
-                    {{--<a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
-                      Ir a la cita inicial 
-                    </a>--}}
-                  @endif
+                    Primera cita programada en progreso: <b>{{ $primeraCita->fecha }}</b>
+                    
+                    @if(count($planeacion) > 0)
+                        <button class="btn btn-info" type="button" id="btn-cierre-cita">
+                            <i class="fas fa-handshake"></i> Concluir cita del paciente
+                        </button>
+                    @endif
                 </div>
-                
-              @else
-                <div class="alert alert-success" role="alert">
-                  Plan inicial guardado 
-                  @if($primeraCita->en_progreso == 1)
-                    {{--<a class="btn btn-success" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
-                      Ir a la cita inicial: <b>{{ $primeraCita->fecha }}</b> 
-                    </a>--}}
-                    <button class="btn btn-success" type="button" id="btn-cierre-cita">
-                        <i class="fas fa-handshake"></i> Concluir cita del paciente
-                    </button>
-                    <script type="text/javascript">
-                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
-                            
-                            this.disabled = true;
-
-                            const token = '{{ csrf_token() }}';
-
-                            var data = {
-                              _token: token,
-                              citaId: {{ $primeraCita->id }},
-                              primerCita: 1
-                            }
-
-                            fetch('/cita/cierre', {
-                                method: 'POST',
-                                body: JSON.stringify(data),
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(function(response){
-                                
-                                if(response.hasOwnProperty('id')){
-                                    $('#cierreCitaModal').modal('show')
-                                } else {
-                                    $('#errorCierraModal').modal('show')    
-                                }
-                            })
-
-                            this.disabled = false;
-                        })
-                    </script>
-                  @endif
-                  
-                  <form method="post" action="/cita/iniciar">
-                  @csrf
-                  <input type="hidden" value="{{ $primeraCita->id }}" id="sesion-id-iniciar" name="cita_id">
-                  {{--<button class="btn btn-success" type="submit" id="btn-iniciar-cita" onclick="this.classList.add('d-none')">
-                    Atender cita
-                  </button>--}}
-                  </form>
-                </div>
-              @endif
-              
             @endif
         @endif
-        
         <p>
             <h4 class="text-center">
                 <b>
@@ -308,5 +215,39 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
+                            
+                            this.disabled = true;
+
+                            const token = '{{ csrf_token() }}';
+
+                            var data = {
+                              _token: token,
+                              citaId: {{ $primeraCita->id }},
+                              primerCita: 1
+                            }
+
+                            fetch('/cita/cierre', {
+                                method: 'POST',
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(function(response){
+                                
+                                if(response.hasOwnProperty('id')){
+                                    $('#cierreCitaModal').modal('show')
+                                } else {
+                                    $('#errorCierraModal').modal('show')    
+                                }
+                            })
+
+                            this.disabled = false;
+                        })
+                    </script>
 
 @endsection

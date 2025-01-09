@@ -25,7 +25,9 @@
     @csrf
     <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
     @if(isset($primeraCita))
-      <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
+      @if($primeraCita->en_progreso == 1)
+        <input type="hidden" name="cita_inicial_id" value="{{ $primeraCita->id }}">
+      @endif
     @endif
     <div class="card card-body">
       <div class="row">
