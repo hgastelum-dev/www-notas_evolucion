@@ -367,22 +367,127 @@
 				<td class="text-center text-primary"><b>{{ $notaHistorica->fecha }}</b></td>
 				<td>{{ $notaHistorica->subjetivo }}</td>
 				<td class="text-center">
-					<button class="btn btn-info" type="button">
+					<button class="btn btn-info" data-toggle="modal" data-target="#objetivoModal-{{ $notaHistorica->id }}" type="button">
 						Ver datos
 					</button>
 				</td>
 				<td>{{ $notaHistorica->analisis }}</td>
 				<td class="text-center">
-					<button class="btn btn-info" type="button">
+					<button class="btn btn-info" data-toggle="modal" data-target="#planModal-{{ $notaHistorica->id }}" type="button" type="button">
 						Ver planeaci&oacute;n
 					</button>
 				</td>
 				<td class="text-center">
-					<a class="btn btn-primary" href="/notas-hist/{{ $notaHistorica->id }}">
+					<a class="btn btn-primary" href="/nota-hist/{{ $notaHistorica->id }}">
 						<i class="fas fa-pencil-alt"></i>
 					</a>
+          <a class="btn btn-danger" href="/nota-hist/confirmar-borrar/{{ $notaHistorica->id }}">
+            <i class="fas fa-trash-alt"></i>
+          </a>
 				</td>
 			</tr>
+
+      <!-- Modal -->
+      <div class="modal fade" id="objetivoModal-{{ $notaHistorica->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Objetivo de nota de evoluci&oacute;n del d&iacute;a <b>{{ $notaHistorica->fecha }}</b>, paciente <b>{{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}</b></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-2"><b>TA:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>FC:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>FR:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Temp:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Talla:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Peso:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-2"><b>IMC:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>SatO2:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Hb:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Hto:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Vcm:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Hcm:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-2"><b>Erit. hipoc. %:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Plaq:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Leuc:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Cr:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>CKD-EPI:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Bun:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-2"><b>G:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Hba1c %:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Insulina serica:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>HOMA:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Au:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Na:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-2"><b>K:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Cl:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Ca:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>P:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Mg:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Alb:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-2"><b>Col:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Tgs:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>HDL Col:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>LDL Col:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>Ego:</b> {{ $notaHistorica->obj_ta }}</div>
+                <div class="col-2"><b>AlbU/CrU:</b> {{ $notaHistorica->obj_ta }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Modal -->
+      <div class="modal fade" id="planModal-{{ $notaHistorica->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Plan de nota de evoluci&oacute;n del d&iacute;a <b>{{ $notaHistorica->fecha }}</b></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <ul class="list-group">
+              @foreach($notaHistorica->getPlanHist as $planHist)
+
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ $planHist->plan }}
+                    <span class="badge badge-primary badge-pill">
+                      {{ $planHist->getTipoPlan->tipo_plan }}
+                    </span>
+                  </li>
+                
+              @endforeach
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
 		@endforeach
 		</tbody>
 	</table>
@@ -397,6 +502,19 @@
 
 	<script type="text/javascript">
 		
+    document.addEventListener('DOMContentLoaded', () => {
+        // Escuchar clics en los botones de eliminar
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('btn-eliminar')) {
+                const row = event.target.closest('.row'); // Encuentra el div con la clase "row"
+                if (row) {
+                    row.remove(); // Elimina el div
+                    console.log('Elemento eliminado');
+                }
+            }
+        });
+    });
+
 		function resaltarInput(inputText){
     
 	    if(inputText.value){
@@ -441,20 +559,20 @@
 	    
 	    const newInputDesc = document.createElement("textarea");
 	    const newInputEvid = document.createElement("select");
+      const newButtonDel = document.createElement("button");
 	    const newDivRow = document.createElement("div");
 	    const newCol1 = document.createElement("div");
 	    const newCol2 = document.createElement("div");
+      const newCol3 = document.createElement("div");
 	    const br = document.createElement("br");
 
 	    newInputDesc.classList.add('form-control');
 			newInputDesc.rows = 3;
 			newInputDesc.placeholder = "";
 			newInputDesc.name = "plan[" + indiceInputs + "][plan]";
-			//newInputDesc.required = "required";
 
 			newInputEvid.classList.add('form-control');
 			newInputEvid.name = "plan[" + indiceInputs + "][tipo_plan_id]";
-			//newInputEvid.required = "required";
 		
 			var option = document.createElement("option");
 					option.value = ''
@@ -475,22 +593,30 @@
 					option.value = '3'
 				  option.text = "Tratamiento";
 				  newInputEvid.add(option);
+
+      newButtonDel.type = 'button'
+      newButtonDel.classList.add('btn', 'btn-danger', 'btn-eliminar');
+      newButtonDel.innerText = 'Borrar'
 			
 			newDivRow.classList.add('row');
-	    newCol1.classList.add('col-6');
-	    newCol2.classList.add('col-6');
+	    newCol1.classList.add('col-5');
+	    newCol2.classList.add('col-5');
+      newCol3.classList.add('col-2');
 
 	    newCol1.appendChild(newInputDesc);
 	    newCol2.appendChild(newInputEvid);
+      newCol3.appendChild(newButtonDel);
 
 	    newDivRow.appendChild(newCol2);
 	    newDivRow.appendChild(newCol1);
+      newDivRow.appendChild(newCol3);
 	    
 			container.appendChild(newDivRow);
 	    container.appendChild(br);
 
 	    indiceInputs = indiceInputs + 1;
-		});
+
+    });
 
 		document.getElementById('form-nota-historica').addEventListener('submit', function(event) {
 	    

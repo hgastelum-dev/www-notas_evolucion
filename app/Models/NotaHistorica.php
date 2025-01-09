@@ -11,5 +11,7 @@ class NotaHistorica extends Model
 
     protected $table = 'pacientes_notas_historic';
 
-    
+    public function getPlanHist(){
+        return $this->hasMany('App\Models\NotaHistoricaPlan', 'nota_historica_id');
+    }
 }

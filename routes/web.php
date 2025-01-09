@@ -72,6 +72,10 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
 
     Route::get('/paciente/notas-hist/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'getViewNotasHist']);
     Route::post('/paciente/notas-hist/insert', [App\Http\Controllers\PacientesController::class, 'insertNotasHist']);
+    Route::get('/nota-hist/{notaHistId}', [App\Http\Controllers\PacientesController::class, 'getViewNotaHist']);
+    Route::post('/nota-hist/update', [App\Http\Controllers\PacientesController::class, 'updateNotaHist']);
+    Route::get('/nota-hist/confirmar-borrar/{notaHistId}', [App\Http\Controllers\PacientesController::class, 'getViewBorrarNotaHist']);
+    Route::post('/nota-hist/delete', [App\Http\Controllers\PacientesController::class, 'deleteNotaHist']);
 
     Route::get('/agenda', [App\Http\Controllers\AgendaController::class, 'getViewMain']);
     Route::get('/citas', [App\Http\Controllers\AgendaController::class, 'getCitas']);

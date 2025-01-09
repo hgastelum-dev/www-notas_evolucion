@@ -562,4 +562,89 @@ class PacientesController extends Controller
 
         return redirect('/paciente/notas-hist/' . $request->paciente_id);
     }
+
+    public function getViewNotaHist($notaHistId){
+        $notaHistorica = NotaHistorica::find($notaHistId);
+        $paciente = Paciente::find($notaHistorica->paciente_id);
+        $tiposPlan = TipoPlaneacion::all();
+        return view('pacientes.nota_historica', compact(['paciente', 'notaHistorica', 'tiposPlan']));
+    }
+
+    public function updateNotaHist(Request $request){
+
+        $notaHistorica = NotaHistorica::find($request->nota_hist_id);
+
+        $notaHistorica->subjetivo = $request->subjetivo;
+        $notaHistorica->analisis = $request->analisis;
+        $notaHistorica->obj_ta = $request->ta;
+        $notaHistorica->obj_fc = $request->fc;
+        $notaHistorica->obj_fr = $request->fr;
+        $notaHistorica->obj_temp = $request->temp;
+        $notaHistorica->obj_talla = $request->talla;
+        $notaHistorica->obj_peso = $request->peso;
+        $notaHistorica->obj_imc = $request->imc;
+        $notaHistorica->obj_sat_o2 = $request->sat_o2;
+        $notaHistorica->obj_hb = $request->hb;
+        $notaHistorica->obj_hto = $request->hto;
+        $notaHistorica->obj_vcm = $request->vcm;
+        $notaHistorica->obj_hcm = $request->hcm;
+        $notaHistorica->obj_porcentaje_eritrocitos_hipocromicos = $request->porcentaje_eritrocitos_hipocromicos;
+        $notaHistorica->obj_plaq = $request->plaq;
+        $notaHistorica->obj_leuc = $request->leuc;
+        $notaHistorica->obj_cr = $request->cr;
+        $notaHistorica->obj_ckdepi = $request->ckdepi;
+        $notaHistorica->obj_bun = $request->bun;
+        $notaHistorica->obj_g = $request->g;
+        $notaHistorica->obj_hba1c_porcentaje = $request->hba1c_porcentaje;
+        $notaHistorica->obj_insulina_serica = $request->insulina_serica;
+        $notaHistorica->obj_homa = $request->homa;
+        $notaHistorica->obj_au = $request->au;
+        $notaHistorica->obj_na = $request->na;
+        $notaHistorica->obj_k = $request->k;
+        $notaHistorica->obj_cl = $request->cl;
+        $notaHistorica->obj_ca = $request->ca;
+        $notaHistorica->obj_p = $request->p;
+        $notaHistorica->obj_mg = $request->mg;
+        $notaHistorica->obj_alb = $request->alb;
+        $notaHistorica->obj_col = $request->col;
+        $notaHistorica->obj_tgs = $request->tgs;
+        $notaHistorica->obj_hdl_col = $request->hdl_col;
+        $notaHistorica->obj_ldl_col = $request->ldl_col;
+        $notaHistorica->obj_ego = $request->ego;
+        $notaHistorica->obj_albu_cru = $request->albu_cru;
+        $notaHistorica->obj_exploracion_fisica = $request->exploracion_fisica;
+
+        $notaHistorica->save();
+
+        foreach($request->plan as $key => $plan){
+            
+            $notaHistPlan = NotaHistoricaPlan::find($plan['plan_hist_id']);
+            
+            $notaHistPlan->plan = $plan['plan'];
+            $notaHistPlan->tipo_plan_id = $plan['tipo_plan_id'];
+            
+            $notaHistPlan->updated_at = Carbon::now('America/Los_Angeles');
+            $notaHistPlan->updated_at = Carbon::now('America/Los_Angeles');
+
+            $notaHistPlan->save();
+        }
+
+        return redirect('/nota-hist/' . $notaHistorica->id);
+    }
+
+    public function getViewBorrarNotaHist($notaHistId){
+
+        $notaHistorica = NotaHistorica::find($notaHistId);
+        return view('pacientes.borrar_notahist', compact(['notaHistorica']));
+    }
+
+    public function deleteNotaHist(Request $request){
+        $notaHistorica = NotaHistorica::find($request->nota_hist_id);
+
+        NotaHistoricaPlan::where('nota_historica_id', $notaHistorica->id)->delete();
+
+        $notaHistorica->delete();
+
+        return redirect('/paciente/notas-hist/' . $notaHistorica->paciente_id);
+    }
 }

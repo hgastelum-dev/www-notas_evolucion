@@ -216,7 +216,9 @@
   </div>
 </div>
 
-<script type="text/javascript">
+@if(isset($primeraCita))
+    @if($primeraCita->en_progreso == 1)
+        <script type="text/javascript">
                         document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
                             
                             this.disabled = true;
@@ -249,5 +251,7 @@
                             this.disabled = false;
                         })
                     </script>
+    @endif
+@endif
 
 @endsection
