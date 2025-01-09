@@ -51,6 +51,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::get('/pacientes', [App\Http\Controllers\PacientesController::class, 'getViewPacientes']);
     Route::get('/pacientes/alta', [App\Http\Controllers\PacientesController::class, 'getViewAlta']);
     Route::post('/paciente/insert', [App\Http\Controllers\PacientesController::class, 'insertPaciente']);
+    Route::post('/paciente/fecha_ingreso/update', [App\Http\Controllers\PacientesController::class, 'updateFechaIngreso']);
     Route::get('/paciente/editar/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'getViewEditar']);
     Route::post('/paciente/update', [App\Http\Controllers\PacientesController::class, 'updatePaciente']);
     Route::get('/paciente/borrar/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'viewBorrarPaciente']);

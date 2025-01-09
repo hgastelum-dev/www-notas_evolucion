@@ -56,7 +56,21 @@
                 <td>{{ $paciente->tipo_sangre }}</td>
                 <th>Fecha de primera cita</th>
                 <td>
-                    <i class="fas fa-calendar-alt"></i> {{ substr($paciente->fecha_ingreso, 0, 10) }}
+                    <form method="post" action="/paciente/fecha_ingreso/update">
+                   <div class="input-group mb-3">
+                      
+                        @csrf
+                        <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
+                        <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" value="{{ $paciente->fecha_ingreso }}" aria-describedby="fecha_ingreso" required>
+                        <div class="input-group-append">
+                        
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </div>
+                      
+                    </div>
+                    </form> 
                 </td>
             </tr>
         </table>

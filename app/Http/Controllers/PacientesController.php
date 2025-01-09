@@ -92,6 +92,16 @@ class PacientesController extends Controller
         return view('pacientes.editar', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
     }
 
+    public function updateFechaIngreso(Request $request){
+        $paciente = Paciente::find($request->paciente_id);
+
+        $paciente->fecha_ingreso = $request->fecha_ingreso;
+
+        $paciente->save();
+
+        return redirect('/paciente/notas-hist/' . $request->paciente_id);
+    }
+
     public function updatePaciente(Request $request){
 
         $validated = $request->validate([
