@@ -423,14 +423,20 @@ class PacientesController extends Controller
             'tipo_plan_id' => 'required'
         ]);
 
-        if(!$request->cita_inicial_id){
+        /*if(!$request->cita_inicial_id){
             return redirect('/paciente/plan/' . $request->paciente_id);
-        }
+        }*/
         
         $citaPlan = new CitaPlaneacion();
 
         $citaPlan->plan = $request->plan;
-        $citaPlan->cita_paciente_id = $request->cita_inicial_id;
+
+        if($request->cita_inicial_id){
+            $citaPlan->cita_paciente_id = $request->cita_inicial_id;
+        } else {
+            $citaPlan->cita_paciente_id = 0;
+        }
+        
         $citaPlan->tipo_plan_id = $request->tipo_plan_id;
         if($request->padre_id){
             $citaPlan->padre_id = $request->padre_id;

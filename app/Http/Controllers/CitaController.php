@@ -9,6 +9,7 @@ use App\Models\CitaSubjetivo;
 use App\Models\CitaAnalisis;
 use App\Models\CitaPlaneacion;
 use App\Models\CitaObjetivo;
+use App\Models\Paciente;
 use Auth;
 
 class CitaController extends Controller
@@ -96,25 +97,15 @@ class CitaController extends Controller
             }
         } elseif ( count($citasConcluidas->get()) < 1 ) {
 
-            $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
-
-            $cita->user_id = Auth::user()->id;
-            $cita->en_progreso = true;
-            $cita->save();
-
-            return redirect('/paciente/plan/' . $cita->getPaciente->id);
-            
-        } else {
-
-            if($cita->en_progreso == 1){
-                
-            } else {
-                // aqui se insertan los registros del plan provenientes de la historia clinica del paciente
-                $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
-                ->where('indicador_seguimiento', false)
+            // verificar si hay registros del plan provenientes de la historia clinica sin cita
+            $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+                ->where('indicador_seguimiento', 0)
+                ->where('cita_paciente_id', 0)
                 ->where('padre_id', 0)
                 ->get();
 
+            if(count($planeacion) > 0 && $cita->user_id == 0){
+                
                 // insertar la planeacion de la historia clinica...
                 foreach ($planeacion as $plan) {
                         
@@ -146,6 +137,29 @@ class CitaController extends Controller
                     }
                 }
             }
+        }
+
+        $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+                ->where('indicador_seguimiento', 0)
+                ->where('cita_paciente_id', 0)
+                ->where('padre_id', 0)
+                ->get();
+        $primeraCita = Paciente::find($cita->paciente_id)
+            ->getCitas
+            ->sortBy('fecha')
+            ->first();
+
+        if(count($planeacion) < 1 && $cita->id == $primeraCita->id){
+
+            
+
+            $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
+
+            $cita->user_id = Auth::user()->id;
+            $cita->en_progreso = true;
+            $cita->save();
+
+            return redirect('/paciente/plan/' . $cita->getPaciente->id);
         }
         
         // asigna el ID del usuario que tomo la cita

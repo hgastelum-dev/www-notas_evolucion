@@ -97,7 +97,7 @@
               @if(count($planeacion) == 0)
                 <div class="alert alert-primary" role="alert">
                   Primera cita programada: <b>{{ $primeraCita->fecha }}</b>
-                  <button class="btn btn-success" type="button" id="btn-cierre-cita">
+                  <button class="btn btn-info" type="button" id="btn-cierre-cita">
                     <i class="fas fa-handshake"></i> Concluir cita del paciente
                   </button>
                   <script type="text/javascript">
@@ -144,7 +144,7 @@
                 <div class="alert alert-success" role="alert">
                   Plan inicial guardado 
                   @if($primeraCita->en_progreso == 1)
-                    {{--<a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                    {{--<a class="btn btn-success" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
                       Ir a la cita inicial: <b>{{ $primeraCita->fecha }}</b> 
                     </a>--}}
                     <button class="btn btn-success" type="button" id="btn-cierre-cita">
