@@ -79,6 +79,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
 
     Route::get('/agenda', [App\Http\Controllers\AgendaController::class, 'getViewMain']);
     Route::get('/citas', [App\Http\Controllers\AgendaController::class, 'getCitas']);
+    Route::post('/agenda/paciente/registrar', [App\Http\Controllers\AgendaController::class, 'insertPaciente']);
     Route::get('/citas/paciente/{pacienteId}', [App\Http\Controllers\AgendaController::class, 'getPaciente']);
     Route::post('/citas/insert', [App\Http\Controllers\AgendaController::class, 'insertCitas']);
     Route::post('/cita/update', [App\Http\Controllers\AgendaController::class, 'updateCita']);

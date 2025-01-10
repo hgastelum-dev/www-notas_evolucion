@@ -58,6 +58,21 @@ class AgendaController extends Controller
         return $paciente->with("getCitas")->get();
     }
 
+    public function insertPaciente(Request $request){
+
+        $nuevoPaciente = new Paciente();
+
+        $nuevoPaciente->nombre_s = $request->nombre_s;
+        $nuevoPaciente->apellido_paterno = $request->apellido_paterno;
+        $nuevoPaciente->apellido_materno = $request->apellido_materno;
+
+        $nuevoPaciente->save();
+
+        $request->session()->flash('PacienteRegistrado', ['titulo' => 'Paciente registrado correctamente: ' . $nuevoPaciente->nombre_s . ' ' . $nuevoPaciente->apellido_paterno . ' ' . $nuevoPaciente->apellido_materno, 'mensaje' => (int)$nuevoPaciente->id, 'icono' => 'success']);
+
+        return redirect('/agenda');
+    }
+
     public function insertCitas(Request $request){
 
         $totalInsertadas = 0;

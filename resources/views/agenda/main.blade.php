@@ -93,17 +93,70 @@
 
         <div class="modal-body">
             <p>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Registrar paciente
+              </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+              <div class="card card-body">
+                <form method="post" action="/agenda/paciente/registrar">
+                  @csrf
+                  <div class="form-group row">
+                    <label for="nombre_s" class="col-sm-2 col-form-label">Nombre(s)</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="nombre_s" name="nombre_s" required>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="apellido_paterno" class="col-sm-2 col-form-label">Apellido paterno</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" required>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="apellido_materno" class="col-sm-2 col-form-label">Apellido materno</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" required>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group row text-center">
+                    <div class="col-sm-12">
+                      <button type="submit" class="btn btn-primary">
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            
+            <br>
+            <p>
                 <i class="fas fa-search"></i> Seleccione un paciente<br>
             </p>
+            @if(session('PacienteRegistrado'))
+              <p>
+                <div class="alert alert-success">
+                  {{ session('PacienteRegistrado')['titulo'] }}. Ahora puede seleccionar al paciente recien registrado para programarlo en el calendario de citas.
+                </div>
+              </p>
+            @endif
             <select class="form-control" id="paciente_id" onchange="getPaciente(this.value)">
             
             <option value="">Busqueda de pacientes</option>
             
             @foreach($pacientes as $paciente)
                 
-                <option value="{{ $paciente->id }}">
-                {{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}
-                </option>
+                @if(isset(session('PacienteRegistrado')['mensaje']) && session('PacienteRegistrado')['mensaje'] == $paciente->id)
+                  <option value="{{ $paciente->id }}" selected>
+                  {{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}
+                  </option>
+                @else
+                  <option value="{{ $paciente->id }}">
+                  {{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}
+                  </option>
+                @endif
             
             @endforeach
             </select>
@@ -407,6 +460,14 @@
           confirmButtonText: 'Cerrar aviso'
         });
 </script>
+@endif
+
+@if(isset(session('PacienteRegistrado')['mensaje']))
+  <script type="text/javascript">
+    var modalSesionNueva = new bootstrap.Modal(document.getElementById('modalSesionNueva'));
+
+    modalSesionNueva.show();
+  </script>
 @endif
 <script type="text/javascript" src="{{ asset('agenda.js') }}"></script>
 
