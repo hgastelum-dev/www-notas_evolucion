@@ -46,6 +46,7 @@
     <form method="post" action="/cita/soap04/planeacion">
     @csrf
     <input type="hidden" name="cita_paciente_id" value="{{ $cita->id }}">
+    <input type="hidden" name="desdeSoap" value="1">
     <div class="card card-body">
       <div class="row">
         <div class="col-sm-4">

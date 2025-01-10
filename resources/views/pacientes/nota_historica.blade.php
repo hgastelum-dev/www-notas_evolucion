@@ -14,6 +14,15 @@
 		@csrf
 		<input type="hidden" name="nota_hist_id" value="{{ $notaHistorica->id }}">
 	  
+    <div class="form-group row">
+      <label for="fecha" class="col-sm-2 col-form-label">
+        Fecha
+      </label>
+      <div class="col-sm-10">
+        <input type="date" class="form-control" id="fecha" name="fecha" value="{{ $notaHistorica->fecha }}" required>
+      </div>
+    </div>
+
 	  <div class="form-group row">
 	    <label for="subjetivo" class="col-sm-2 col-form-label">
 	    	Subjetivo

@@ -54,6 +54,8 @@ class CitaController extends Controller
             ->where('cita_estado_id', 4)
             ->whereNotIn('id', [$cita->id]);
 
+        //return count($citasConcluidas->get());
+
         if(count($citasConcluidas->get()) > 0 && $cita->user_id == 0){
             // ... logica para extraer la ultima cita concluida (por fecha) e 
             // insertar los datos de la planeacion en la cita que se esta atendiendo
@@ -173,17 +175,36 @@ class CitaController extends Controller
             ->sortBy('fecha')
             ->first();
 
-        if(count($planeacion) < 1 && $cita->id == $primeraCita->id){
+        $ultimoSoapHist = NotaHistorica::where('paciente_id', $cita->paciente_id)
+                ->orderBy('fecha', 'DESC')
+                ->first();
 
+        if(isset($ultimoSoapHist)){
+            $totalHist = count($ultimoSoapHist->getPlanHist);
+        } else {
+            $totalHist = 0;
+        }
+        
+        if($totalHist < 1 && count($planeacion) < 1 && $cita->id == $primeraCita->id){
+
+            /*$userAlert = array(
+                'titulo' => 'data',
+                'mensaje' => 'data',
+                'icono' => 'data',
+                'operacion' => 'data',
+                'background' => 'data'
+            );*/
             
+            $request->session()->flash('CitaInicialOpciones', ['titulo' => $cita->id, 'mensaje' => 'El paciente <b>' . $cita->getPaciente->nombre_s . ' ' . $cita->getPaciente->apellido_paterno . ' ' . $cita->getPaciente->apellido_materno . '</b> no cuenta con registros en su <b class="text-danger">Plan inicial</b> o <b class="text-danger">Historial de notas de evolucion</b>', 'icono' => 'info']);
 
-            $request->session()->flash('avisoInicioCita', ['titulo' => 'Atento aviso:', 'mensaje' => 'Está recibiendo al paciente <b>' . $cita->getPaciente->nombre_s . '</b> por primera vez en consultorio. Favor de registrar su historia clinica', 'icono' => 'info']);
+            return redirect('/agenda');
 
-            $cita->user_id = Auth::user()->id;
-            $cita->en_progreso = true;
-            $cita->save();
+            //$cita->user_id = Auth::user()->id;
+            //$cita->en_progreso = true;
+            //$cita->save();
 
-            return redirect('/paciente/plan/' . $cita->getPaciente->id);
+            //return redirect('/paciente/plan/' . $cita->getPaciente->id);
+            return '.... ¡undefined flow!';
         }
         
         // asigna el ID del usuario que tomo la cita
@@ -191,6 +212,28 @@ class CitaController extends Controller
         $cita->en_progreso = true;
         $cita->save();
         
+        return redirect('/cita/soap01/subjetivo/' . $cita->id);
+    }
+
+    public function iniciarPlanInicial(Request $request){
+        
+        $cita = CitaPaciente::find($request->cita_id);
+
+        $cita->user_id = Auth::user()->id;
+        $cita->en_progreso = true;
+        $cita->save();
+
+        return redirect('/paciente/plan/' . $cita->getPaciente->id);
+    }
+    
+    public function iniciarSoap(Request $request){
+
+        $cita = CitaPaciente::find($request->cita_id);
+
+        $cita->user_id = Auth::user()->id;
+        $cita->en_progreso = true;
+        $cita->save();
+
         return redirect('/cita/soap01/subjetivo/' . $cita->id);
     }
 
@@ -457,8 +500,8 @@ class CitaController extends Controller
         }
         
         $cita = CitaPaciente::find($request->cita_paciente_id);
-
-        if($cita->getCitaAnterior){
+        
+        if($cita->getCitaAnterior || isset($request->desdeSoap)){
             $citaPlan->indicador_seguimiento = true;
         
         } else {

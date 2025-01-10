@@ -85,6 +85,8 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/cita/update', [App\Http\Controllers\AgendaController::class, 'updateCita']);
     Route::post('/cita/delete', [App\Http\Controllers\AgendaController::class, 'deleteCita']);
     Route::post('/cita/iniciar', [App\Http\Controllers\CitaController::class, 'iniciarCita']);
+    Route::post('/iniciar/plan-inicial', [App\Http\Controllers\CitaController::class, 'iniciarPlanInicial']);
+    Route::post('/iniciar/soap', [App\Http\Controllers\CitaController::class, 'iniciarSoap']);
     Route::get('/cita/atender/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewAtenderCita']);
     Route::post('/lab-gab/update', [App\Http\Controllers\CitaController::class, 'updateLaboratorio']);
     Route::post('/cita/cierre', [App\Http\Controllers\CitaController::class, 'cerrarCita']);

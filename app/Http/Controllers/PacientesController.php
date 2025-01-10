@@ -578,6 +578,7 @@ class PacientesController extends Controller
 
         $notaHistorica = NotaHistorica::find($request->nota_hist_id);
 
+        $notaHistorica->fecha = $request->fecha;
         $notaHistorica->subjetivo = $request->subjetivo;
         $notaHistorica->analisis = $request->analisis;
         $notaHistorica->obj_ta = $request->ta;

@@ -149,7 +149,7 @@
             @foreach($pacientes as $paciente)
                 
                 @if(isset(session('PacienteRegistrado')['mensaje']) && session('PacienteRegistrado')['mensaje'] == $paciente->id)
-                  <option value="{{ $paciente->id }}" selected>
+                  <option value="{{ $paciente->id }}">
                   {{ $paciente->nombre_s }} {{ $paciente->apellido_paterno }} {{ $paciente->apellido_materno }}
                   </option>
                 @else
@@ -432,6 +432,50 @@
     </div>
 </div>
 
+@if(session('CitaInicialOpciones'))
+
+  <!-- Modal -->
+  <div class="modal fade" id="modalInicialOpciones" tabindex="-1" role="dialog" aria-labelledby="modalInicialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalInicialLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {!! session('CitaInicialOpciones')['mensaje'] !!}
+
+          <p class="text-center">
+            ¿Qu&eacute;e desea hacer a continuaci&oacute;n?
+          </p>
+          <p class="text-center">
+            <form class="text-center" method="post" action="/iniciar/plan-inicial">
+
+              @csrf
+              <input type="hidden" name="cita_id" value="{{ session('CitaInicialOpciones')['titulo'] }}">
+              <button class="btn btn-primary" type="submit" onclick="this.classList.add('d-none')">
+                Atender la cita capturando la historia clinica/plan inicial
+              </button>
+            </form>
+          </p>
+          <p class="text-center">
+            <form class="text-center" method="post" action="/iniciar/soap">
+
+              @csrf
+              <input type="hidden" name="cita_id" value="{{ session('CitaInicialOpciones')['titulo'] }}">
+              <button class="btn btn-info" type="submit" onclick="this.classList.add('d-none')">
+                Atender la cita capturando una nota de evoluci&oacute;n
+              </button>
+            </form>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+@endif
+
 @endsection
 
 @section("scripts")
@@ -467,6 +511,14 @@
     var modalSesionNueva = new bootstrap.Modal(document.getElementById('modalSesionNueva'));
 
     modalSesionNueva.show();
+  </script>
+@endif
+
+@if(session('CitaInicialOpciones'))
+  <script type="text/javascript">
+    var modalInicialOpciones = new bootstrap.Modal(document.getElementById('modalInicialOpciones'));
+
+    modalInicialOpciones.show();
   </script>
 @endif
 <script type="text/javascript" src="{{ asset('agenda.js') }}"></script>
