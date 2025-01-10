@@ -65,8 +65,14 @@ class AgendaController extends Controller
         $nuevoPaciente->nombre_s = $request->nombre_s;
         $nuevoPaciente->apellido_paterno = $request->apellido_paterno;
         $nuevoPaciente->apellido_materno = $request->apellido_materno;
-
+        
         $nuevoPaciente->save();
+
+        $paciente = Paciente::find($nuevoPaciente->id);
+
+        $paciente->numero_expediente = 'EXP_'.$paciente->id;
+
+        $paciente->save();
 
         $request->session()->flash('PacienteRegistrado', ['titulo' => 'Paciente registrado correctamente: ' . $nuevoPaciente->nombre_s . ' ' . $nuevoPaciente->apellido_paterno . ' ' . $nuevoPaciente->apellido_materno, 'mensaje' => (int)$nuevoPaciente->id, 'icono' => 'success']);
 

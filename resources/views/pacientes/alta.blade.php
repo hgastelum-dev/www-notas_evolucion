@@ -30,10 +30,28 @@
 
           <div class="form-group row">
             <label for="nombre_s" class="col-sm-2 col-form-label">
-                Nombre completo
+                Nombre(s) <b class="text-danger">*</b>
             </label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="nombre_s" name="nombre_s" required value="{{ old('nombre_s') }}">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="apellido_paterno" class="col-sm-2 col-form-label">
+                Apellido paterno <b class="text-danger">*</b>
+            </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" required value="{{ old('apellido_paterno') }}">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="apellido_materno" class="col-sm-2 col-form-label">
+                Apellido materno <b class="text-danger">*</b>
+            </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" required value="{{ old('apellido_materno') }}">
             </div>
           </div>
 

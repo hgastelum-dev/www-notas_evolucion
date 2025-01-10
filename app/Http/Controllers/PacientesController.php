@@ -32,13 +32,17 @@ class PacientesController extends Controller
     public function insertPaciente(Request $request){
 
         $validated = $request->validate([
-            'nombre_s' => 'required|unique:pacientes|max:255',
+            'nombre_s' => 'required|max:255',
+            'apellido_paterno' => 'required|max:255',
+            'apellido_materno' => 'required|max:255',
             'email' => 'nullable|unique:pacientes|max:255',
         ]);
 
         $paciente = new Paciente();
 
         $paciente->nombre_s = $request->nombre_s;
+        $paciente->apellido_paterno = $request->apellido_paterno;
+        $paciente->apellido_materno = $request->apellido_materno;
         $paciente->email = $request->email;
 
         // datos predeterminados de la ficha de identificacion 
@@ -74,7 +78,7 @@ class PacientesController extends Controller
 
     public function getViewPacientes(){
 
-        $pacientes = Paciente::select('id', 'numero_expediente','nombre_s','apellido_paterno', 'apellido_materno', 'email')->whereNotIn('id', [4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])->get();
+        $pacientes = Paciente::select('id', 'numero_expediente','nombre_s','apellido_paterno', 'apellido_materno', 'email')->get();
 
         return view('pacientes.listado', compact(['pacientes']));
     }
@@ -135,11 +139,11 @@ class PacientesController extends Controller
             $paciente->foto_path = $pathFoto;
         }
 
-        //$paciente->genero_id = $request->cat_genero_id;
+        $paciente->genero_id = $request->cat_genero_id;
         $paciente->ocupacion = $request->ocupacion;
         $paciente->escolaridad = $request->escolaridad;
         $paciente->religion = $request->religion;
-        //$paciente->estado_civil_id = $request->cat_estado_civil_id;
+        $paciente->estado_civil_id = $request->cat_estado_civil_id;
         $paciente->fecha_ingreso = $request->fecha_ingreso;
 
         $paciente->save();

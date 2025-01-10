@@ -106,7 +106,11 @@
   <div class="col-md-2">
     <br>
     <label for="cat_genero_id" class="form-label">Genero</label>
-    <input disabled type="text" class="form-control" id="cat_genero_idx" name="cat_genero_idx" value="@if($paciente->genero_id == 2) {!! 'Femenino' !!} @else {!! 'Masculino' !!} @endif" onkeydown="">
+    <select class="form-control" id="cat_genero_id" name="cat_genero_id">
+      <option value="">Seleccione una opcion</option>
+      <option value="1" @if($paciente->genero_id == 1) {!! 'selected' !!} @endif>Masculino</option>
+      <option value="2" @if($paciente->genero_id == 2) {!! 'selected' !!} @endif>Femenino</option>
+    </select>
   </div>
 </div>
 
@@ -120,7 +124,7 @@
   <div class="col-md-2">
     <br>
     <label for="cat_estado_civil_id" class="form-label">Estado civil</label>
-    <input disabled type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="" onkeydown="">
+    <input type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="{{ $paciente->estado_civil_id }}" onkeydown="">
   </div>
 </div>
 
