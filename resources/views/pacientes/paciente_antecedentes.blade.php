@@ -119,7 +119,7 @@
   	<b>Diabetes:</b>
   </label>
   <div class="col-sm-10">
-  	<textarea class="form-control" id="he_diabetes" name="he_diabetes" rows="3">{{ $he_diabetes }}</textarea>
+  	<textarea class="form-control" id="he_diabetes" name="he_diabetes" rows="2">{{ $he_diabetes }}</textarea>
   </div>
 </div>
 
@@ -128,7 +128,7 @@
     	<b>HAS:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_has" name="he_has" rows="3">{{ $he_has }}</textarea>
+      <textarea class="form-control" id="he_has" name="he_has" rows="2">{{ $he_has }}</textarea>
     </div>
 </div>
 
@@ -137,7 +137,7 @@
     	<b>Card. isq.:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_car_izq" name="he_car_izq" rows="3">{{ $he_car_izq }}</textarea>
+      <textarea class="form-control" id="he_car_izq" name="he_car_izq" rows="2">{{ $he_car_izq }}</textarea>
     </div>
 </div>
 
@@ -146,7 +146,7 @@
     	<b>Cancer:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_cancer" name="he_cancer" rows="3">{{ $he_cancer }}</textarea>
+      <textarea class="form-control" id="he_cancer" name="he_cancer" rows="2">{{ $he_cancer }}</textarea>
     </div>
 </div>
 
@@ -155,7 +155,7 @@
     	<b>Neumopatia:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_neumopatia" name="he_neumopatia" rows="3">{{ $he_neumopatia }}</textarea>
+      <textarea class="form-control" id="he_neumopatia" name="he_neumopatia" rows="2">{{ $he_neumopatia }}</textarea>
     </div>
 </div>
 
@@ -164,7 +164,7 @@
     	<b>Enf. renal:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_enf_renal" name="he_enf_renal" rows="3">{{ $he_enf_renal }}</textarea>
+      <textarea class="form-control" id="he_enf_renal" name="he_enf_renal" rows="2">{{ $he_enf_renal }}</textarea>
     </div>
 </div>
 
@@ -173,7 +173,7 @@
     	<b>Enf. hepatica:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_enf_hepatica" name="he_enf_hepatica" rows="3">{{ $he_enf_hepatica }}</textarea>
+      <textarea class="form-control" id="he_enf_hepatica" name="he_enf_hepatica" rows="2">{{ $he_enf_hepatica }}</textarea>
     </div>
 </div>
 
@@ -182,7 +182,7 @@
     	<b>Otros:</b>
     </label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="he_otros" name="he_otros" rows="3">{{ $he_otros }}</textarea>
+      <textarea class="form-control" id="he_otros" name="he_otros" rows="2">{{ $he_otros }}</textarea>
     </div>
 </div>
 
@@ -302,7 +302,7 @@
 <div class="row">
 	<div class="col-sm-12">
 		<b>Otro:</b><br>
-		<textarea class="form-control" rows="3" name="pnp_otro">{{ $pnp_otro }}</textarea>
+		<textarea class="form-control" rows="2" name="pnp_otro">{{ $pnp_otro }}</textarea>
 	</div>
 </div>
 
@@ -395,7 +395,7 @@
 <div class="row">
 	<div class="col-sm-12">
 		<b>Enfermedades:</b><br>
-		<textarea name="pp_patias" class="form-control" rows="3">{{ $pp_patias }}</textarea>
+		<textarea name="pp_patias" class="form-control" rows="2">{{ $pp_patias }}</textarea>
 	</div>
 </div>
 
