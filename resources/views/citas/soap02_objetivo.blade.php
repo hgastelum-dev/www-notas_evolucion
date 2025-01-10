@@ -22,6 +22,18 @@
   </div>
 @endif
 
+<div class="row">
+            {{--<div class="col-sm-6">
+              <b>Laboratorio:</b>
+              <textarea class="form-control @if($cita->laboratorio) {!! 'border-success' !!} @endif" name="laboratorio" rows="3">@if($cita->laboratorio){{$cita->laboratorio}}@endif</textarea>
+            </div>--}}
+            <div class="col-sm-12">
+              <b>Gabinete:</b>
+              <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="2">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
+            </div>
+            
+          </div>
+<br>
 <div class="mb-3">
   <label for="objetivo" class="form-label">
     <h3>

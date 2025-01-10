@@ -406,6 +406,11 @@ class CitaController extends Controller
             $citaObjetivo->save();
         }
 
+        $cita->laboratorio = $request->laboratorio;
+        $cita->gabinete = $request->gabinete;
+
+        $cita->save();
+
         $request->session()->flash('userAlerts', ['titulo' => 'Notificacion:', 'mensaje' => 'Actualizado correctamente', 'icono' => 'success']);
 
         return redirect('/cita/soap02/objetivo/' . $request->cita_paciente_id . '#btn-s');
@@ -550,14 +555,9 @@ class CitaController extends Controller
 
     public function updateLaboratorio(Request $request){
 
-        $citaPaciente = CitaPaciente::find($request->cita_id);
+        
 
-        $citaPaciente->laboratorio = $request->laboratorio;
-        $citaPaciente->gabinete = $request->gabinete;
-
-        $citaPaciente->save();
-
-        return redirect('/cita/soap01/subjetivo/' . $citaPaciente->id);
+        //return redirect('/cita/soap02/objetivo/' . $citaPaciente->id);
     }
 
     public function cerrarCita(Request $request){
