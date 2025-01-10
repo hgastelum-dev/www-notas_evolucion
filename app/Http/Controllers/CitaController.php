@@ -10,6 +10,7 @@ use App\Models\CitaAnalisis;
 use App\Models\CitaPlaneacion;
 use App\Models\CitaObjetivo;
 use App\Models\Paciente;
+use App\Models\NotaHistorica;
 use Auth;
 
 class CitaController extends Controller
@@ -97,43 +98,66 @@ class CitaController extends Controller
             }
         } elseif ( count($citasConcluidas->get()) < 1 ) {
 
-            // verificar si hay registros del plan provenientes de la historia clinica sin cita
-            $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
-                ->where('indicador_seguimiento', 0)
-                ->where('cita_paciente_id', 0)
-                ->where('padre_id', 0)
-                ->get();
+            $ultimoSoapHist = NotaHistorica::where('paciente_id', $cita->paciente_id)
+                ->orderBy('fecha', 'DESC')
+                ->first();
 
-            if(count($planeacion) > 0 && $cita->user_id == 0){
+            if(isset($ultimoSoapHist->getPlanHist) && count($ultimoSoapHist->getPlanHist) > 0 && $cita->user_id == 0){
                 
-                // insertar la planeacion de la historia clinica...
-                foreach ($planeacion as $plan) {
+                // insertar la planeacion de la ultima Nota historica a la cita actual...
+                foreach ($ultimoSoapHist->getPlanHist as $planHist) {
                         
                     $nuevoPlan = new CitaPlaneacion();
                     
-                    $nuevoPlan->plan = $plan->plan;
-                    $nuevoPlan->padre_id = $plan->padre_id; // 0
-                    $nuevoPlan->tipo_plan_id = $plan->tipo_plan_id;
+                    $nuevoPlan->plan = $planHist->plan;
+                    $nuevoPlan->padre_id = 0; // 0
+                    $nuevoPlan->tipo_plan_id = $planHist->tipo_plan_id;
                     $nuevoPlan->cita_paciente_id = $cita->id;
 
                     $nuevoPlan->indicador_seguimiento = true;
-                    $nuevoPlan->paciente_id = $plan->paciente_id;
+                    $nuevoPlan->paciente_id = $planHist->paciente_id;
 
                     $nuevoPlan->save();
+                }
+            } else {
+                // verificar si hay registros del plan provenientes de la historia clinica sin cita
+                $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+                    ->where('indicador_seguimiento', 0)
+                    ->where('cita_paciente_id', 0)
+                    ->where('padre_id', 0)
+                    ->get();
 
-                    foreach($plan->getTipoPlanAnidado as $planAnidado){
-                        
-                        $nuevoPlanAnidado = new CitaPlaneacion();
+                if(count($planeacion) > 0 && $cita->user_id == 0){
                     
-                        $nuevoPlanAnidado->plan = $planAnidado->plan;
-                        $nuevoPlanAnidado->padre_id = $nuevoPlan->id;
-                        $nuevoPlanAnidado->tipo_plan_id = $planAnidado->tipo_plan_id;
-                        $nuevoPlanAnidado->cita_paciente_id = $cita->id;
+                    // insertar la planeacion de la historia clinica...
+                    foreach ($planeacion as $plan) {
+                            
+                        $nuevoPlan = new CitaPlaneacion();
+                        
+                        $nuevoPlan->plan = $plan->plan;
+                        $nuevoPlan->padre_id = $plan->padre_id; // 0
+                        $nuevoPlan->tipo_plan_id = $plan->tipo_plan_id;
+                        $nuevoPlan->cita_paciente_id = $cita->id;
 
-                        $nuevoPlanAnidado->indicador_seguimiento = true;
-                        $nuevoPlanAnidado->paciente_id = $plan->paciente_id;
+                        $nuevoPlan->indicador_seguimiento = true;
+                        $nuevoPlan->paciente_id = $plan->paciente_id;
 
-                        $nuevoPlanAnidado->save();    
+                        $nuevoPlan->save();
+
+                        foreach($plan->getTipoPlanAnidado as $planAnidado){
+                            
+                            $nuevoPlanAnidado = new CitaPlaneacion();
+                        
+                            $nuevoPlanAnidado->plan = $planAnidado->plan;
+                            $nuevoPlanAnidado->padre_id = $nuevoPlan->id;
+                            $nuevoPlanAnidado->tipo_plan_id = $planAnidado->tipo_plan_id;
+                            $nuevoPlanAnidado->cita_paciente_id = $cita->id;
+
+                            $nuevoPlanAnidado->indicador_seguimiento = true;
+                            $nuevoPlanAnidado->paciente_id = $plan->paciente_id;
+
+                            $nuevoPlanAnidado->save();    
+                        }
                     }
                 }
             }
