@@ -201,7 +201,7 @@
 <script type="text/javascript">
   
   document.getElementById('cat_procedencia_id').addEventListener('change', function(){
-    if (this.value == 'Doctor' || this.value == 'Enfermero'){
+    if (this.value == 'Doctor' || this.value == 'Enfermero' || this.value == 'Paciente'){
       document.getElementById('contacto_procedencia').removeAttribute('disabled')
     } else {
       document.getElementById('contacto_procedencia').setAttribute('disabled', 'disabled')

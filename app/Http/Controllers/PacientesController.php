@@ -127,7 +127,7 @@ class PacientesController extends Controller
         $paciente->lugar_residencia = $request->lugar_residencia;
         $paciente->cat_procedencia_id = $request->cat_procedencia_id;
         
-        if($request->cat_procedencia_id == 'Doctor' || $request->cat_procedencia_id == 'Enfermero'){
+        if($request->cat_procedencia_id == 'Doctor' || $request->cat_procedencia_id == 'Enfermero' || $request->cat_procedencia_id == 'Paciente'){
             $paciente->contacto_procedencia = $request->contacto_procedencia;
         } else {
             $paciente->contacto_procedencia = '';
