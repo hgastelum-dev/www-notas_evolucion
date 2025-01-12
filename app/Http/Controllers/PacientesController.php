@@ -89,7 +89,10 @@ class PacientesController extends Controller
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
         if(isset($primeraCita)){
-            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
+                ->whereNotIn('id', [$primeraCita->id])
+                ->where('paciente_id', $paciente->id)
+                ->first();
         } else {
             $citaEnProgreso = null;
         }
@@ -188,7 +191,10 @@ class PacientesController extends Controller
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
         if(isset($primeraCita)){
-            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
+                ->whereNotIn('id', [$primeraCita->id])
+                ->where('paciente_id', $paciente->id)
+                ->first();
         } else {
             $citaEnProgreso = null;
         }
@@ -254,7 +260,10 @@ class PacientesController extends Controller
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
         if(isset($primeraCita)){
-            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
+            ->whereNotIn('id', [$primeraCita->id])
+            ->where('paciente_id', $paciente->id)
+            ->first();
         } else {
             $citaEnProgreso = null;
         }
@@ -291,7 +300,10 @@ class PacientesController extends Controller
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
         if(isset($primeraCita)){
-            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
+                ->whereNotIn('id', [$primeraCita->id])
+                ->where('paciente_id', $paciente->id)
+                ->first();
         } else {
             $citaEnProgreso = null;
         }
@@ -413,7 +425,10 @@ class PacientesController extends Controller
         $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
 
         if(isset($primeraCita)){
-            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)->whereNotIn('id', [$primeraCita->id])->first();
+            $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
+                ->whereNotIn('id', [$primeraCita->id])
+                ->where('paciente_id', $paciente->id)
+                ->first();
         } else {
             $citaEnProgreso = null;
         }
