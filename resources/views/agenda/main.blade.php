@@ -116,7 +116,7 @@
                   <div class="form-group row">
                     <label for="apellido_materno" class="col-sm-2 col-form-label">Apellido materno</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" required>
+                      <input type="text" class="form-control" id="apellido_materno" name="apellido_materno">
                     </div>
                   </div>
                   
