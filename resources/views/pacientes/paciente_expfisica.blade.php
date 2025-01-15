@@ -15,6 +15,7 @@
 		$expFisica = $paciente->getExploracionFisica->padecimiento;
 
           $ta = $paciente->getExploracionFisica->ta;
+          $ta2 = $paciente->getExploracionFisica->ta2;
           $fc = $paciente->getExploracionFisica->fc;
           $fr = $paciente->getExploracionFisica->fr;
           $temp = $paciente->getExploracionFisica->temp;
@@ -58,6 +59,7 @@
 		$expFisica = '';
 
           $ta = '';
+          $ta2 = '';
           $fc = '';
           $fr = '';
           $temp = '';
@@ -125,11 +127,17 @@
   </label>
   
   <div class="row g-3">
-    <div class="col-sm-2">
+    <div class="col-sm-1">
       <h6 class="font-weight-bold">
         <i class="fas fa-check-circle text-primary d-none"></i> TA:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta" name="ta" value="{{ $ta }}">
+    </div>
+    <div class="col-sm-1">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i><br>
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta2" name="ta2" value="{{ $ta2 }}">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">

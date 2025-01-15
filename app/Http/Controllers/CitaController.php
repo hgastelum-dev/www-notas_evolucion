@@ -321,6 +321,7 @@ class CitaController extends Controller
             $citaObjetivo = CitaObjetivo::find($cita->getObjetivo->id);
 
             $citaObjetivo->ta = $request->ta;
+            $citaObjetivo->ta2 = $request->ta2;
             $citaObjetivo->fc = $request->fc;
             $citaObjetivo->fr = $request->fr;
             $citaObjetivo->temp = $request->temp;
@@ -364,6 +365,7 @@ class CitaController extends Controller
             $citaObjetivo = new CitaObjetivo();
 
             $citaObjetivo->ta = $request->ta;
+            $citaObjetivo->ta2 = $request->ta2;
             $citaObjetivo->fc = $request->fc;
             $citaObjetivo->fr = $request->fr;
             $citaObjetivo->temp = $request->temp;

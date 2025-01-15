@@ -4,6 +4,25 @@
 
 <link rel="stylesheet" type="text/css" href="{{ asset('lib/js/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
 
+<style>
+.modal-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+  }
+  
+  .modal-content {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+  
+  .modal-body {
+    overflow-y: auto;
+  }
+</style>
+
 @endsection
 
 @section('paciente')
@@ -38,7 +57,7 @@
 	      	</div>
 	      	<br>
 	      	<div class="row">
-					  <div class="col-3">
+					  <div class="col-2">
 					    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 					      <a class="nav-link active" id="v-pills-subjetivo-tab" data-toggle="pill" href="#v-pills-subjetivo" role="tab" aria-controls="v-pills-subjetivo" aria-selected="true">Subjetivo</a>
 					      <a class="nav-link" id="v-pills-objetivo-tab" data-toggle="pill" href="#v-pills-objetivo" role="tab" aria-controls="v-pills-objetivo" aria-selected="false">Objetivo</a>
@@ -46,7 +65,7 @@
 					      <a class="nav-link" id="v-pills-plan-tab" data-toggle="pill" href="#v-pills-plan" role="tab" aria-controls="v-pills-plan" aria-selected="false">Planeacion</a>
 					    </div>
 					  </div>
-					  <div class="col-9">
+					  <div class="col-10">
 					    <div class="tab-content" id="v-pills-tabContent">
 					      <div class="tab-pane fade show active" id="v-pills-subjetivo" role="tabpanel" aria-labelledby="v-pills-subjetivo-tab">
 					      	<textarea class="form-control" rows="5" id="subjetivo" name="subjetivo"></textarea>
@@ -61,11 +80,17 @@
 
 
 					      						        <div class="row g-3">
-    <div class="col-sm-2">
+    <div class="col-sm-1">
       <h6 class="font-weight-bold">
         <i class="fas fa-check-circle text-primary d-none"></i> TA:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta" name="ta" value="">
+    </div>
+    <div class="col-sm-1">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i><br>
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta2" name="ta2" value="">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
@@ -304,7 +329,7 @@
       <h6 class="font-weight-bold">
         Exploraci&oacute;n fisica:
       </h6>
-      <textarea class="form-control" id="exploracion_fisica" name="exploracion_fisica" rows="7"></textarea>
+      <textarea class="form-control" id="exploracion_fisica" name="exploracion_fisica" rows="3"></textarea>
     </div>
   </div>
 

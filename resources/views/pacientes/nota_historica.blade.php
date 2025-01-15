@@ -51,11 +51,17 @@
 
 
 	    	<div class="row g-3">
-    <div class="col-sm-2">
+    <div class="col-sm-1">
       <h6 class="font-weight-bold">
         <i class="fas fa-check-circle text-primary d-none"></i> TA:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta" name="ta" value="{{ $notaHistorica->obj_ta }}">
+    </div>
+    <div class="col-sm-1">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i><br>
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta2" name="ta2" value="{{ $notaHistorica->obj_ta2 }}">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">

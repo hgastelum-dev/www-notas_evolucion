@@ -112,7 +112,7 @@ class PacientesController extends Controller
     public function updatePaciente(Request $request){
 
         $validated = $request->validate([
-            'nombre_s' => 'required|string|min:1|max:250|unique:pacientes,nombre_s,' . $request->paciente_id,
+            'nombre_s' => 'required|string|min:1|max:250',
             'email' => 'nullable|string|email|min:1|max:255|unique:pacientes,email,' . $request->paciente_id
         ]);
         
@@ -318,6 +318,7 @@ class PacientesController extends Controller
             $expFisica = PacienteExploracionFisica::where("paciente_id", $request->paciente_id)->first();
 
             $expFisica->ta = $request->ta;
+            $expFisica->ta2 = $request->ta2;
             $expFisica->fc = $request->fc;
             $expFisica->fr = $request->fr;
             $expFisica->temp = $request->temp;
@@ -358,6 +359,7 @@ class PacientesController extends Controller
             $expFisica = new PacienteExploracionFisica();
             
             $expFisica->ta = $request->ta;
+            $expFisica->ta2 = $request->ta2;
             $expFisica->fc = $request->fc;
             $expFisica->fr = $request->fr;
             $expFisica->temp = $request->temp;
@@ -520,6 +522,7 @@ class PacientesController extends Controller
         $nuevaNota->fecha = $request->fecha;
         $nuevaNota->subjetivo = $request->subjetivo;
         $nuevaNota->obj_ta = $request->ta;
+        $nuevaNota->obj_ta2 = $request->ta2;
         $nuevaNota->obj_fc = $request->fc;
         $nuevaNota->obj_fr = $request->fr;
         $nuevaNota->obj_temp = $request->temp;
@@ -597,6 +600,7 @@ class PacientesController extends Controller
         $notaHistorica->subjetivo = $request->subjetivo;
         $notaHistorica->analisis = $request->analisis;
         $notaHistorica->obj_ta = $request->ta;
+        $notaHistorica->obj_ta2 = $request->ta2;
         $notaHistorica->obj_fc = $request->fc;
         $notaHistorica->obj_fr = $request->fr;
         $notaHistorica->obj_temp = $request->temp;
