@@ -93,6 +93,16 @@
   <div class="col-md-3">
     <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
     <input type="date" class="form-control datetimepicker-input" id="fecha_nacimiento" name="fecha_nacimiento" data-toggle="datetimepicker" data-target="#fecha_nacimiento" placeholder="" value="{{ substr($paciente->fecha_nacimiento, 0, 10) }}" onkeydown="">
+    @if($paciente->fecha_nacimiento)
+
+      @php
+        $fecha_nacimiento_obj = new DateTime(substr($paciente->fecha_nacimiento, 0, 10));
+        $hoy = new DateTime(); // Fecha actual
+
+        $edad = $hoy->diff($fecha_nacimiento_obj)->y;
+      @endphp
+      <span class="badge badge-success"><b>Edad:</b> {{ $edad }} a&ntilde;os</span>
+    @endif
   </div>
 </div>
 
@@ -123,8 +133,17 @@
 
   <div class="col-md-2">
     <br>
+    @php
+      if($paciente->estado_civil_id == 1){
+        $edoCivil = 'Soltero';
+      } elseif ($paciente->estado_civil_id == 2){
+        $edoCivil = 'Casado';
+      } else {
+        $edoCivil = $paciente->estado_civil_id;
+      }
+    @endphp
     <label for="cat_estado_civil_id" class="form-label">Estado civil</label>
-    <input type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="{{ $paciente->estado_civil_id }}" onkeydown="">
+    <input type="text" class="form-control" id="cat_estado_civil_id" name="cat_estado_civil_id" value="{{ $edoCivil }}" onkeydown="">
   </div>
 </div>
 

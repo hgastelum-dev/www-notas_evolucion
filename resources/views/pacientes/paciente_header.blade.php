@@ -48,6 +48,19 @@
                 <th>Fecha de nacimiento:</th>
                 <td>
                     <i class="fas fa-calendar-alt"></i> {{ substr($paciente->fecha_nacimiento, 0, 10) }}
+                    @if($paciente->fecha_nacimiento)
+
+                      @php
+                        $fecha_nacimiento_obj = new DateTime(substr($paciente->fecha_nacimiento, 0, 10));
+                        $hoy = new DateTime(); // Fecha actual
+
+                        $edad = $hoy->diff($fecha_nacimiento_obj)->y;
+                      @endphp
+
+                      <span class="badge badge-success"><b>Edad:</b> {{ $edad }} a&ntilde;os</span>
+                    @else 
+                      <span class="badge badge-danger">Favor de ingresar la edad del paciente</span>
+                    @endif
                 </td>
             </tr>
             

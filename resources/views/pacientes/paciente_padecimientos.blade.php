@@ -22,7 +22,7 @@
 	@endphp
 	
 	<div class="alert alert-warning" role="alert">
-	  <i class="fas fa-exclamation-circle"></i> Sin registro de <b>padecimientos</b>...
+	  <i class="fas fa-exclamation-circle"></i> Sin registro de <b>padecimiento actual</b>...
 	</div>
 @endif
 

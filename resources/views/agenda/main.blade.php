@@ -456,7 +456,7 @@
               @csrf
               <input type="hidden" name="cita_id" value="{{ session('CitaInicialOpciones')['titulo'] }}">
               <button class="btn btn-primary" type="submit" onclick="this.classList.add('d-none')">
-                Atender la cita capturando la historia clinica/plan inicial
+                Historia cl&iacute;nica
               </button>
             </form>
           </p>
@@ -466,7 +466,7 @@
               @csrf
               <input type="hidden" name="cita_id" value="{{ session('CitaInicialOpciones')['titulo'] }}">
               <button class="btn btn-info" type="submit" onclick="this.classList.add('d-none')">
-                Atender la cita capturando una nota de evoluci&oacute;n
+                Nota de evoluci&oacute;n
               </button>
             </form>
           </p>

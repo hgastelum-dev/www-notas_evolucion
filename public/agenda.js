@@ -291,11 +291,21 @@ function cambiarColor(operacion){
   }
 }
 
+const today = new Date();
+
 function getPaciente(pacienteId)
 {
+  const formattedDate = today.toISOString().split('T')[0]; // Obtiene YYYY-MM-DD
+  const time = today.toLocaleString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // Formato 24 horas
+  });
+
   // se resetea el valor de los inputs cuando el usuario cambia el paciente en el input select
-  document.getElementById('fecha-nueva').value = '';
-  document.getElementById('hora-inicia-nueva').value = '';
+  document.getElementById('fecha-nueva').value = formattedDate;
+  document.getElementById('hora-inicia-nueva').value = time;
 
   // reinicio de arreglo de objetos (sesiones nuevas del paciente)
   arrayNvasSesiones = [];
@@ -317,6 +327,17 @@ function getPaciente(pacienteId)
       }).then(res => res.json())
       .catch(error => console.error('Error: ', error))
       .then(response => inputsNvaSesion.classList.remove("d-none") ); 
+
+      nuevaSesion = {
+        pacienteId: pacienteId, 
+        fechaNva: formattedDate,
+        horaIniciaNva: time//,
+        //horaTerminaNva: horaTerminaNva
+      }
+
+      arrayNvasSesiones.push(nuevaSesion);
+
+      actualizarListado();
 
   } else {
 

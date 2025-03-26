@@ -233,6 +233,7 @@ class PacientesController extends Controller
         $antecedente->pnp_toxicos_inicio = $request->pnp_toxicos_inicio;
         $antecedente->pnp_toxicos_fin = $request->pnp_toxicos_fin;
         $antecedente->pnp_toxicos_tipo = $request->pnp_toxicos_tipo;
+        $antecedente->pnp_gineco_obstetricos = $request->pnp_gineco_obstetricos;
         $antecedente->pnp_otro = $request->pnp_otro;
         $antecedente->pp_qx = $request->pp_qx;
         $antecedente->pp_qx_tipo = $request->pp_qx_tipo;

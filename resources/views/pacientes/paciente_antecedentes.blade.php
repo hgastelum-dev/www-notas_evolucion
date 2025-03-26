@@ -40,6 +40,7 @@
 		$pnp_toxicos_inicio = $paciente->getAntecedentes->pnp_toxicos_inicio;
 		$pnp_toxicos_fin = $paciente->getAntecedentes->pnp_toxicos_fin;
 		$pnp_toxicos_tipo = $paciente->getAntecedentes->pnp_toxicos_tipo;
+		$pnp_gineco_obstetricos = $paciente->getAntecedentes->pnp_gineco_obstetricos;
 		$pnp_otro = $paciente->getAntecedentes->pnp_otro;
 		$pp_qx = $paciente->getAntecedentes->pp_qx;
 		$pp_qx_tipo = $paciente->getAntecedentes->pp_qx_tipo;
@@ -79,6 +80,7 @@
 		$pnp_toxicos_inicio = "";
 		$pnp_toxicos_fin = "";
 		$pnp_toxicos_tipo = "";
+		$pnp_gineco_obstetricos = "";
 		$pnp_otro = "";
 		$pp_qx = "";
 		$pp_qx_tipo = "";
@@ -303,6 +305,13 @@
 	<div class="col-sm-12">
 		<b>Otro:</b><br>
 		<textarea class="form-control" rows="2" name="pnp_otro">{{ $pnp_otro }}</textarea>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-sm-12">
+		<b>Gineco obst&eacute;tricos:</b><br>
+		<textarea class="form-control" rows="2" name="pnp_gineco_obstetricos">{{ $pnp_gineco_obstetricos }}</textarea>
 	</div>
 </div>
 
