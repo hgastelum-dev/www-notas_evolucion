@@ -1,6 +1,207 @@
 @extends('layouts.sbadmin')
 
 @section('container')
+<style>
+    .sticky-tabs {
+        position: sticky;
+        top: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+    }
+.table-medica {
+    width: auto;
+    max-width: 100%;
+    font-size: 0.9rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table-medica th,
+.table-medica td {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table-medica th {
+    background-color: #f5f5f5;
+    color: #424242;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.table-medica td {
+    color: #333;
+}
+
+.table-medica tr:last-child td {
+    border-bottom: none;
+}
+
+.table-medica tbody tr:hover {
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.exploracion-box {
+    background: #fefefe;
+    border-left: 4px solid #2196f3;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 0.375rem;
+    box-shadow: inset 0 0 0 1px #e0e0e0;
+}
+</style>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-notas-previas" tabindex="-1" aria-labelledby="notasPreviasModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notasPreviasModalLabel">Notas de evoluci&oacute;n previas</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <style>
+    .nav-tabs-vertical {
+        flex-direction: column;
+        border-right: 1px solid #dee2e6;
+    }
+
+    .nav-tabs-vertical .nav-link {
+        border: 1px solid transparent;
+        border-right: none;
+        color: #495057;
+    }
+
+    .nav-tabs-vertical .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #dee2e6 #dee2e6 #fff;
+        font-weight: bold;
+    }
+
+    .tab-content-area {
+        padding-left: 1.5rem;
+    }
+</style>
+
+@php
+    $citasPrevias = $cita->getPaciente->citasConcluidasAnteriores($cita->fecha)->get();
+@endphp
+
+<div class="row">
+    {{-- Tabs laterales con fechas --}}
+    <div class="col-md-3">
+    <div class="nav nav-tabs nav-tabs-vertical flex-column sticky-tabs" id="citaTabs" role="tablist" aria-orientation="vertical">
+        @foreach($citasPrevias as $index => $citaPrevia)
+            <a class="nav-link @if($loop->first) active @endif"
+               id="cita-tab-{{ $index }}" data-toggle="tab"
+               href="#cita-{{ $index }}" role="tab"
+               aria-controls="cita-{{ $index }}"
+               aria-selected="{{ $loop->first ? 'true' : 'false' }}">
+                <i class="fa fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($citaPrevia->fecha)->format('d/m/Y') }}
+                @if($loop->first)
+                    <span class="badge badge-success ml-1">Última</span>
+                @endif
+            </a>
+        @endforeach
+    </div>
+</div>
+
+    {{-- Contenido de cada cita --}}
+    <div class="col-md-9 tab-content-area">
+        <div class="tab-content" id="citaTabsContent">
+            @foreach($citasPrevias as $index => $citaPrevia)
+                <div class="tab-pane fade @if($loop->first) show active @endif"
+                     id="cita-{{ $index }}" role="tabpanel"
+                     aria-labelledby="cita-tab-{{ $index }}">
+                    
+                    {{-- Subjetivo --}}
+                    <div class="mb-4">
+                        <h5><b><span class="badge badge-success">Subjetivo</span></b></h5>
+                        <p>{!! optional($citaPrevia->getSubjetivo)->subjetivo ?? 'Sin información.' !!}</p>
+                    </div>
+
+                    {{-- Objetivo --}}
+                    @php $objetivo = $citaPrevia->getObjetivo; @endphp
+                    <div class="mb-4">
+                        <h5><b><span class="badge badge-success">Objetivo</span></b></h5>
+                        @if ($objetivo)
+                            <table class="table-medica">
+                                <tbody>
+                                    <tr><th>TA</th><td>{{ $objetivo->ta }}/{{ $objetivo->ta2 }}</td><th>FC</th><td>{{ $objetivo->fc }}</td></tr>
+                                    <tr><th>FR</th><td>{{ $objetivo->fr }}</td><th>Temp</th><td>{{ $objetivo->temp }} °C</td></tr>
+                                    <tr><th>Peso</th><td>{{ $objetivo->peso }} kg</td><th>IMC</th><td>{{ $objetivo->imc != 'Infinity' ? $objetivo->imc : 'N/A' }}</td></tr>
+                                    <tr><th>Hb</th><td>{{ $objetivo->hb }}</td><th>Hto</th><td>{{ $objetivo->hto }}</td></tr>
+                                    <tr><th>VCM</th><td>{{ $objetivo->vcm }}</td><th>HCM</th><td>{{ $objetivo->hcm }}</td></tr>
+                                    <tr><th>Cr</th><td>{{ $objetivo->cr }}</td><th>CKD-EPI</th><td>{{ $objetivo->ckdepi }}</td></tr>
+                                    <tr><th>BUN</th><td>{{ $objetivo->bun }}</td><th>HbA1c %</th><td>{{ $objetivo->hba1c_porcentaje }}</td></tr>
+                                    <tr><th>Na</th><td>{{ $objetivo->na }}</td><th>K</th><td>{{ $objetivo->k }}</td></tr>
+                                    <tr><th>Cl</th><td>{{ $objetivo->cl }}</td><th>Ca</th><td>{{ $objetivo->ca }}</td></tr>
+                                    <tr><th>P</th><td>{{ $objetivo->p }}</td><th>Mg</th><td>{{ $objetivo->mg }}</td></tr>
+                                    <tr><th>HDL</th><td>{{ $objetivo->hdl_col }}</td><th>LDL</th><td>{{ $objetivo->ldl_col }}</td></tr>
+                                    <tr><th>TG</th><td>{{ $objetivo->tgs }}</td><th>Col Total</th><td>{{ $objetivo->col ?? 'N/A' }}</td></tr>
+                                    <tr><th>ALB</th><td>{{ $objetivo->alb }}</td><th>Albúmina/Cr</th><td>{{ $objetivo->albu_cru }}</td></tr>
+                                    <tr><th>EGO</th><td colspan="3">{{ $objetivo->ego }}</td></tr>
+                                </tbody>
+                            </table>
+                            <br>
+                            <div class="exploracion-box">
+                                {!! $objetivo->exploracion_fisica !!}
+                            </div>
+                        @else
+                            <p>Sin información.</p>
+                        @endif
+                    </div>
+
+                    {{-- Análisis --}}
+                    <div class="mb-4">
+                        <h5><b><span class="badge badge-success">Analisis</span></b></h5>
+                        <p>{!! optional($citaPrevia->getAnalisis)->analisis ?? 'Sin información.' !!}</p>
+                    </div>
+
+                    {{-- Planeación --}}
+                    <div class="mb-4">
+                        <h5><b><span class="badge badge-success">Planeaci&oacute;n</span></b></h5>
+                        @forelse($citaPrevia->getPlaneacion->sortBy(fn($p) => $p->getTipoPlan->tipo_plan) as $plan)
+                            <p>
+                                - <b>{{ $plan->getTipoPlan->tipo_plan }}</b>: {{ $plan->plan }}
+                                @if(count($plan->getTipoPlanAnidado) > 0)
+                                    <div class="text-dark ml-3">
+                                        @foreach($plan->getTipoPlanAnidado as $planAnidadoPrevio)
+                                            <p><u>{{ $planAnidadoPrevio->plan }}</u></p>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </p>
+                        @empty
+                            <p>Sin información.</p>
+                        @endforelse
+                    </div>
+
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar ventana</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="row">
     <div class="col-xl-6 col-md-6 mb-4">
@@ -65,6 +266,10 @@
         </div>
         <div class="text-right">
             <p>
+                <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modal-notas-previas">
+                    Ver notas previas: {{ count($cita->getPaciente->citasConcluidasAnteriores($cita->fecha)->get()) }}
+                </button>
+                
                 <a class="btn btn-info" href="/paciente/plan/{{ $cita->paciente_id }}">
                     <i class="fas fa-user"></i> ir a la historia clinica
                 </a>

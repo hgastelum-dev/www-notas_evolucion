@@ -15,6 +15,14 @@ class Paciente extends Model
         return $this->hasMany('App\Models\CitaPaciente', 'paciente_id');
     }
 
+    public function citasConcluidasAnteriores($fechaCita)
+    {
+        return $this->getCitas()
+            ->where('cita_estado_id', 4)
+            ->whereDate('fecha', '<', $fechaCita)
+            ->orderBy('fecha', 'desc');
+    }
+
     public function getAntecedentes(){
         return $this->hasOne('App\Models\PacienteAntecedente', 'paciente_id');
     }
