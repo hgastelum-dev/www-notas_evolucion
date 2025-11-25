@@ -47,7 +47,7 @@ class PacientesController extends Controller
 
         // datos predeterminados de la ficha de identificacion 
         $paciente->tipo_sangre = 'Vacio';
-        $paciente->fecha_nacimiento = 'Vacio';
+        $paciente->fecha_nacimiento = null;
         $paciente->direccion = 'Vacio';
         $paciente->telefono = 'Vacio';
         $paciente->lugar_nacimiento = 'Vacio';

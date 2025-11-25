@@ -31,7 +31,6 @@ class CitaController extends Controller
             ->where('cita_estado_id', '!=', 3)
             ->where('cita_estado_id', '!=', 4)
             ->whereNotIn('id', [$cita->id])
-            //->where('user_id', '!=', 0)
             ->where('fecha', '<=', $cita->fecha)
             ->get();
 
@@ -47,14 +46,11 @@ class CitaController extends Controller
             $request->session()->flash('userAlerts', ['titulo' => 'Notificacion:', 'mensaje' => 'Tiene citas programadas del paciente <b>' . $cita->getPaciente->nombre_s . '</b> que se encuentran pendientes de Concluir.', 'icono' => $citasListado]);
             
             return redirect('/agenda');
-            //return 'Tiene citas programadas del paciente ' . $cita->getPaciente->nombre_s . ' que se encuentran pendientes de Concluir.<br>' . $citasInconclusas;
         }
 
         $citasConcluidas = CitaPaciente::where('paciente_id', $cita->paciente_id)
             ->where('cita_estado_id', 4)
             ->whereNotIn('id', [$cita->id]);
-
-        //return count($citasConcluidas->get());
 
         if(count($citasConcluidas->get()) > 0 && $cita->user_id == 0){
             // ... logica para extraer la ultima cita concluida (por fecha) e 
@@ -65,6 +61,84 @@ class CitaController extends Controller
             ->whereNotIn('id', [$cita->id])
             ->orderBy('fecha', 'DESC')
             ->first();
+
+            // copiar SUBJETIVO de la cita anterior (si existe)
+            $subjetivoAnterior = CitaSubjetivo::where('cita_paciente_id', $ultimaCita->id)->first();
+
+            if ($subjetivoAnterior) {
+
+                $nuevoSubjetivo = new CitaSubjetivo();
+                $nuevoSubjetivo->subjetivo = $subjetivoAnterior->subjetivo;
+                $nuevoSubjetivo->cita_paciente_id = $cita->id; // asignar a la cita actual
+                $nuevoSubjetivo->save();
+            }
+
+            // ======== AGREGAR LA PLANEACIÓN ANTERIOR AL SUBJETIVO (formato HTML) ========
+
+            // 1. Obtener los planes padre (padre_id = 0) de la última cita concluida
+            $planesPadre = $ultimaCita->getPlaneacion->where('padre_id', 0)->where('tipo_plan_id', 3);
+
+            // 2. Construir la lista HTML
+            $htmlPlaneacion = "<h5 style='color: blue;'><strong>Tratamiento(s) de cita anterior:</strong></h5><ul>";
+
+            foreach ($planesPadre as $plan) {
+
+                $htmlPlaneacion .= "<li>" . e($plan->plan);
+
+                // Hijos de este plan
+                $hijos = $plan->getTipoPlanAnidado;
+
+                if (count($hijos) > 0) {
+                    $htmlPlaneacion .= "<ul>";
+                    foreach ($hijos as $hijo) {
+                        $htmlPlaneacion .= "<li>" . e($hijo->plan) . "</li>";
+                    }
+                    $htmlPlaneacion .= "</ul>";
+                }
+
+                $htmlPlaneacion .= "</li>";
+            }
+
+            $htmlPlaneacion .= "</ul>";
+
+            $wrapperHtml = '<div class="auto-planeacion" data-auto="1">' . $htmlPlaneacion . '</div>';
+
+            // 3. Insertar el bloque de planeación sin duplicar (con wrapper identificable)
+            $citaSubj = CitaSubjetivo::where('cita_paciente_id', $cita->id)->first();
+
+            if ($citaSubj) {
+
+                $texto = $citaSubj->subjetivo ?? '';
+
+                // --- LIMPIAR BLOQUES PREVIOS AUTO-GENERADOS ---
+                libxml_use_internal_errors(true);
+                $dom = new \DOMDocument();
+                $dom->loadHTML('<?xml encoding="utf-8" ?><div id="root">' . $texto . '</div>');
+                $xpath = new \DOMXPath($dom);
+
+                // Buscar nodos con la clase auto-planeacion
+                $nodes = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " auto-planeacion ")]');
+
+                foreach ($nodes as $node) {
+                    $node->parentNode->removeChild($node);
+                }
+
+                // reconstruir HTML sin los nodos removidos
+                $root = $dom->getElementById('root');
+                $newHtml = '';
+                foreach ($root->childNodes as $child) {
+                    $newHtml .= $dom->saveHTML($child);
+                }
+
+                libxml_clear_errors();
+
+                // agregar el bloque actualizado
+                $newHtml .= "<br><br>" . $wrapperHtml;
+
+                // guardar
+                $citaSubj->subjetivo = $newHtml;
+                $citaSubj->save();
+            }
 
             $cita->cita_anterior_id = $ultimaCita->id;
 
@@ -187,24 +261,10 @@ class CitaController extends Controller
         
         if($totalHist < 1 && count($planeacion) < 1 && $cita->id == $primeraCita->id){
 
-            /*$userAlert = array(
-                'titulo' => 'data',
-                'mensaje' => 'data',
-                'icono' => 'data',
-                'operacion' => 'data',
-                'background' => 'data'
-            );*/
-            
             $request->session()->flash('CitaInicialOpciones', ['titulo' => $cita->id, 'mensaje' => 'El paciente <b>' . $cita->getPaciente->nombre_s . ' ' . $cita->getPaciente->apellido_paterno . ' ' . $cita->getPaciente->apellido_materno . '</b> no cuenta con registros en su <b class="text-danger">Plan inicial</b> o <b class="text-danger">Historial de notas de evolucion</b>', 'icono' => 'info']);
 
             return redirect('/agenda');
 
-            //$cita->user_id = Auth::user()->id;
-            //$cita->en_progreso = true;
-            //$cita->save();
-
-            //return redirect('/paciente/plan/' . $cita->getPaciente->id);
-            return '.... ¡undefined flow!';
         }
         
         // asigna el ID del usuario que tomo la cita
