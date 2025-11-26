@@ -12,6 +12,7 @@ use App\Models\CitaObjetivo;
 use App\Models\Paciente;
 use App\Models\NotaHistorica;
 use Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CitaController extends Controller
 {
@@ -374,7 +375,33 @@ class CitaController extends Controller
 
     public function updateSoap02(Request $request){
 
-        $cita = CitaPaciente::find($request->cita_paciente_id);
+      // validar entrada
+      $validated = $request->validate([
+          'cita_paciente_id'   => 'required|exists:citas_pacientes,id',
+          'gabinete'           => 'nullable|string',
+          'gabinete_pdf'       => 'nullable|file|mimes:pdf|max:2096', // maximo 5MB
+      ]);
+
+      $cita = CitaPaciente::find($request->cita_paciente_id);
+
+      /* ==========================================================
+       * 1. SUBIR PDF (si viene en el request)
+       * ==========================================================*/
+      if ($request->hasFile('gabinete_pdf')) {
+
+          // eliminar anterior si existe
+          if ($cita->gabinete_path_pdf && Storage::disk('public')->exists($cita->gabinete_path_pdf)) {
+              Storage::disk('public')->delete($cita->gabinete_path_pdf);
+          }
+
+          // guardar nuevo
+          $path = $request->file('gabinete_pdf')->store('gabinetes', 'public');
+          $cita->gabinete_path_pdf = $path;
+      }
+
+      // guardar texto gabinete
+      $cita->gabinete = $request->gabinete;
+      $cita->save();
 
         if($cita->getObjetivo){
             

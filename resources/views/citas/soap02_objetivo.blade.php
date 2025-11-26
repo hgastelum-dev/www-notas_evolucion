@@ -3,12 +3,38 @@
 @section('styles')
 
 <link href="{{ asset('summernote-0.8.18-dist/summernote.min.css') }}" rel="stylesheet">
+<style>
+.file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
 
+.file-upload-button {
+    border: 1px solid #007bff;
+    color: #007bff;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.file-upload-wrapper input[type=file] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+}
+</style>
 @endsection
 
 @section('seccion-cita')
 
-<form method="post" action="/cita/soap02/objetivo/update">
+<form method="post" action="/cita/soap02/objetivo/update" enctype="multipart/form-data">
 
 @csrf
 <input type="hidden" name="cita_paciente_id" value="{{ $cita->id }}">
@@ -22,18 +48,49 @@
   </div>
 @endif
 
-<div class="row">
-            {{--<div class="col-sm-6">
-              <b>Laboratorio:</b>
-              <textarea class="form-control @if($cita->laboratorio) {!! 'border-success' !!} @endif" name="laboratorio" rows="3">@if($cita->laboratorio){{$cita->laboratorio}}@endif</textarea>
-            </div>--}}
-            <div class="col-sm-12">
-              <b>Gabinete:</b>
-              <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="2">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
-            </div>
-            
+  <div class="row">
+    <div class="col-sm-12">
+      <b>Gabinete:</b>
+      <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="2">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
+
+      {{-- input para subir pdf --}}
+      <div class="mt-2 p-2 border rounded bg-light">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+          {{-- seccion izquierda --}}
+          <div class="d-flex align-items-center">
+
+            {{-- link a edenmed --}}
+            <a href="https://apps.evacenter.com/login" 
+              target="_blank" 
+              class="btn btn-outline-primary btn-sm mr-2">
+              <i class="fas fa-external-link-alt"></i> Abrir estudios en EdenMed
+            </a>
+
+            {{-- mostrar pdf existente --}}
+            @if($cita->gabinete_path_pdf)
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF">
+                <i class="fas fa-file-pdf"></i> Ver PDF en modal
+              </button>
+            @endif
           </div>
-<br>
+
+          {{-- boton seleccionar pdf a la derecha --}}
+          <div class="mt-2 mt-sm-0 d-flex align-items-center">
+            <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
+            <div class="file-upload-wrapper">
+              <button class="file-upload-button">
+                <i class="fas fa-upload"></i> Seleccionar PDF
+              </button>
+              <input type="file" name="gabinete_pdf" accept="application/pdf" id="file_input_pdf">
+            </div>
+            <span id="file-name" class="text-muted ml-2">Ningún archivo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <br>
 <div class="mb-3">
   <label for="objetivo" class="form-label">
     <h3>
@@ -308,6 +365,31 @@
   </p>
 </div>
 </form>
+
+  {{-- modal para ver el pdf de gabinete --}}
+  <div class="modal fade" id="modalPDF" tabindex="-1" role="dialog" aria-labelledby="modalPDFTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-file-pdf"></i> PDF del estudio</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body p-0" style="height: 80vh;">
+          <iframe 
+            src="{{ asset('storage/'.$cita->gabinete_path_pdf) }}" 
+            style="width: 100%; height: 100%;" 
+            frameborder="0">
+          </iframe>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 @section('scripts')
@@ -315,6 +397,20 @@
 <script type="text/javascript" src="{{ asset('summernote-0.8.18-dist/summernote.min.js') }}"></script>
 
 <script type="text/javascript">
+  document.getElementById('file_input_pdf').addEventListener('change', function () {
+    const fileNameSpan = document.getElementById('file-name');
+    
+    if (this.files.length > 0) {
+        fileNameSpan.textContent = this.files[0].name;
+        fileNameSpan.classList.remove('text-muted');
+        fileNameSpan.classList.add('text-success', 'font-weight-bold');
+    } else {
+        fileNameSpan.textContent = "Ningún archivo";
+        fileNameSpan.classList.remove('text-success', 'font-weight-bold');
+        fileNameSpan.classList.add('text-muted');
+    }
+  }); 
+
   function resaltarInput(inputText){
     
     if(inputText.value){
