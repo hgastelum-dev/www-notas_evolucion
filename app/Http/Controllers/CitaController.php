@@ -380,6 +380,8 @@ class CitaController extends Controller
           'cita_paciente_id'   => 'required|exists:citas_pacientes,id',
           'gabinete'           => 'nullable|string',
           'gabinete_pdf'       => 'nullable|file|mimes:pdf|max:2096', // maximo 5MB
+          'patologia'           => 'nullable|string',
+          'patologia_pdf'       => 'nullable|file|mimes:pdf|max:2096', // maximo 5MB
       ]);
 
       $cita = CitaPaciente::find($request->cita_paciente_id);
@@ -401,6 +403,22 @@ class CitaController extends Controller
 
       // guardar texto gabinete
       $cita->gabinete = $request->gabinete;
+      $cita->save();
+
+      if ($request->hasFile('patologia_pdf')) {
+
+          // eliminar anterior si existe
+          if ($cita->patologia_path_pdf && Storage::disk('public')->exists($cita->patologia_path_pdf)) {
+              Storage::disk('public')->delete($cita->patologia_path_pdf);
+          }
+
+          // guardar nuevo
+          $pathPatologia = $request->file('patologia_pdf')->store('patologias', 'public');
+          $cita->patologia_path_pdf = $pathPatologia;
+      }
+
+      // guardar texto patologia
+      $cita->patologia = $request->patologia;
       $cita->save();
 
         if($cita->getObjetivo){

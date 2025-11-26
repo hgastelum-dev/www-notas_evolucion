@@ -69,7 +69,7 @@
             {{-- mostrar pdf existente --}}
             @if($cita->gabinete_path_pdf)
               <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF">
-                <i class="fas fa-file-pdf"></i> Ver PDF en modal
+                <i class="fas fa-file-pdf"></i> Ver PDF de gabinete
               </button>
             @endif
           </div>
@@ -84,6 +84,41 @@
               <input type="file" name="gabinete_pdf" accept="application/pdf" id="file_input_pdf">
             </div>
             <span id="file-name" class="text-muted ml-2">Ningún archivo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <b>Patologia:</b>
+      <textarea class="form-control @if($cita->patologia) {!! 'border-success' !!} @endif" name="patologia" rows="2">@if($cita->patologia){{$cita->patologia}}@endif</textarea>
+
+      {{-- input para subir pdf --}}
+      <div class="mt-2 p-2 border rounded bg-light">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+          {{-- seccion izquierda --}}
+          <div class="d-flex align-items-center">
+
+            {{-- mostrar pdf existente --}}
+            @if($cita->patologia_path_pdf)
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF2">
+                <i class="fas fa-file-pdf"></i> Ver PDF de patologia
+              </button>
+            @endif
+          </div>
+
+          {{-- boton seleccionar pdf a la derecha --}}
+          <div class="mt-2 mt-sm-0 d-flex align-items-center">
+            <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
+            <div class="file-upload-wrapper">
+              <button class="file-upload-button">
+                <i class="fas fa-upload"></i> Seleccionar PDF
+              </button>
+              <input type="file" name="patologia_pdf" accept="application/pdf" id="file_input_pdf2">
+            </div>
+            <span id="file-name2" class="text-muted ml-2">Ningún archivo</span>
           </div>
         </div>
       </div>
@@ -390,6 +425,30 @@
     </div>
   </div>
 
+  {{-- modal para ver el pdf de patologia --}}
+  <div class="modal fade" id="modalPDF2" tabindex="-1" role="dialog" aria-labelledby="modalPDF2Title" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-file-pdf"></i> PDF de patologia</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body p-0" style="height: 80vh;">
+          <iframe 
+            src="{{ asset('storage/'.$cita->patologia_path_pdf) }}" 
+            style="width: 100%; height: 100%;" 
+            frameborder="0">
+          </iframe>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 @section('scripts')
@@ -399,6 +458,20 @@
 <script type="text/javascript">
   document.getElementById('file_input_pdf').addEventListener('change', function () {
     const fileNameSpan = document.getElementById('file-name');
+    
+    if (this.files.length > 0) {
+        fileNameSpan.textContent = this.files[0].name;
+        fileNameSpan.classList.remove('text-muted');
+        fileNameSpan.classList.add('text-success', 'font-weight-bold');
+    } else {
+        fileNameSpan.textContent = "Ningún archivo";
+        fileNameSpan.classList.remove('text-success', 'font-weight-bold');
+        fileNameSpan.classList.add('text-muted');
+    }
+  }); 
+
+  document.getElementById('file_input_pdf2').addEventListener('change', function () {
+    const fileNameSpan = document.getElementById('file-name2');
     
     if (this.files.length > 0) {
         fileNameSpan.textContent = this.files[0].name;
