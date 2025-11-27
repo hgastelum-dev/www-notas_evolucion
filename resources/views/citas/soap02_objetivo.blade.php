@@ -34,6 +34,24 @@
 
 @section('seccion-cita')
 
+  @php
+    $mostrarSugerencia = $cita->en_progreso; // solo si la cita esta en atencion
+    $tallaAnterior = null;
+
+    if ($mostrarSugerencia) {
+        $tallaAnterior = optional(
+            \App\Models\CitaPaciente::where('paciente_id', $cita->paciente_id)
+                ->where('cita_estado_id', 4)
+                ->where('id', '!=', $cita->id)
+                ->orderBy('fecha', 'desc')
+                ->first()?->getObjetivo
+        )->talla ?? null;
+    }
+
+    $tallaActual = $cita->getObjetivo?->talla ?? null;
+    $valorParaInput = old('talla', $tallaActual ?? ($mostrarSugerencia ? $tallaAnterior : null));
+  @endphp
+
 <form method="post" action="/cita/soap02/objetivo/update" enctype="multipart/form-data">
 
 @csrf
@@ -168,7 +186,7 @@
       <h6 class="font-weight-bold">
         <i class="fas fa-check-circle text-primary d-none"></i> Talla:
       </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="talla" name="talla" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->talla }} @endif">
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="talla" name="talla" value="{{ $valorParaInput }}">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
