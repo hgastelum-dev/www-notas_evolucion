@@ -45,6 +45,9 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/usuarios/permiso/denegar', [App\Http\Controllers\UsersController::class, 'denegarPermiso']);
 
     Route::get('/tablero', [App\Http\Controllers\TableroPrincipalController::class, 'getViewMain']);
+    Route::get('/paciente/{id}/citas', [App\Http\Controllers\TableroPrincipalController::class, 'citasConcluidas']);
+    Route::post('/paciente/parametros', [App\Http\Controllers\TableroPrincipalController::class, 'parametros']);
+    Route::post('/paciente/graficar', [App\Http\Controllers\TableroPrincipalController::class, 'graficar']);
 
     Route::post('/ajax/search', [App\Http\Controllers\TableroPrincipalController::class, 'getDiagnosticosCie10']);
 
