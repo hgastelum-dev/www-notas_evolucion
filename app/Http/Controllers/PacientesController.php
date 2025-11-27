@@ -355,7 +355,8 @@ class PacientesController extends Controller
             $expFisica->ldl_col = $request->ldl_col;
             $expFisica->ego = $request->ego;
             $expFisica->albu_cru = $request->albu_cru;
-            
+            $expFisica->tsh = $request->tsh;
+            $expFisica->vit_d_serica = $request->vit_d_serica;
         } else {
             $expFisica = new PacienteExploracionFisica();
             
@@ -396,6 +397,8 @@ class PacientesController extends Controller
             $expFisica->ldl_col = $request->ldl_col;
             $expFisica->ego = $request->ego;
             $expFisica->albu_cru = $request->albu_cru;
+            $expFisica->tsh = $request->tsh;
+            $expFisica->vit_d_serica = $request->vit_d_serica;
         }
 
         $expFisica->paciente_id = $request->paciente_id;

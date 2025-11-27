@@ -35,20 +35,28 @@
 @section('seccion-cita')
 
   @php
-    $mostrarSugerencia = $cita->en_progreso; // solo si la cita esta en atencion
+    $mostrarSugerencia = $cita->en_progreso;
     $tallaAnterior = null;
 
     if ($mostrarSugerencia) {
-        $tallaAnterior = optional(
-            \App\Models\CitaPaciente::where('paciente_id', $cita->paciente_id)
-                ->where('cita_estado_id', 4)
-                ->where('id', '!=', $cita->id)
-                ->orderBy('fecha', 'desc')
-                ->first()?->getObjetivo
-        )->talla ?? null;
+        // obtener la última cita concluida
+        $ultimaCita = \App\Models\CitaPaciente::where('paciente_id', $cita->paciente_id)
+            ->where('cita_estado_id', 4)
+            ->where('id', '!=', $cita->id)
+            ->orderBy('fecha', 'desc')
+            ->first();
+
+        // usar optional para evitar errores si no existe
+        $tallaAnterior = optional(optional($ultimaCita)->getObjetivo)->talla ?? null;
+
+        // si no hay talla en la última cita, buscar en exploración física
+        if (!$tallaAnterior) {
+            $expl = \App\Models\PacienteExploracionFisica::where('paciente_id', $cita->paciente_id)->first();
+            $tallaAnterior = optional($expl)->talla ?? null;
+        }
     }
 
-    $tallaActual = $cita->getObjetivo?->talla ?? null;
+    $tallaActual = optional($cita->getObjetivo)->talla ?? null;
     $valorParaInput = old('talla', $tallaActual ?? ($mostrarSugerencia ? $tallaAnterior : null));
   @endphp
 
@@ -393,6 +401,24 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="albu_cru" name="albu_cru" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->albu_cru }} @endif">
     </div>
   </div>
+
+  <br>
+
+  <div class="row g-3">
+    
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> TSH:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tsh" name="tsh" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tsh }} @endif">
+    </div>
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit d. serica:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vit_d_serica }} @endif">
+    </div>
+  </div>
   
   <br>
   
@@ -430,15 +456,15 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
         <div class="modal-body p-0" style="height: 80vh;">
+          @if($cita->gabinete_path_pdf)
           <iframe 
             src="{{ asset('storage/'.$cita->gabinete_path_pdf) }}" 
             style="width: 100%; height: 100%;" 
             frameborder="0">
           </iframe>
+          @endif
         </div>
-
       </div>
     </div>
   </div>
@@ -456,11 +482,13 @@
         </div>
 
         <div class="modal-body p-0" style="height: 80vh;">
+          @if($cita->patologia_path_pdf)
           <iframe 
             src="{{ asset('storage/'.$cita->patologia_path_pdf) }}" 
             style="width: 100%; height: 100%;" 
             frameborder="0">
           </iframe>
+          @endif
         </div>
 
       </div>

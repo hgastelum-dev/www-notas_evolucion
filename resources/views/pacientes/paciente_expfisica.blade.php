@@ -51,6 +51,8 @@
           $ldl_col = $paciente->getExploracionFisica->ldl_col;
           $ego = $paciente->getExploracionFisica->ego;
           $albu_cru = $paciente->getExploracionFisica->albu_cru;
+          $tsh = $paciente->getExploracionFisica->tsh;
+          $vit_d_serica = $paciente->getExploracionFisica->vit_d_serica;
 	@endphp
 
 @else 
@@ -95,6 +97,8 @@
           $ldl_col = '';
           $ego = '';
           $albu_cru = '';
+          $tsh = '';
+          $vit_d_serica = '';
 	@endphp
 	
 	<div class="alert alert-warning" role="alert">
@@ -366,6 +370,24 @@
         <i class="fas fa-check-circle text-primary d-none"></i> AlbU/CrU:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="albu_cru" name="albu_cru" value="{{ $albu_cru }}">
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row g-3">
+    
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> TSH:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tsh" name="tsh" value="{{ $tsh }}">
+    </div>
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit d. serica:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="{{ $vit_d_serica }}">
     </div>
   </div>
   
