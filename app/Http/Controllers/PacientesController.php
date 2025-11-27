@@ -112,8 +112,8 @@ class PacientesController extends Controller
     public function updatePaciente(Request $request){
 
         $validated = $request->validate([
-            'nombre_s' => 'required|string|min:1|max:250',
-            'email' => 'nullable|string|email|min:1|max:255|unique:pacientes,email,' . $request->paciente_id
+            'nombre_s' => 'required|string|min:1|max:250'/*,
+            'email' => 'nullable|string|email|min:1|max:255|unique:pacientes,email,' . $request->paciente_id*/
         ]);
         
         $paciente = Paciente::find($request->paciente_id);
