@@ -20,12 +20,12 @@
     {{-- Page Wrapper --}}
     <div id="wrapper">
         {{-- Sidebar --}}
-        <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-light sidebar accordion" id="accordionSidebar">
 
             {{-- Sidebar - Brand --}}
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/tablero">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-stethoscope"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('img/geialogo.jpg') }}" height="50">
                 </div>
                 <div class="sidebar-brand-text mx-3">GEIA Med.<sup></sup></div>
             </a>
