@@ -9,6 +9,7 @@ use App\Models\CitaObjetivo;
 use App\Models\CitaAnalisis;
 use App\Models\CitaPlaneacion;
 use stdClass;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AgendaController extends Controller {
@@ -24,52 +25,59 @@ class AgendaController extends Controller {
     }
 
   // metodo que envia los datos (citas) al fullcalendar
-  public function getCitas(Request $request){
-
+  public function getCitas(Request $request)
+{
     $start = $request->query('start');
     $end   = $request->query('end');
 
-    // validacion
+    // Validación
     if (!$start || !$end) {
-      return [];
+        return response()->json([]);
     }
 
-    // traer citas unicamente del rango visible
-    $citasPacientes = CitaPaciente::whereBetween('fecha', [$start, $end])
-      ->with([
-        'getPaciente:id,nombre_s,apellido_paterno,apellido_materno',
-        'getEstado:id,class_color'
-      ])
-      ->get();
+    // FullCalendar usa END EXCLUSIVE:
+    //   start = incluido
+    //   end   = NO incluido
+    // Por eso la consulta debe ser fecha < end
+    $startDate = \Carbon\Carbon::parse($start)->toDateString();
+    $endDate   = \Carbon\Carbon::parse($end)->toDateString();
+
+    // Obtener citas dentro del rango visible (end exclusive)
+    $citasPacientes = CitaPaciente::whereDate('fecha', '>=', $startDate)
+        ->whereDate('fecha', '<',  $endDate)
+        ->with([
+            'getPaciente:id,nombre_s,apellido_paterno,apellido_materno',
+            'getEstado:id,class_color'
+        ])
+        ->get();
 
     $citasArreglo = [];
 
     foreach ($citasPacientes as $citaPaciente) {
 
-      $sesionObjeto = new \stdClass();
+        $sesionObjeto = new \stdClass();
 
-      $sesionObjeto->title = $citaPaciente->getPaciente->nombre_s . ' ' . 
-                              $citaPaciente->getPaciente->apellido_paterno . ' ' .
-                              $citaPaciente->getPaciente->apellido_materno;
+        $sesionObjeto->title = $citaPaciente->getPaciente->nombre_s . ' ' .
+                               $citaPaciente->getPaciente->apellido_paterno . ' ' .
+                               $citaPaciente->getPaciente->apellido_materno;
 
-      $sesionObjeto->start = $citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio;
-      $sesionObjeto->end   = $citaPaciente->fecha . ' ' . $citaPaciente->hora_termino;
+        $sesionObjeto->start = $citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio;
+        $sesionObjeto->end   = $citaPaciente->fecha . ' ' . $citaPaciente->hora_termino;
+        $sesionObjeto->resourceId = "a"; 
+        $sesionObjeto->sesionId     = $citaPaciente->id;
+        $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;
 
-      $sesionObjeto->sesionId = $citaPaciente->id;
-      $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;
+        // color según estado
+        $sesionObjeto->color = $citaPaciente->en_progreso
+            ? 'purple'
+            : $citaPaciente->getEstado->class_color;
 
-      // color de la cita
-      if ($citaPaciente->en_progreso) {
-        $sesionObjeto->color = 'purple';
-      } else {
-        $sesionObjeto->color = $citaPaciente->getEstado->class_color;
-      }
-
-      $citasArreglo[] = $sesionObjeto;
+        $citasArreglo[] = $sesionObjeto;
     }
 
-    return response()->json($citasArreglo);    
-  }
+    return response()->json($citasArreglo);
+}
+
 
     public function getCitasOld(){
         
