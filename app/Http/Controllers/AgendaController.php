@@ -11,11 +11,11 @@ use App\Models\CitaPlaneacion;
 use stdClass;
 use Illuminate\Http\Request;
 
-class AgendaController extends Controller
-{
-    public function __construct(){
-        $this->middleware('auth');
-    }
+class AgendaController extends Controller {
+    
+  public function __construct(){
+    $this->middleware('auth');
+  }
 
     public function getViewMain(){
         $citaEstados = CitaEstado::all();
@@ -23,8 +23,55 @@ class AgendaController extends Controller
         return view('agenda.main', compact(['pacientes','citaEstados']));
     }
 
-    // metodo que envia los datos (citas) al fullcalendar
-    public function getCitas(){
+  // metodo que envia los datos (citas) al fullcalendar
+  public function getCitas(Request $request){
+
+    $start = $request->query('start');
+    $end   = $request->query('end');
+
+    // validacion
+    if (!$start || !$end) {
+      return [];
+    }
+
+    // traer citas unicamente del rango visible
+    $citasPacientes = CitaPaciente::whereBetween('fecha', [$start, $end])
+      ->with([
+        'getPaciente:id,nombre_s,apellido_paterno,apellido_materno',
+        'getEstado:id,class_color'
+      ])
+      ->get();
+
+    $citasArreglo = [];
+
+    foreach ($citasPacientes as $citaPaciente) {
+
+      $sesionObjeto = new \stdClass();
+
+      $sesionObjeto->title = $citaPaciente->getPaciente->nombre_s . ' ' . 
+                              $citaPaciente->getPaciente->apellido_paterno . ' ' .
+                              $citaPaciente->getPaciente->apellido_materno;
+
+      $sesionObjeto->start = $citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio;
+      $sesionObjeto->end   = $citaPaciente->fecha . ' ' . $citaPaciente->hora_termino;
+
+      $sesionObjeto->sesionId = $citaPaciente->id;
+      $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;
+
+      // color de la cita
+      if ($citaPaciente->en_progreso) {
+        $sesionObjeto->color = 'purple';
+      } else {
+        $sesionObjeto->color = $citaPaciente->getEstado->class_color;
+      }
+
+      $citasArreglo[] = $sesionObjeto;
+    }
+
+    return response()->json($citasArreglo);    
+  }
+
+    public function getCitasOld(){
         
         $pacientes = Paciente::select('id','nombre_s','apellido_paterno','apellido_materno')->get();
         $citasPacientes = CitaPaciente::whereIn("paciente_id", $pacientes->modelKeys())->get();
