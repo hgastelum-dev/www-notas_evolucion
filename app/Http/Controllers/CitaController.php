@@ -38,10 +38,23 @@ class CitaController extends Controller
         // validar que no se encuentren citas pendientes de cerrar en sistema
         if(count($citasInconclusas) > 0){
 
+            $citasInconclusas = $citasInconclusas->sortBy('fecha');
+
             $citasListado = '';
             foreach($citasInconclusas as $citaInconclusa){
 
-                $citasListado .= '<i class="fas fa-clock"></i>' . $citaInconclusa->fecha . '<br>';
+                $citasListado .= '
+                    <div style="margin-bottom:8px;">
+                        <i class="fas fa-clock"></i> ' . $citaInconclusa->fecha . '
+                        <form method="post" action="/cita/iniciar" style="display:inline-block; margin-left:10px;">
+                            ' . csrf_field() . '
+                            <input type="hidden" name="cita_id" value="' . $citaInconclusa->id . '">
+                            <button class="btn btn-sm btn-success">
+                                Atender
+                            </button>
+                        </form>
+                    </div>
+                ';
             }
 
             $request->session()->flash('userAlerts', ['titulo' => 'Notificacion:', 'mensaje' => 'Tiene citas programadas del paciente <b>' . $cita->getPaciente->nombre_s . '</b> que se encuentran pendientes de Concluir.', 'icono' => $citasListado]);

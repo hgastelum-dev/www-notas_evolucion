@@ -499,7 +499,7 @@
           position: 'top-end',
           icon: 'error',
           title: '¡Aviso!',
-          html: '{!! session('userAlerts')['mensaje'] !!} <br><br> {!! session('userAlerts')['icono'] !!}',
+          html: `{!! session('userAlerts')['mensaje'] !!} <br><br> {!! session('userAlerts')['icono'] !!}`,
           showConfirmButton: true,
           confirmButtonText: 'Cerrar aviso'
         });
