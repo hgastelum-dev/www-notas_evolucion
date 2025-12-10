@@ -52,7 +52,7 @@ class PacientesController extends Controller
         $paciente->telefono = 'Vacio';
         $paciente->lugar_nacimiento = 'Vacio';
         $paciente->lugar_residencia = 'Vacio';
-        $paciente->genero_id = 'Vacio';
+        $paciente->genero_id = null;
         $paciente->ocupacion = 'Vacio';
         $paciente->escolaridad = 'Vacio';
         $paciente->religion = 'Vacio';

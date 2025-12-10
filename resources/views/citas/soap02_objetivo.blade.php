@@ -572,5 +572,86 @@
     }
     
   }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      const inputCr = document.getElementById("cr");
+      const inputCkd = document.getElementById("ckdepi");
+
+      // valores obtenidos desde Blade
+      const generoId = "{{ $cita->getPaciente->genero_id }}";  // puede venir NULL
+      const fechaNacimiento = "{{ $cita->getPaciente->fecha_nacimiento }}"; // puede venir NULL
+
+      inputCr.addEventListener("input", function() {
+          const cr = parseFloat(inputCr.value);
+
+          // si creatinina no es válida
+          if (isNaN(cr) || cr <= 0) {
+              inputCkd.value = "";
+              return;
+          }
+
+          // si falta sexo o fecha de nacimiento → no calcular
+          if (!generoId || !fechaNacimiento) {
+              inputCkd.value = "";
+              return;
+          }
+
+          const resultado = calcularEgfCKDEPI2021(cr, generoId, fechaNacimiento);
+          inputCkd.value = resultado;
+      });
+  });
+
+  function calcularEgfCKDEPI2021(creatinina, generoId, fechaNacimiento) {
+
+      if (!generoId || !fechaNacimiento) {
+          return ""; // fallback seguro
+      }
+
+      // fecha válida?
+      const nacimiento = new Date(fechaNacimiento);
+      if (isNaN(nacimiento)) {
+          return "";
+      }
+
+      // calcular edad manualmente
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - nacimiento.getFullYear();
+      const mes = hoy.getMonth() - nacimiento.getMonth();
+      if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+          edad--;
+      }
+
+      // Si edad es inválida
+      if (isNaN(edad) || edad <= 0 || edad > 120) {
+          return "";
+      }
+
+      // parámetros según sexo
+      let K, alpha, factorSexo;
+      if (generoId == "2") { // mujer
+          K = 0.7;
+          alpha = -0.241;
+          factorSexo = 1.012;
+      } else if (generoId == "1") { // hombre
+          K = 0.9;
+          alpha = -0.302;
+          factorSexo = 1;
+      } else {
+          return ""; // género desconocido
+      }
+
+      const scrK = creatinina / K;
+      const minVal = Math.min(scrK, 1);
+      const maxVal = Math.max(scrK, 1);
+
+      const eGFR =
+          142 *
+          Math.pow(minVal, alpha) *
+          Math.pow(maxVal, -1.200) *
+          Math.pow(0.9938, edad) *
+          factorSexo;
+
+      return Number(eGFR.toFixed(2));
+  }
 </script>
 @endsection
