@@ -156,6 +156,19 @@ class PacientesController extends Controller
         return redirect('/paciente/editar/' . $paciente->id);
     }
 
+    public function updateAnalisisPaciente(Request $request){
+
+      $paciente = Paciente::find($request->paciente_id);
+
+      $paciente->plan_inicial_analisis = $request->plan_inicial_analisis;
+
+      $paciente->save();
+
+      $request->session()->flash('analisisUpdated', ['titulo' => 'Información de analisis actualizada exitosamente.', 'mensaje' => $paciente->nombre_s, 'icono' => 'success']);
+
+      return redirect('/paciente/plan/' . $request->paciente_id);
+    }
+
     public function viewBorrarPaciente($pacienteId){
 
         $paciente = Paciente::find($pacienteId);

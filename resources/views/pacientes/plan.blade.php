@@ -2,7 +2,22 @@
 
 @section('paciente')
 
-<div class="mb-3">
+  <div class="mb-3">
+
+    <div class="text-center">
+      @if(session('analisisUpdated'))
+        <div class="alert alert-success">
+          {{ session('analisisUpdated')['titulo'] }}
+        </div>
+      @endif
+      <form method="post" action="/paciente/plan/inicial/analisis">
+        @csrf
+        <input type="hidden" name="paciente_id" value="{{ $paciente->id }}">
+        <b>Analisis</b>:<br>
+        <textarea class="form-control" rows="5" name="plan_inicial_analisis">{{ $paciente->plan_inicial_analisis }}</textarea><br>
+        <button class="btn btn-info" type="submit">Guardar analisis</button>
+      </form>
+    </div>
   
 @if ($errors->any())
   <div class="alert alert-danger">
@@ -104,6 +119,9 @@
                 @endif 
                 <span class="badge badge-primary">
                   {{ substr($key, 0, 1) . '-' . $consecutivo }}
+                </span>
+                <span class="badge badge-dark">
+                  {{ $plan->created_at->format('Y-m-d') }}
                 </span>
             </td>
             <td class="font-weight-bold">{{ $plan->plan }}</td>
