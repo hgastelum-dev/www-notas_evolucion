@@ -599,6 +599,73 @@
           const resultado = calcularEgfCKDEPI2021(cr, generoId, fechaNacimiento);
           inputCkd.value = resultado;
       });
+
+      // helpers
+  function parseNumberFromInput(value) {
+    if (value === null || value === undefined) return NaN;
+    // permitir comas como separador decimal
+    const normalized = String(value).trim().replace(',', '.');
+    // eliminar caracteres no numéricos (salvo el punto y el signo negativo)
+    const cleaned = normalized.replace(/[^0-9.\-]/g, '');
+    const n = parseFloat(cleaned);
+    return isFinite(n) ? n : NaN;
+  }
+
+  function calcularHomaYActualizar() {
+    const inputG = document.getElementById('g');
+    const inputIns = document.getElementById('insulina_serica');
+    const inputHoma = document.getElementById('homa');
+
+    if (!inputG || !inputIns || !inputHoma) return;
+
+    const g = parseNumberFromInput(inputG.value);
+    const ins = parseNumberFromInput(inputIns.value);
+
+    // si cualquiera no es número válido, limpiar el campo de HOMA
+    if (isNaN(g) || isNaN(ins)) {
+      inputHoma.value = '';
+      return;
+    }
+
+    // fórmula estándar HOMA-IR (glucosa mg/dL * insulina μU/mL) / 405
+    const homa = (g * ins) / 405;
+
+    // si el resultado es finito, mostrar con 2 decimales; si no, limpiar
+    if (isFinite(homa)) {
+      // si quieres mostrar sin decimales cuando es entero, cambia toFixed
+      inputHoma.value = Number(homa.toFixed(2));
+      // opcional: resaltar el input para indicar que fue calculado
+      inputHoma.classList.add('bg-info', 'text-white', 'font-weight-bold', 'text-center');
+    } else {
+      inputHoma.value = '';
+      inputHoma.classList.remove('bg-info', 'text-white', 'font-weight-bold', 'text-center');
+    }
+  }
+
+  // obtener referencias
+  const elG = document.getElementById('g');
+  const elIns = document.getElementById('insulina_serica');
+
+  if (elG) {
+    // calcular al teclear (input) y también al perder foco
+    elG.addEventListener('input', function() {
+      // respetar tu resaltarInput existente
+      if (typeof resaltarInput === 'function') resaltarInput(elG);
+      calcularHomaYActualizar();
+    });
+    elG.addEventListener('blur', calcularHomaYActualizar);
+  }
+
+  if (elIns) {
+    elIns.addEventListener('input', function() {
+      if (typeof resaltarInput === 'function') resaltarInput(elIns);
+      calcularHomaYActualizar();
+    });
+    elIns.addEventListener('blur', calcularHomaYActualizar);
+  }
+
+  // calcular al cargar si ya hay valores (por ejemplo al editar)
+  calcularHomaYActualizar();
   });
 
   function calcularEgfCKDEPI2021(creatinina, generoId, fechaNacimiento) {
