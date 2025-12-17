@@ -21,8 +21,6 @@ $(function () {
     
       $('#fechaTerminoCambio').val( $(this).val() );
   });
-  
-  
 
   $('#fecha-nueva').datetimepicker({
     format: 'YYYY-MM-DD', //  HH:mm
@@ -86,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   calendar = new FullCalendar.Calendar(calendarEl, {
       locale: 'es',
+      timezone: 'America/Tijuana',
       plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
       defaultView: 'dayGridWeek',
       businessHours: true, // display business hours
@@ -97,6 +96,24 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       editable: false,
       events: '/citas',
+	eventRender: function(info) {
+  // Para eventos en timeGrid y dayGrid
+  var timeElement = info.el.querySelector('.fc-time');
+
+  if (timeElement && timeElement.innerText.includes('-')) {
+    // Ejemplo: "14:10 - 14:11"
+    let horaInicio = timeElement.innerText.split('-')[0].trim();
+    timeElement.innerText = horaInicio; // reemplaza texto
+  }
+
+  // Para vista lista
+  var listTimeEl = info.el.querySelector('.fc-list-item-time');
+  if (listTimeEl && listTimeEl.innerText.includes('-')) {
+    let horaInicio = listTimeEl.innerText.split('-')[0].trim();
+    listTimeEl.innerText = horaInicio;
+  }
+},
+
       eventClick: function(info)
       {
         var modalSesionCambio = new bootstrap.Modal(document.getElementById('modalSesionCambio'));
@@ -295,7 +312,12 @@ const today = new Date();
 
 function getPaciente(pacienteId)
 {
-  const formattedDate = today.toISOString().split('T')[0]; // Obtiene YYYY-MM-DD
+  //const formattedDate = today.toISOString().split('T')[0]; // Obtiene YYYY-MM-DD
+  const formattedDate =
+  today.getFullYear() + '-' +
+  String(today.getMonth() + 1).padStart(2, '0') + '-' +
+  String(today.getDate()).padStart(2, '0');
+
   const time = today.toLocaleString('en-US', {
     timeZone: 'America/Los_Angeles',
     hour: '2-digit',

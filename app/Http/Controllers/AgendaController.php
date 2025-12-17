@@ -61,8 +61,20 @@ class AgendaController extends Controller {
                                $citaPaciente->getPaciente->apellido_paterno . ' ' .
                                $citaPaciente->getPaciente->apellido_materno;
 
-        $sesionObjeto->start = $citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio;
-        $sesionObjeto->end   = $citaPaciente->fecha . ' ' . $citaPaciente->hora_termino;
+        //$sesionObjeto->start = $citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio;
+        //$sesionObjeto->start = Carbon::parse($citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio)
+    //->format('Y-m-d\TH:i:sP');
+
+	//$sesionObjeto->end   = Carbon::parse($citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio)
+    //->format('Y-m-d\TH:i:sP');
+	$startDT = Carbon::parse($citaPaciente->fecha . ' ' . $citaPaciente->hora_inicio);
+	$endDT   = $startDT->copy()->addMinute(); // <<--- AQUÍ SE ARREGLA EL BUG
+
+	$sesionObjeto->start = $startDT->format('Y-m-d\TH:i:sP');
+	$sesionObjeto->end   = $endDT->format('Y-m-d\TH:i:sP');
+
+$sesionObjeto->allDay = false;
+
         $sesionObjeto->resourceId = "a"; 
         $sesionObjeto->sesionId     = $citaPaciente->id;
         $sesionObjeto->statusSesion = $citaPaciente->cita_estado_id;

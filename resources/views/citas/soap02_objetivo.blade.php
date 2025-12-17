@@ -502,6 +502,25 @@
 <script type="text/javascript" src="{{ asset('summernote-0.8.18-dist/summernote.min.js') }}"></script>
 
 <script type="text/javascript">
+
+// inicia desactivacion de boton al submit
+  const form = document.querySelector("form[action='/cita/soap02/objetivo/update']");
+  const btnLogin = document.getElementById("btn-s");
+
+  form.addEventListener("submit", function (e) {
+      //e.preventDefault();
+
+      // deshabilitar boton
+      btnLogin.disabled = true;
+
+      // cambiar texto
+      btnLogin.innerHTML = `
+          <span class="spinner-border spinner-border-sm" role="status"></span>
+          Actualizando, espere un momento...
+      `;
+  });
+  // termina desactivacion de boton al submit
+
   document.getElementById('file_input_pdf').addEventListener('change', function () {
     const fileNameSpan = document.getElementById('file-name');
     

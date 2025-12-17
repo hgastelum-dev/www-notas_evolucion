@@ -392,9 +392,9 @@ class CitaController extends Controller
       $validated = $request->validate([
           'cita_paciente_id'   => 'required|exists:citas_pacientes,id',
           'gabinete'           => 'nullable|string',
-          'gabinete_pdf'       => 'nullable|file|mimes:pdf|max:2096', // maximo 5MB
+          'gabinete_pdf'       => 'nullable|file|mimes:pdf|max:30720', // maximo 5MB
           'patologia'           => 'nullable|string',
-          'patologia_pdf'       => 'nullable|file|mimes:pdf|max:2096', // maximo 5MB
+          'patologia_pdf'       => 'nullable|file|mimes:pdf|max:30720', // maximo 5MB
       ]);
 
       $cita = CitaPaciente::find($request->cita_paciente_id);
