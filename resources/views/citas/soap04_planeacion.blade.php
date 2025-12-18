@@ -38,7 +38,7 @@
 
   <p>
     <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#div-nuevo-plan" aria-expanded="false" aria-controls="div-nuevo-plan">
-      A&ntilde;adir nuevo diagnostico/tratamiento
+      Añadir nuevo diagnóstico / tratamiento
     </button>
   </p>
 
@@ -82,13 +82,13 @@
 
   <br>
   <h4 class="text-center">
-    Diagnosticos y tratamientos<br>
+    Diagnósticos y tratamientos<br>
     de <b>cita anterior:</b>  <br>
     @if($cita->getCitaAnterior)
       <i class="fas fa-calendar-alt"></i> {{ $cita->getCitaAnterior->fecha }}
     @else
       <b class="text-danger">
-        <i class="fas fa-exclamation-circle"></i> Primera cita del paciente, favor de actualizar sus Diagnosticos y Tratamientos...
+        <i class="fas fa-exclamation-circle"></i> Primera cita del paciente, favor de actualizar sus Diagnósticos y Tratamientos...
       </b>
     @endif
   </h4>
@@ -293,7 +293,7 @@
 
             var option = document.createElement("option");
               option.value = '';
-              option.text = 'Seleccione una opcion';
+              option.text = 'Seleccione una opción';
               x.add(option);
             for(var i = 0; i < data.length; i++){
               var option = document.createElement("option");

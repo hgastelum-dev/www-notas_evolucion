@@ -144,7 +144,7 @@
             @endif
             <select class="form-control" id="paciente_id" onchange="getPaciente(this.value)">
             
-            <option value="">Busqueda de pacientes</option>
+            <option value="">Búsqueda de pacientes</option>
             
             @foreach($pacientes as $paciente)
                 
@@ -214,7 +214,7 @@
         <div class="row">
           <div class="col">
             <select class="form-control" id="paciente_recurrente_id">
-              <option value="">Busqueda de pacientes</option>
+              <option value="">Búsqueda de pacientes</option>
               
               @foreach($pacientes as $paciente)
                 <option value="{{ $paciente->id }}">
@@ -379,7 +379,7 @@
             <tr>
               <th>Paciente</th>
               <th>Inicio</th>
-              <th>Termino</th>
+              <th>Término</th>
               <th>Estado</th>
             </tr>  
           </thead>
@@ -448,7 +448,7 @@
           {!! session('CitaInicialOpciones')['mensaje'] !!}
 
           <p class="text-center">
-            ¿Qu&eacute;e desea hacer a continuaci&oacute;n?
+            ¿Qu&eacute; desea hacer a continuaci&oacute;n?
           </p>
           <p class="text-center">
             <form class="text-center" method="post" action="/iniciar/plan-inicial">

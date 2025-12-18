@@ -24,7 +24,7 @@
             </div>
             <br><br>
             <h4 class="mb-3 fw-normal text-info">
-              Sistema de Expediente el&eacute;ctronico
+              Sistema de Expediente Electrónico
             </h4>
             
             <h4 class="mb-3 fw-normal" style="color: gray;">
@@ -51,7 +51,7 @@
 
             <div class="form-floating">
               <input type="email" class="form-control" id="email" name="email" placeholder="usuario@ejemplo.com" value="{{ old('email') }}" autofocus required>
-              <label for="email">Correo electronico</label>
+              <label for="email">Correo electrónico</label>
             </div>
 
             <div class="form-floating">

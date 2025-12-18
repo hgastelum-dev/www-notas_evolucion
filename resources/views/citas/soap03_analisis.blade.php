@@ -34,14 +34,14 @@
 <div class="mb-3">
   <label for="analisis" class="form-label">
     <h3>
-        <b>A</b>nalisis:
+        <b>A</b>nálisis:
     </h3>
   </label>
   <textarea class="form-control border border-info rounded" id="analisis" name="analisis" rows="15" autofocus>@if($cita->getAnalisis) {{ $cita->getAnalisis->analisis }} @endif</textarea>
 </div>
 <p>
   <button type="submit" class="btn btn-success btn-lg btn-block" id="btn-s">
-    Guardar datos de apartado <b>Analisis</b> 
+    Guardar datos de apartado <b>Análisis</b> 
     @if(session('userAlerts'))
       <span class="badge badge-secondary">
         <i class="fas fa-check-circle"></i> Actualizado exitosamente

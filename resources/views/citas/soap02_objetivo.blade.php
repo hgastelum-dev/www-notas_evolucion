@@ -216,7 +216,7 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <b>Patologia:</b>
+      <b>Patología:</b>
       <textarea class="form-control @if($cita->patologia) {!! 'border-success' !!} @endif" name="patologia" rows="2">@if($cita->patologia){{$cita->patologia}}@endif</textarea>
 
       {{-- input para subir pdf --}}
@@ -228,7 +228,7 @@
             {{-- mostrar pdf existente --}}
             @if($cita->patologia_path_pdf)
               <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF2">
-                <i class="fas fa-file-pdf"></i> Ver PDF de patologia
+                <i class="fas fa-file-pdf"></i> Ver PDF de Patología
               </button>
             @endif
           </div>
@@ -344,7 +344,7 @@
   <div class="row g-3">
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Erit. hipoc. %:
+        <i class="fas fa-check-circle text-primary d-none"></i> Erit. hipocróm. %:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="porcentaje_eritrocitos_hipocromicos" name="porcentaje_eritrocitos_hipocromicos" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->porcentaje_eritrocitos_hipocromicos }} @endif">
     </div>
@@ -374,7 +374,7 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Bun:
+        <i class="fas fa-check-circle text-primary d-none"></i> BUN:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bun" name="bun" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bun }} @endif">
     </div>
@@ -390,13 +390,13 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Hba1c %:
+        <i class="fas fa-check-circle text-primary d-none"></i> HbA1c %:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hba1c_porcentaje" name="hba1c_porcentaje" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hba1c_porcentaje }} @endif">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Insulina serica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Insulina sérica:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="insulina_serica" name="insulina_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->insulina_serica }} @endif">
     </div>
@@ -464,31 +464,31 @@
     
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Col:
+        <i class="fas fa-check-circle text-primary d-none"></i> Col.:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="col" name="col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->col }} @endif">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Tgs:
+        <i class="fas fa-check-circle text-primary d-none"></i> TGs:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tgs" name="tgs" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tgs }} @endif">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> HDL Col:
+        <i class="fas fa-check-circle text-primary d-none"></i> HDL Col.:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hdl_col" name="hdl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hdl_col }} @endif">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> LDL Col:
+        <i class="fas fa-check-circle text-primary d-none"></i> LDL Col.:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ldl_col" name="ldl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ldl_col }} @endif">
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Ego:
+        <i class="fas fa-check-circle text-primary d-none"></i> EGO:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ego" name="ego" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ego }} @endif">
     </div>
@@ -512,7 +512,7 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vit d. serica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sérica:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vit_d_serica }} @endif">
     </div>
@@ -573,7 +573,7 @@
       <div class="modal-content">
 
         <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-file-pdf"></i> PDF de patologia</h5>
+          <h5 class="modal-title"><i class="fas fa-file-pdf"></i> PDF de Patología</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
             <span aria-hidden="true">&times;</span>
           </button>

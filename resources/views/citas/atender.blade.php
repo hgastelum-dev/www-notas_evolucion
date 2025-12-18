@@ -64,7 +64,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="notasPreviasModalLabel">Notas de evoluci&oacute;n previas</h5>
+        <h5 class="modal-title" id="notasPreviasModalLabel">Notas de evolución previas</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -165,7 +165,7 @@
 
                     {{-- Análisis --}}
                     <div class="mb-4">
-                        <h5><b><span class="badge badge-success">Analisis</span></b></h5>
+                        <h5><b><span class="badge badge-success">Análisis</span></b></h5>
                         <p>{!! optional($citaPrevia->getAnalisis)->analisis ?? 'Sin información.' !!}</p>
                     </div>
 
@@ -271,7 +271,7 @@
                 </button>
                 
                 <a class="btn btn-info" href="/paciente/plan/{{ $cita->paciente_id }}">
-                    <i class="fas fa-user"></i> ir a la historia clinica
+                    <i class="fas fa-user"></i> Ir a la historia clínica
                 </a>
                 <button class="btn btn-success" type="button" id="btn-cierre-cita">
                     <i class="fas fa-handshake"></i> Concluir cita del paciente
@@ -373,7 +373,7 @@
             <i class="fas fa-pencil-alt text-danger" style="font-size: 75px;"></i>
             <p>
                 <h5 class="text-center">
-                    La secciones <b>SOAP</b> de la cita en pantalla aun no han sido capturadas completamente. Favor de ingresar la informaci&oacute;n correspondiente a cada apartado
+                    Las secciones <b>SOAP</b> de la cita en pantalla aún no han sido capturadas completamente. Favor de ingresar la informaci&oacute;n correspondiente a cada apartado
                 </h5>
             </p>
         </p>
