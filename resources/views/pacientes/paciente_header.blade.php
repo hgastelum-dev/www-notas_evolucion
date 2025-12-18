@@ -6,7 +6,7 @@
     
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
-            <i class="fas fa-user"></i> Actualizacion de datos del paciente
+            <i class="fas fa-user"></i> Actualización de datos del paciente
         </h6>
     </div>
 
@@ -21,7 +21,7 @@
         <table class="table table-bordered table-hover text-nowrap align-middle text-center">
             
             <tr>
-                <th>Numero de expediente:</th>
+                <th>Número de expediente:</th>
                 <td class="text-center">
                     <span class="badge badge-primary">
                         {{ $paciente->numero_expediente }}
@@ -37,7 +37,7 @@
             </tr>
             
             <tr>
-                <th>Genero:</th>
+                <th>Género:</th>
                 <td>
                     @if($paciente->genero_id == 2)
                         Femenino
@@ -121,7 +121,7 @@
         <p>
             <h4 class="text-center">
                 <b>
-                    Seleccione una opcion<br>
+                    Seleccione una opción<br>
                     <i class="fas fa-arrow-down"></i>
                 </b>
             </h4>
@@ -166,7 +166,7 @@
           &nbsp;
           <li class="nav-item">
               <a class="nav-link border border-primary {{ request()->is('paciente/notas-hist/*') || request()->is('paciente/notas-hist') ? 'active' : '' }}" href="/paciente/notas-hist/{{ $paciente->id }}">
-                  <i class="far fa-file"></i> Historico de notas
+                  <i class="far fa-file"></i> Histórico de notas
               </a>
           </li>
         </ul>

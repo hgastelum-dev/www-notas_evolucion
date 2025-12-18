@@ -145,7 +145,7 @@
 
 <div class="form-group row">
     <label for="he_cancer" class="col-sm-2 col-form-label">
-    	<b>Cancer:</b>
+    	<b>Cáncer:</b>
     </label>
     <div class="col-sm-10">
       <textarea class="form-control" id="he_cancer" name="he_cancer" rows="2">{{ $he_cancer }}</textarea>
@@ -154,7 +154,7 @@
 
 <div class="form-group row">
     <label for="he_neumopatia" class="col-sm-2 col-form-label">
-    	<b>Neumopatia:</b>
+    	<b>Neumopatía:</b>
     </label>
     <div class="col-sm-10">
       <textarea class="form-control" id="he_neumopatia" name="he_neumopatia" rows="2">{{ $he_neumopatia }}</textarea>
@@ -172,7 +172,7 @@
 
 <div class="form-group row">
     <label for="he_enf_hepatica" class="col-sm-2 col-form-label">
-    	<b>Enf. hepatica:</b>
+    	<b>Enf. hepática:</b>
     </label>
     <div class="col-sm-10">
       <textarea class="form-control" id="he_enf_hepatica" name="he_enf_hepatica" rows="2">{{ $he_enf_hepatica }}</textarea>
@@ -272,7 +272,7 @@
 <div class="row">
 
 	<div class="col-sm-2">
-		<b>Toxicos:</b><br>
+		<b>Tóxicos:</b><br>
 		<div class="form-check form-check-inline">
 		  <input class="form-check-input" type="radio" name="pnp_toxicos" id="pnp_toxicos1" value="Si" @if($pnp_toxicos == "Si") {{ 'checked' }} @endif>
 		  <label class="form-check-label" for="pnp_toxicos1">Si</label>
@@ -327,7 +327,7 @@
 <div class="row">
 	<div class="col-sm-2">
 		<br>
-		<b>Cirugias:</b><br>
+		<b>Cirugías:</b><br>
 		<div class="form-check form-check-inline">
 		  <input class="form-check-input" type="radio" name="pp_qx" id="pp_qx1" value="Si" @if($pp_qx == "Si") {{ 'checked' }} @endif>
 		  <label class="form-check-label" for="pp_qx1">Si</label>
@@ -393,7 +393,7 @@
 	</div>
 
 	<div class="col-sm-3">
-		<b>Ultima:</b><br>
+		<b>Última:</b><br>
 		<input type="text" name="pp_transfusiones_ultima" class="form-control" value="{{ $pp_transfusiones_ultima }}">
 	</div>
 

@@ -66,7 +66,7 @@
 
 <div class="row g-3">
   <div class="col-md-4">
-    <label for="email" class="form-label">Correo electronico</label>
+    <label for="email" class="form-label">Correo electrónico</label>
     <input type="text" class="form-control" id="email" name="email" value="{{ $paciente->email }}" onkeydown="">
   </div>
 
@@ -81,7 +81,7 @@
 <div class="row g-3">
   
   <div class="col-md-3">
-    <label for="telefono" class="form-label">Telefono</label>
+    <label for="telefono" class="form-label">Teléfono</label>
     <input type="text" class="form-control" id="telefono" name="telefono" value="{{ $paciente->telefono }}" onkeydown="">
   </div>
 
@@ -115,9 +115,9 @@
 
   <div class="col-md-2">
     <br>
-    <label for="cat_genero_id" class="form-label">Genero</label>
+    <label for="cat_genero_id" class="form-label">Género</label>
     <select class="form-control" id="cat_genero_id" name="cat_genero_id">
-      <option value="">Seleccione una opcion</option>
+      <option value="">Seleccione una opción</option>
       <option value="1" @if($paciente->genero_id == 1) {!! 'selected' !!} @endif>Masculino</option>
       <option value="2" @if($paciente->genero_id == 2) {!! 'selected' !!} @endif>Femenino</option>
     </select>

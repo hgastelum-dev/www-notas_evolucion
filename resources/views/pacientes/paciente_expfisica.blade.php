@@ -102,7 +102,7 @@
 	@endphp
 	
 	<div class="alert alert-warning" role="alert">
-	  <i class="fas fa-exclamation-circle"></i> Sin registro de <b>exploraci&oacute;n fisica</b>...
+	  <i class="fas fa-exclamation-circle"></i> Sin registro de <b>exploraci&oacute;n física</b>...
 	</div>
 @endif
 
@@ -269,7 +269,7 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Insulina serica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Insulina sérica:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="insulina_serica" name="insulina_serica" value="{{ $insulina_serica }}">
     </div>
@@ -385,7 +385,7 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vit d. serica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sérica:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="{{ $vit_d_serica }}">
     </div>
