@@ -722,4 +722,18 @@ class CitaController extends Controller
             }
         }
     }
+	
+    public function updateFechaSexoCkdepi (Request $request){
+
+      $paciente = Paciente::find($request->paciente_id);
+
+      $paciente->fecha_nacimiento = $request->fecha_nacimiento;
+      $paciente->genero_id = $request->cat_genero_id;
+      
+      $paciente->save();
+
+      $request->session()->flash('ckdepiUpdated', ['titulo' => 'Notificacion:', 'mensaje' => 'Fecha de nacimiento y sexo actualizados exitosamente', 'icono' => 'success']);
+
+      return redirect('/cita/soap02/objetivo/' . $request->cita_id);
+    }
 }

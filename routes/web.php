@@ -102,7 +102,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     // captura SOAP 02
     Route::get('/cita/soap02/objetivo/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewSoap02']);
     Route::post('/cita/soap02/objetivo/update', [App\Http\Controllers\CitaController::class, 'updateSoap02']);
-    
+    Route::post('/fecha-nac/genero/update', [App\Http\Controllers\CitaController::class, 'updateFechaSexoCkdepi']);    
     // captura SOAP 03
     Route::get('/cita/soap03/analisis/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewSoap03']);
     Route::post('/cita/soap03/analisis/update', [App\Http\Controllers\CitaController::class, 'updateSoap03']);

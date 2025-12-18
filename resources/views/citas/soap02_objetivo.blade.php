@@ -60,6 +60,95 @@
     $valorParaInput = old('talla', $tallaActual ?? ($mostrarSugerencia ? $tallaAnterior : null));
   @endphp
 
+  <div class="text-right">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ckdepiModal">
+      Actualizar <b>Fecha de nacimiento/sexo</b>
+    </button>
+    <p>
+      @if($cita->getPaciente->fecha_nacimiento)
+        <b>Fecha de nacimiento:</b> {{ $cita->getPaciente->fecha_nacimiento }} 
+        @php
+          $fecha_nacimiento_obj = new DateTime(substr($cita->getPaciente->fecha_nacimiento, 0, 10));
+          $hoy = new DateTime(); // Fecha actual
+
+          $edad = $hoy->diff($fecha_nacimiento_obj)->y;
+        @endphp
+                <span class="badge badge-success"><b>Edad:</b> {{ $edad }} a&ntilde;os</span>
+      @else
+        <b>Fecha de nacimiento:</b> <b class="text-danger">Sin registro</b>
+      @endif <br>
+      <b>Sexo:</b>
+      @if($cita->getPaciente->genero_id)
+          @switch($cita->getPaciente->genero_id)
+              @case(1)
+                  Masculino
+                  @break
+
+              @case(2)
+                  Femenino
+                  @break
+
+              @default
+                  <b class="text-danger">Desconocido</b>
+          @endswitch
+      @else
+          <b class="text-danger">Sin registro</b>
+      @endif
+
+    </p>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="ckdepiModal" tabindex="-1" aria-labelledby="fechaNacGeneroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fechaNacGeneroModalLabel">Actualizar fecha de nacimiento/sexo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="/fecha-nac/genero/update">
+
+            @csrf
+            <input type="hidden" name="cita_id" value="{{ $cita->id }}">
+            <input type="hidden" name="paciente_id" value="{{ $cita->getPaciente->id }}">
+            <div class="col-md-12">
+              <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
+              <input type="date" class="form-control datetimepicker-input" id="fecha_nacimiento" name="fecha_nacimiento" data-toggle="datetimepicker" data-target="#fecha_nacimiento" placeholder="" value="{{ substr($cita->getPaciente->fecha_nacimiento, 0, 10) }}" onkeydown="">
+              @if($cita->getPaciente->fecha_nacimiento)
+
+                @php
+                  $fecha_nacimiento_obj = new DateTime(substr($cita->getPaciente->fecha_nacimiento, 0, 10));
+                  $hoy = new DateTime(); // Fecha actual
+
+                  $edad = $hoy->diff($fecha_nacimiento_obj)->y;
+                @endphp
+                <span class="badge badge-success"><b>Edad:</b> {{ $edad }} a&ntilde;os</span>
+              @endif
+            </div>
+
+            <div class="col-md-12">
+              <label for="cat_genero_id" class="form-label">Sexo</label>
+              <select class="form-control" id="cat_genero_id" name="cat_genero_id" required>
+                <option value="">Seleccione una opci&oacute;n</option>
+                <option value="1" @if($cita->getPaciente->genero_id == 1) {!! 'selected' !!} @endif>Masculino</option>
+                <option value="2" @if($cita->getPaciente->genero_id == 2) {!! 'selected' !!} @endif>Femenino</option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar ventana</button>
+              <button type="submit" class="btn btn-primary" id="btn-actualizar-ckdepi">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
 <form method="post" action="/cita/soap02/objetivo/update" enctype="multipart/form-data">
 
 @csrf
@@ -68,6 +157,15 @@
 @if(session('userAlerts'))
   <div class="alert alert-{{ session('userAlerts')['icono'] }} alert-dismissible fade show" role="alert">
     <strong>{{ session('userAlerts')['titulo'] }}</strong> {{ session('userAlerts')['mensaje'] }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+@endif
+
+@if(session('ckdepiUpdated'))
+  <div class="alert alert-{{ session('ckdepiUpdated')['icono'] }} alert-dismissible fade show" role="alert">
+    <strong>{{ session('ckdepiUpdated')['titulo'] }}</strong> {{ session('ckdepiUpdated')['mensaje'] }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
