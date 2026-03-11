@@ -477,6 +477,9 @@ class CitaController extends Controller
             $citaObjetivo->albu_cru = $request->albu_cru;
             $citaObjetivo->tsh = $request->tsh;
             $citaObjetivo->vit_d_serica = $request->vit_d_serica;
+            $citaObjetivo->bnp = $request->bnp;
+            $citaObjetivo->ca_125 = $request->ca_125;
+            $citaObjetivo->fk = $request->fk;
             $citaObjetivo->exploracion_fisica = $request->exploracion_fisica;
 
             $citaObjetivo->save();
@@ -523,6 +526,9 @@ class CitaController extends Controller
             $citaObjetivo->albu_cru = $request->albu_cru;
             $citaObjetivo->tsh = $request->tsh;
             $citaObjetivo->vit_d_serica = $request->vit_d_serica;
+            $citaObjetivo->bnp = $request->bnp;
+            $citaObjetivo->ca_125 = $request->ca_125;
+            $citaObjetivo->fk = $request->fk;
             $citaObjetivo->exploracion_fisica = $request->exploracion_fisica;
             
             $citaObjetivo->cita_paciente_id = $request->cita_paciente_id;

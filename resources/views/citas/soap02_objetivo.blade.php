@@ -301,7 +301,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="peso" name="peso" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->peso }} @endif">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
@@ -340,7 +340,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hcm" name="hcm" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hcm }} @endif">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
@@ -379,7 +379,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bun" name="bun" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bun }} @endif">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -419,7 +419,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="na" name="na" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->na }} @endif">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -459,7 +459,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="alb" name="alb" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->alb }} @endif">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -499,9 +499,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="albu_cru" name="albu_cru" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->albu_cru }} @endif">
     </div>
   </div>
-
   <br>
-
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -512,9 +510,30 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sérica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sér.:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vit_d_serica }} @endif">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> BNP:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bnp" name="bnp" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bnp }} @endif">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> CA-125:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca_125" name="ca_125" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ca_125 }} @endif">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> FK:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fk }} @endif">
     </div>
   </div>
   

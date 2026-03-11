@@ -53,6 +53,9 @@
           $albu_cru = $paciente->getExploracionFisica->albu_cru;
           $tsh = $paciente->getExploracionFisica->tsh;
           $vit_d_serica = $paciente->getExploracionFisica->vit_d_serica;
+          $bnp = $paciente->getExploracionFisica->bnp;
+          $ca_125 = $paciente->getExploracionFisica->ca_125;
+          $fk = $paciente->getExploracionFisica->fk;
 	@endphp
 
 @else 
@@ -99,6 +102,9 @@
           $albu_cru = '';
           $tsh = '';
           $vit_d_serica = '';
+          $bnp = '';
+          $ca_125 = '';
+          $fk = '';
 	@endphp
 	
 	<div class="alert alert-warning" role="alert">
@@ -174,7 +180,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="peso" name="peso" value="{{ $peso }}">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
@@ -213,7 +219,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hcm" name="hcm" value="{{ $hcm }}">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
@@ -252,7 +258,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bun" name="bun" value="{{ $bun }}">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -292,7 +298,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="na" name="na" value="{{ $na }}">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -332,7 +338,7 @@
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="alb" name="alb" value="{{ $alb }}">
     </div>
   </div>
-  <br><br>
+  <br>
   <div class="row g-3">
     
     <div class="col-sm-2">
@@ -385,9 +391,30 @@
     </div>
     <div class="col-sm-2">
       <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sérica:
+        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sér.:
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="{{ $vit_d_serica }}">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> BNP:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bnp" name="bnp" value="{{ $bnp }}">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> CA-125:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca_125" name="ca_125" value="{{ $ca_125 }}">
+    </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">
+        <i class="fas fa-check-circle text-primary d-none"></i> FK:
+      </h6>
+      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="{{ $fk }}">
     </div>
   </div>
   
