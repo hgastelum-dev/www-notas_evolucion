@@ -93,6 +93,14 @@
     @endif
   </h4>
 
+  @if(!empty($planesAgrupado['Tratamiento']))
+    <div class="text-right mb-3">
+      <button class="btn btn-danger" onclick="abrirReceta({{ $cita->id }})">
+        <i class="fas fa-file-pdf"></i> Ver receta
+      </button>
+    </div>
+  @endif
+
   {{-- agrupado --}}
   <table class="table table-hover table-bordered">
     <tbody>
@@ -255,6 +263,25 @@
   <input type="hidden" name="cita_planeacion_id" id="cita_planeacion_id">
 </form>
 
+<div class="modal fade" id="modal-receta" tabindex="-1">
+  <div class="modal-dialog modal-xl" style="max-width: 95%;">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title">Receta médica</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body p-0" style="height: 80vh;">
+        <iframe id="iframe-receta" src="" width="100%" height="100%" style="border:none;"></iframe>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -346,6 +373,14 @@
     document.getElementById('cita_planeacion_id').value = planId;
 
     document.getElementById("form-delete-plan").submit();
+  }
+
+  function abrirReceta(citaId){
+    var url = "/receta/" + citaId; // o usa route si quieres
+
+    document.getElementById('iframe-receta').src = url;
+
+    $('#modal-receta').modal('show');
   }
 </script>
 @endsection

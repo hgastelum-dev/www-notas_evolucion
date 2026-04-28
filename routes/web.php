@@ -112,6 +112,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/cita/soap04/planeacion', [App\Http\Controllers\CitaController::class, 'insertSoap04']);
     Route::post('/cita/soap04/planeacion/update', [App\Http\Controllers\CitaController::class, 'updateSoap04']);
     Route::post('/cita/soap04/planeacion/delete', [App\Http\Controllers\CitaController::class, 'deleteSoap04']);
+    Route::get('/receta/{cita}', [App\Http\Controllers\CitaController::class, 'generar'])->name('receta.pdf');
 
     require __DIR__.'/auth.php';
 });

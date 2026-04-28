@@ -13,6 +13,7 @@ use App\Models\Paciente;
 use App\Models\NotaHistorica;
 use Auth;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CitaController extends Controller
 {
@@ -612,6 +613,8 @@ class CitaController extends Controller
          
         $planesAgrupado = $grouped->all();
 
+        //return $planesAgrupado;
+
         return view('citas.soap04_planeacion', compact(['cita', 'tiposPlaneacion', 'planesAgrupado']));
     }
 
@@ -741,5 +744,23 @@ class CitaController extends Controller
       $request->session()->flash('ckdepiUpdated', ['titulo' => 'Notificacion:', 'mensaje' => 'Fecha de nacimiento y sexo actualizados exitosamente', 'icono' => 'success']);
 
       return redirect('/cita/soap02/objetivo/' . $request->cita_id);
+    }
+
+    public function generar($citaId){
+
+        $cita = CitaPaciente::with(['getPlaneacion', 'getPaciente'])->findOrFail($citaId);
+
+        // filtrar solo tratamientos
+        $tratamientos = $cita->getPlaneacion->filter(function ($plan) {
+            return $plan->getTipoPlan->tipo_plan == 'Tratamiento';
+        });
+
+        if ($tratamientos->isEmpty()) {
+            return back()->with('error', 'No hay tratamientos para generar receta');
+        }
+
+        $pdf = Pdf::loadView('pdf.receta', compact('cita', 'tratamientos'));
+
+        return $pdf->stream('receta.pdf');
     }
 }
