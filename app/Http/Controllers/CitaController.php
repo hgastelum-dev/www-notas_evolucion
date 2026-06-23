@@ -396,6 +396,7 @@ class CitaController extends Controller
           'gabinete_pdf'       => 'nullable|file|mimes:pdf|max:30720', // maximo 5MB
           'patologia'           => 'nullable|string',
           'patologia_pdf'       => 'nullable|file|mimes:pdf|max:30720', // maximo 5MB
+          'pcr_cmv'             => 'nullable|string',
       ]);
 
       $cita = CitaPaciente::find($request->cita_paciente_id);
@@ -481,6 +482,7 @@ class CitaController extends Controller
             $citaObjetivo->bnp = $request->bnp;
             $citaObjetivo->ca_125 = $request->ca_125;
             $citaObjetivo->fk = $request->fk;
+            $citaObjetivo->pcr_cmv = $request->pcr_cmv;
             $citaObjetivo->exploracion_fisica = $request->exploracion_fisica;
 
             $citaObjetivo->save();
@@ -530,6 +532,7 @@ class CitaController extends Controller
             $citaObjetivo->bnp = $request->bnp;
             $citaObjetivo->ca_125 = $request->ca_125;
             $citaObjetivo->fk = $request->fk;
+            $citaObjetivo->pcr_cmv = $request->pcr_cmv;
             $citaObjetivo->exploracion_fisica = $request->exploracion_fisica;
             
             $citaObjetivo->cita_paciente_id = $request->cita_paciente_id;

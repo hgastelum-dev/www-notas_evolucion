@@ -56,6 +56,7 @@
           $bnp = $paciente->getExploracionFisica->bnp;
           $ca_125 = $paciente->getExploracionFisica->ca_125;
           $fk = $paciente->getExploracionFisica->fk;
+          $pcr_cmv = $paciente->getExploracionFisica->pcr_cmv;
 	@endphp
 
 @else 
@@ -105,6 +106,7 @@
           $bnp = '';
           $ca_125 = '';
           $fk = '';
+          $pcr_cmv = 'negativo';
 	@endphp
 	
 	<div class="alert alert-warning" role="alert">
@@ -416,7 +418,23 @@
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="{{ $fk }}">
     </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">PCR CMV:</h6>
+      <div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_neg" value="negativo" @if($pcr_cmv !== 'positivo') checked @endif>
+          <label class="form-check-label" for="pcr_cmv_neg">Negativo</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_pos" value="positivo" @if($pcr_cmv === 'positivo') checked @endif>
+          <label class="form-check-label" for="pcr_cmv_pos">Positivo</label>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  
   
   <br>
   
