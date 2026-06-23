@@ -535,10 +535,23 @@
       </h6>
       <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fk }} @endif">
     </div>
+
+    <div class="col-sm-2">
+      <h6 class="font-weight-bold">PCR CMV:</h6>
+      <div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_neg" value="negativo" @if( !($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') ) checked @endif>
+          <label class="form-check-label" for="pcr_cmv_neg">Negativo</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_pos" value="positivo" @if($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') checked @endif>
+          <label class="form-check-label" for="pcr_cmv_pos">Positivo</label>
+        </div>
+      </div>
+    </div>
   </div>
-  
+
   <br>
-  
   <div class="row g-3">
     <div class="col-sm-12">
       <h6 class="font-weight-bold">

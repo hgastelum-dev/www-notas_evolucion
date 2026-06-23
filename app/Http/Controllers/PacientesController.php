@@ -373,6 +373,7 @@ class PacientesController extends Controller
             $expFisica->bnp = $request->bnp;
             $expFisica->ca_125 = $request->ca_125;
             $expFisica->fk = $request->fk;
+            $expFisica->pcr_cmv = $request->pcr_cmv;
         } else {
             $expFisica = new PacienteExploracionFisica();
             
@@ -418,6 +419,7 @@ class PacientesController extends Controller
             $expFisica->bnp = $request->bnp;
             $expFisica->ca_125 = $request->ca_125;
             $expFisica->fk = $request->fk;
+            $expFisica->pcr_cmv = $request->pcr_cmv;
         }
 
         $expFisica->paciente_id = $request->paciente_id;
