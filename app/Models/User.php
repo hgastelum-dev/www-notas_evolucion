@@ -42,4 +42,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function scopeDoctores($query){
+        return $query->permission('CitaAtender');
+    }
+
+    public function puedeGestionarAgenda(): bool {
+
+      return $this->can('CitaGestionar');
+    }
 }

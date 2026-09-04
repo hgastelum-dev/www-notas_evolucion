@@ -17,7 +17,7 @@ use App\Http\Controllers\API\PacientesController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -30,3 +30,4 @@ Route::controller(PacientesController::class)->group(function(){
     Route::post('/paciente/insert', 'insert');
     Route::post('/pacientes/reset', 'resetPacientes');
 });
+*/

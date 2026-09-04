@@ -16,12 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     
     Route::get('/', function () {
-        //return view('auth.login');
         return redirect('/login');
     });
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
+      
+      return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::get('/usuarios', [App\Http\Controllers\UsersController::class, 'getViewUsers']);
@@ -65,6 +65,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/paciente/antecedentes/update', [App\Http\Controllers\PacientesController::class, 'updateAntecedentes']);
     Route::get('/paciente/padecimientos/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'getViewPadecimientos']);
     Route::post('/paciente/padecimientos/update', [App\Http\Controllers\PacientesController::class, 'updatePadecimientos']);
+    
     // gestion del Plan en expediente del paciente
     Route::get('/paciente/plan/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'getViewPlan']);
     Route::post('/paciente/plan', [App\Http\Controllers\PacientesController::class, 'insertPlan']);
@@ -103,6 +104,7 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::get('/cita/soap02/objetivo/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewSoap02']);
     Route::post('/cita/soap02/objetivo/update', [App\Http\Controllers\CitaController::class, 'updateSoap02']);
     Route::post('/fecha-nac/genero/update', [App\Http\Controllers\CitaController::class, 'updateFechaSexoCkdepi']);    
+    
     // captura SOAP 03
     Route::get('/cita/soap03/analisis/{citaId}', [App\Http\Controllers\CitaController::class, 'getViewSoap03']);
     Route::post('/cita/soap03/analisis/update', [App\Http\Controllers\CitaController::class, 'updateSoap03']);
@@ -119,4 +121,3 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
 
 Route::get('/usuarios/exportar', [App\Http\Controllers\UsersController::class, 'exportarUsuarios'])->middleware('is-active');
 Route::get('/usuarios/exportar/pdf', [App\Http\Controllers\UsersController::class, 'exportarUsuariosPdf'])->middleware('is-active');
-

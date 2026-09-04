@@ -78,11 +78,8 @@
                 </p>
             @endif
 
-            <p class="mt-5 mb-3 text-muted">NCBC &copy; 2023</p>
+            <p class="mt-5 mb-3 text-muted">GEIA &copy; 2026</p>
         </form>
     </main>  
   </body>
 </html>
-            
-                
-                

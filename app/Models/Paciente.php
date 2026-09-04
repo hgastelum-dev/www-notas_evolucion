@@ -10,17 +10,22 @@ class Paciente extends Model
     use HasFactory;
 
     protected $table = 'pacientes';
-	protected $hidden = ['foto_path'];
+	  protected $hidden = ['foto_path'];
+    
     public function getCitas(){
         return $this->hasMany('App\Models\CitaPaciente', 'paciente_id');
     }
 
-    public function citasConcluidasAnteriores($fechaCita)
+    public function citasConcluidasAnteriores($fechaCita, $horaCita = null)
     {
+        $fechaHoraLimite = $horaCita
+            ? $fechaCita . ' ' . $horaCita
+            : $fechaCita . ' 23:59:59'; // fallback si solo mandan fecha
+
         return $this->getCitas()
             ->where('cita_estado_id', 4)
-            ->whereDate('fecha', '<', $fechaCita)
-            ->orderBy('fecha', 'desc');
+            ->whereRaw("CONCAT(fecha, ' ', hora_inicio) < ?", [$fechaHoraLimite])
+            ->orderByRaw("CONCAT(fecha, ' ', hora_inicio) DESC");
     }
 
     public function getAntecedentes(){

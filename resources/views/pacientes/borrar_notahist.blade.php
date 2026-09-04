@@ -2,7 +2,7 @@
 
 @section('container')
 
-<div class="card shadow mb-4">
+  <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
             <i class="fas fa-user"></i> Aviso: Eliminaci&oacute;n de registro
@@ -13,7 +13,7 @@
         <div class="row">
         <div class="col-sm-12">
             <div class="alert alert-info" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> <b>Atento aviso:</b> Est&aacute; intentando eliminar 1 registro del historial de notas de evoluci&oacute;n <b>fecha: {{ $notaHistorica->fecha }}</b>, desea proceder? Esta acci&oacute;n no podr&aacute; deshacerse.
+                <i class="fas fa-exclamation-triangle"></i> <b>Atento aviso:</b> Est&aacute; intentando eliminar 1 registro del historial de notas de evoluci&oacute;n <b>fecha: {{ $notaHistorica->fecha }}</b>, ¿desea proceder? Esta acci&oacute;n no podr&aacute; deshacerse.
                 <br><br>
 
                 <form method="POST" action="/nota-hist/delete">
@@ -35,6 +35,6 @@
         </div>
         </div>
     </div>
-</div>
+  </div>
 
 @endsection

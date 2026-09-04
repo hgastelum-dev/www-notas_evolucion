@@ -16,7 +16,7 @@ class InsertarPermisosConsultorio extends Seeder
      */
     public function run()
     {
-        $permisosConsultorio = ['CitaGestionar', 'CitaAtender'];
+        $permisosConsultorio = ['CitaGestionar', 'CitaAtender', 'CitaGestionarTodas'];
         $usuario = User::find(1);
 
         foreach($permisosConsultorio as $permisoConsultorio){

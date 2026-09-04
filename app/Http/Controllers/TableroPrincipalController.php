@@ -49,7 +49,7 @@ class TableroPrincipalController extends Controller
             ]);
         })->values();
 
-        // buscar columnas que sí tengan valores
+        // buscar columnas que si tengan valores
         $parametrosDisponibles = [];
 
         foreach ($columnas as $col) {

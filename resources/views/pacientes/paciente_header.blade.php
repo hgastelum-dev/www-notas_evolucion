@@ -2,7 +2,7 @@
 
 @section('container')
 
-<div class="card shadow mb-4">
+  <div class="card shadow mb-4">
     
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
@@ -52,8 +52,7 @@
 
                       @php
                         $fecha_nacimiento_obj = new DateTime(substr($paciente->fecha_nacimiento, 0, 10));
-                        $hoy = new DateTime(); // Fecha actual
-
+                        $hoy = new DateTime(); 
                         $edad = $hoy->diff($fecha_nacimiento_obj)->y;
                       @endphp
 
@@ -174,97 +173,90 @@
         <br><br>
         @yield('paciente')
     </div>
-</div>
+  </div>
 
-
-
-
-
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="cierreCitaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p class="text-center">
-            <i class="fas fa-check-circle text-success" style="font-size: 75px;"></i>
-            <p>
-                <h5 class="text-center">
-                    La cita en pantalla ha sido <b>Concluida</b> exitosamente
-                    <br><br>
-                    <a class="btn btn-primary" href="/agenda">
-                        <i class="fas fa-arrow-left"></i> Regresar a la agenda semanal
-                    </a>
-                </h5>
-            </p>
-        </p>
+  {{-- modal aviso de finalizacion de cita inicial con historia clinica --}}
+  <div class="modal fade" id="cierreCitaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p class="text-center">
+              <i class="fas fa-check-circle text-success" style="font-size: 75px;"></i>
+              <p>
+                  <h5 class="text-center">
+                      La cita en pantalla ha sido <b>Concluida</b> exitosamente
+                      <br><br>
+                      <a class="btn btn-primary" href="/agenda">
+                          <i class="fas fa-arrow-left"></i> Regresar a la agenda semanal
+                      </a>
+                  </h5>
+              </p>
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="errorCierraModal" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Atento aviso</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="text-center">
-            <i class="fas fa-pencil-alt text-danger" style="font-size: 75px;"></i>
-            <p>
-                <h5 class="text-center">
-                    Favor de capturar el <b>plan inicial</b> del paciente para poder concluir la primer cita del paciente.
-                </h5>
-            </p>
-        </p>
+  {{-- modal aviso de validacion para poder finalizar cita inicial con historia clinica --}}
+  <div class="modal fade" id="errorCierraModal" tabindex="-1" aria-labelledby="cierreCitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Atento aviso</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="text-center">
+              <i class="fas fa-pencil-alt text-danger" style="font-size: 75px;"></i>
+              <p>
+                  <h5 class="text-center">
+                      Favor de capturar el <b>plan inicial</b> del paciente para poder concluir la primer cita del paciente.
+                  </h5>
+              </p>
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-@if(isset($primeraCita))
-    @if($primeraCita->en_progreso == 1)
-        <script type="text/javascript">
-                        document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
-                            
-                            this.disabled = true;
+  @if(isset($primeraCita))
+      @if($primeraCita->en_progreso == 1)
+          <script type="text/javascript">
+            document.getElementById('btn-cierre-cita').addEventListener('click', function(event){
+                              
+                this.disabled = true;
 
-                            const token = '{{ csrf_token() }}';
+                const token = '{{ csrf_token() }}';
 
-                            var data = {
-                              _token: token,
-                              citaId: {{ $primeraCita->id }},
-                              primerCita: 1
-                            }
+                var data = {
+                  _token: token,
+                  citaId: {{ $primeraCita->id }},
+                  primerCita: 1
+                }
 
-                            fetch('/cita/cierre', {
-                                method: 'POST',
-                                body: JSON.stringify(data),
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(function(response){
-                                
-                                if(response.hasOwnProperty('id')){
-                                    $('#cierreCitaModal').modal('show')
-                                } else {
-                                    $('#errorCierraModal').modal('show')    
-                                }
-                            })
+                fetch('/cita/cierre', {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(function(response){
+                                  
+                    if(response.hasOwnProperty('id')){
+                        $('#cierreCitaModal').modal('show')
+                    } else {
+                        $('#errorCierraModal').modal('show')    
+                    }
+                })
 
-                            this.disabled = false;
-                        })
-                    </script>
-    @endif
-@endif
+                this.disabled = false;
+            })
+          </script>
+      @endif
+  @endif
 
 @endsection

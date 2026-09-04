@@ -42,4 +42,8 @@ class CitaPaciente extends Model
     public function getCitaAnterior(){
         return $this->belongsTo($this, 'cita_anterior_id');
     }
+
+    public function getDoctor(){
+      return $this->belongsTo('App\Models\User', 'doctor_id');
+    }
 }

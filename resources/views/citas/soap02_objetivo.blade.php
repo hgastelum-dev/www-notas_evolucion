@@ -2,34 +2,34 @@
 
 @section('styles')
 
-<link href="{{ asset('summernote-0.8.18-dist/summernote.min.css') }}" rel="stylesheet">
-<style>
-.file-upload-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
+  <link href="{{ asset('summernote-0.8.18-dist/summernote.min.css') }}" rel="stylesheet">
+  <style>
+    .file-upload-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
 
-.file-upload-button {
-    border: 1px solid #007bff;
-    color: #007bff;
-    background: #fff;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
+    .file-upload-button {
+        border: 1px solid #007bff;
+        color: #007bff;
+        background: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
 
-.file-upload-wrapper input[type=file] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    cursor: pointer;
-    height: 100%;
-    width: 100%;
-}
-</style>
+    .file-upload-wrapper input[type=file] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        height: 100%;
+        width: 100%;
+    }
+  </style>
 @endsection
 
 @section('seccion-cita')
@@ -39,7 +39,7 @@
     $tallaAnterior = null;
 
     if ($mostrarSugerencia) {
-        // obtener la última cita concluida
+        // obtener la ultima cita concluida
         $ultimaCita = \App\Models\CitaPaciente::where('paciente_id', $cita->paciente_id)
             ->where('cita_estado_id', 4)
             ->where('id', '!=', $cita->id)
@@ -49,7 +49,7 @@
         // usar optional para evitar errores si no existe
         $tallaAnterior = optional(optional($ultimaCita)->getObjetivo)->talla ?? null;
 
-        // si no hay talla en la última cita, buscar en exploración física
+        // si no hay talla en la ultima cita, buscar en exploracion fisica
         if (!$tallaAnterior) {
             $expl = \App\Models\PacienteExploracionFisica::where('paciente_id', $cita->paciente_id)->first();
             $tallaAnterior = optional($expl)->talla ?? null;
@@ -58,19 +58,21 @@
 
     $tallaActual = optional($cita->getObjetivo)->talla ?? null;
     $valorParaInput = old('talla', $tallaActual ?? ($mostrarSugerencia ? $tallaAnterior : null));
+  
   @endphp
 
   <div class="text-right">
-    <!-- Button trigger modal -->
+    
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ckdepiModal">
       Actualizar <b>Fecha de nacimiento/sexo</b>
     </button>
+    
     <p>
       @if($cita->getPaciente->fecha_nacimiento)
         <b>Fecha de nacimiento:</b> {{ $cita->getPaciente->fecha_nacimiento }} 
         @php
           $fecha_nacimiento_obj = new DateTime(substr($cita->getPaciente->fecha_nacimiento, 0, 10));
-          $hoy = new DateTime(); // Fecha actual
+          $hoy = new DateTime(); // fecha actual
 
           $edad = $hoy->diff($fecha_nacimiento_obj)->y;
         @endphp
@@ -78,7 +80,9 @@
       @else
         <b>Fecha de nacimiento:</b> <b class="text-danger">Sin registro</b>
       @endif <br>
+      
       <b>Sexo:</b>
+      
       @if($cita->getPaciente->genero_id)
           @switch($cita->getPaciente->genero_id)
               @case(1)
@@ -95,11 +99,10 @@
       @else
           <b class="text-danger">Sin registro</b>
       @endif
-
     </p>
   </div>
 
-  <!-- Modal -->
+  {{-- modal para actualizar fecha de nacimiento y sexo --}}
   <div class="modal fade" id="ckdepiModal" tabindex="-1" aria-labelledby="fechaNacGeneroModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -122,7 +125,7 @@
 
                 @php
                   $fecha_nacimiento_obj = new DateTime(substr($cita->getPaciente->fecha_nacimiento, 0, 10));
-                  $hoy = new DateTime(); // Fecha actual
+                  $hoy = new DateTime(); // fecha actual
 
                   $edad = $hoy->diff($fecha_nacimiento_obj)->y;
                 @endphp
@@ -149,431 +152,431 @@
     </div>
   </div>
 
-<form method="post" action="/cita/soap02/objetivo/update" enctype="multipart/form-data">
+  <form method="post" action="/cita/soap02/objetivo/update" enctype="multipart/form-data">
 
-@csrf
-<input type="hidden" name="cita_paciente_id" value="{{ $cita->id }}">
+    @csrf
+    <input type="hidden" name="cita_paciente_id" value="{{ $cita->id }}">
 
-@if(session('userAlerts'))
-  <div class="alert alert-{{ session('userAlerts')['icono'] }} alert-dismissible fade show" role="alert">
-    <strong>{{ session('userAlerts')['titulo'] }}</strong> {{ session('userAlerts')['mensaje'] }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-@endif
+    @if(session('userAlerts'))
+      <div class="alert alert-{{ session('userAlerts')['icono'] }} alert-dismissible fade show" role="alert">
+        <strong>{{ session('userAlerts')['titulo'] }}</strong> {{ session('userAlerts')['mensaje'] }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    @endif
 
-@if(session('ckdepiUpdated'))
-  <div class="alert alert-{{ session('ckdepiUpdated')['icono'] }} alert-dismissible fade show" role="alert">
-    <strong>{{ session('ckdepiUpdated')['titulo'] }}</strong> {{ session('ckdepiUpdated')['mensaje'] }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-@endif
+    @if(session('ckdepiUpdated'))
+      <div class="alert alert-{{ session('ckdepiUpdated')['icono'] }} alert-dismissible fade show" role="alert">
+        <strong>{{ session('ckdepiUpdated')['titulo'] }}</strong> {{ session('ckdepiUpdated')['mensaje'] }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    @endif
 
-  <div class="row">
-    <div class="col-sm-12">
-      <b>Gabinete:</b>
-      <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="2">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
+    <div class="row">
+      <div class="col-sm-12">
+        <b>Gabinete:</b>
+        <textarea class="form-control @if($cita->gabinete) {!! 'border-success' !!} @endif" name="gabinete" rows="2">@if($cita->gabinete){{$cita->gabinete}}@endif</textarea>
 
-      {{-- input para subir pdf --}}
-      <div class="mt-2 p-2 border rounded bg-light">
-        <div class="d-flex align-items-center justify-content-between flex-wrap">
-          {{-- seccion izquierda --}}
-          <div class="d-flex align-items-center">
+        {{-- input para subir pdf --}}
+        <div class="mt-2 p-2 border rounded bg-light">
+          <div class="d-flex align-items-center justify-content-between flex-wrap">
+            {{-- seccion izquierda --}}
+            <div class="d-flex align-items-center">
 
-            {{-- link a edenmed --}}
-            <a href="https://apps.evacenter.com/login" 
-              target="_blank" 
-              class="btn btn-outline-primary btn-sm mr-2">
-              <i class="fas fa-external-link-alt"></i> Abrir estudios en EdenMed
-            </a>
+              {{-- link a edenmed --}}
+              <a href="https://apps.evacenter.com/login" 
+                target="_blank" 
+                class="btn btn-outline-primary btn-sm mr-2">
+                <i class="fas fa-external-link-alt"></i> Abrir estudios en EdenMed
+              </a>
 
-            {{-- mostrar pdf existente --}}
-            @if($cita->gabinete_path_pdf)
-              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF">
-                <i class="fas fa-file-pdf"></i> Ver PDF de gabinete
-              </button>
-            @endif
-          </div>
-
-          {{-- boton seleccionar pdf a la derecha --}}
-          <div class="mt-2 mt-sm-0 d-flex align-items-center">
-            <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
-            <div class="file-upload-wrapper">
-              <button class="file-upload-button">
-                <i class="fas fa-upload"></i> Seleccionar PDF
-              </button>
-              <input type="file" name="gabinete_pdf" accept="application/pdf" id="file_input_pdf">
+              {{-- mostrar pdf existente --}}
+              @if($cita->gabinete_path_pdf)
+                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF">
+                  <i class="fas fa-file-pdf"></i> Ver PDF de gabinete
+                </button>
+              @endif
             </div>
-            <span id="file-name" class="text-muted ml-2">Ningún archivo</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      <b>Patología:</b>
-      <textarea class="form-control @if($cita->patologia) {!! 'border-success' !!} @endif" name="patologia" rows="2">@if($cita->patologia){{$cita->patologia}}@endif</textarea>
-
-      {{-- input para subir pdf --}}
-      <div class="mt-2 p-2 border rounded bg-light">
-        <div class="d-flex align-items-center justify-content-between flex-wrap">
-          {{-- seccion izquierda --}}
-          <div class="d-flex align-items-center">
-
-            {{-- mostrar pdf existente --}}
-            @if($cita->patologia_path_pdf)
-              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF2">
-                <i class="fas fa-file-pdf"></i> Ver PDF de Patología
-              </button>
-            @endif
-          </div>
-
-          {{-- boton seleccionar pdf a la derecha --}}
-          <div class="mt-2 mt-sm-0 d-flex align-items-center">
-            <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
-            <div class="file-upload-wrapper">
-              <button class="file-upload-button">
-                <i class="fas fa-upload"></i> Seleccionar PDF
-              </button>
-              <input type="file" name="patologia_pdf" accept="application/pdf" id="file_input_pdf2">
+            {{-- boton seleccionar pdf a la derecha --}}
+            <div class="mt-2 mt-sm-0 d-flex align-items-center">
+              <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
+              <div class="file-upload-wrapper">
+                <button class="file-upload-button">
+                  <i class="fas fa-upload"></i> Seleccionar PDF
+                </button>
+                <input type="file" name="gabinete_pdf" accept="application/pdf" id="file_input_pdf">
+              </div>
+              <span id="file-name" class="text-muted ml-2">Ningún archivo</span>
             </div>
-            <span id="file-name2" class="text-muted ml-2">Ningún archivo</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  <br>
-<div class="mb-3">
-  <label for="objetivo" class="form-label">
-    <h3>
-        <b>O</b>bjetivo:
-    </h3>
-  </label>
-  
-  <div class="row g-3">
-    <div class="col-sm-1">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> TA:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta" name="ta" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ta }} @endif">
-    </div>
-    <div class="col-sm-1">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i><br>
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta2" name="ta2" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ta2 }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> FC:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fc" name="fc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fc }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> FR:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fr" name="fr" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fr }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Temp:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="temp" name="temp" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->temp }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Talla:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="talla" name="talla" value="{{ $valorParaInput }}">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Peso:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="peso" name="peso" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->peso }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> IMC:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" id="imc" name="imc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->imc }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> SatO2:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="sat_o2" name="sat_o2" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->sat_o2 }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Hb:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hb" name="hb" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hb }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Hto:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hto" name="hto" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hto }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vcm:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vcm" name="vcm" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vcm }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Hcm:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hcm" name="hcm" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hcm }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Erit. hipocróm. %:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="porcentaje_eritrocitos_hipocromicos" name="porcentaje_eritrocitos_hipocromicos" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->porcentaje_eritrocitos_hipocromicos }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Plaq:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="plaq" name="plaq" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->plaq }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Leuc:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="leuc" name="leuc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->leuc }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Cr:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="cr" name="cr" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->cr }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> CKD-EPI:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ckdepi" name="ckdepi" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ckdepi }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> BUN:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bun" name="bun" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bun }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> G:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="g" name="g" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->g }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> HbA1c %:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hba1c_porcentaje" name="hba1c_porcentaje" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hba1c_porcentaje }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Insulina sérica:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="insulina_serica" name="insulina_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->insulina_serica }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> HOMA:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="homa" name="homa" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->homa }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Au:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="au" name="au" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->au }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Na:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="na" name="na" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->na }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> K:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="k" name="k" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->k }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Cl:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="cl" name="cl" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->cl }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Ca:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca" name="ca" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ca }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> P:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="p" name="p" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->p }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Mg:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="mg" name="mg" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->mg }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Alb:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="alb" name="alb" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->alb }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Col.:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="col" name="col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->col }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> TGs:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tgs" name="tgs" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tgs }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> HDL Col.:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hdl_col" name="hdl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hdl_col }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> LDL Col.:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ldl_col" name="ldl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ldl_col }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> EGO:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ego" name="ego" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ego }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> AlbU/CrU:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="albu_cru" name="albu_cru" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->albu_cru }} @endif">
-    </div>
-  </div>
-  <br>
-  <div class="row g-3">
-    
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> TSH:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tsh" name="tsh" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tsh }} @endif">
-    </div>
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sér.:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vit_d_serica }} @endif">
-    </div>
 
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> BNP:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bnp" name="bnp" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bnp }} @endif">
-    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <b>Patología:</b>
+        <textarea class="form-control @if($cita->patologia) {!! 'border-success' !!} @endif" name="patologia" rows="2">@if($cita->patologia){{$cita->patologia}}@endif</textarea>
 
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> CA-125:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca_125" name="ca_125" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ca_125 }} @endif">
-    </div>
+        {{-- input para subir pdf --}}
+        <div class="mt-2 p-2 border rounded bg-light">
+          <div class="d-flex align-items-center justify-content-between flex-wrap">
+            {{-- seccion izquierda --}}
+            <div class="d-flex align-items-center">
 
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">
-        <i class="fas fa-check-circle text-primary d-none"></i> FK:
-      </h6>
-      <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fk }} @endif">
-    </div>
+              {{-- mostrar pdf existente --}}
+              @if($cita->patologia_path_pdf)
+                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPDF2">
+                  <i class="fas fa-file-pdf"></i> Ver PDF de Patología
+                </button>
+              @endif
+            </div>
 
-    <div class="col-sm-2">
-      <h6 class="font-weight-bold">PCR CMV:</h6>
-      <div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_neg" value="negativo" @if( !($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') ) checked @endif>
-          <label class="form-check-label" for="pcr_cmv_neg">Negativo</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_pos" value="positivo" @if($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') checked @endif>
-          <label class="form-check-label" for="pcr_cmv_pos">Positivo</label>
+            {{-- boton seleccionar pdf a la derecha --}}
+            <div class="mt-2 mt-sm-0 d-flex align-items-center">
+              <label class="mr-2 mb-0"><b>Subir PDF:</b></label>
+              <div class="file-upload-wrapper">
+                <button class="file-upload-button">
+                  <i class="fas fa-upload"></i> Seleccionar PDF
+                </button>
+                <input type="file" name="patologia_pdf" accept="application/pdf" id="file_input_pdf2">
+              </div>
+              <span id="file-name2" class="text-muted ml-2">Ningún archivo</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <br>
-  <div class="row g-3">
-    <div class="col-sm-12">
-      <h6 class="font-weight-bold">
-        Exploraci&oacute;n fisica:
-      </h6>
-      <textarea class="form-control" id="exploracion_fisica" name="exploracion_fisica" rows="7">@if($cita->getObjetivo) {{ $cita->getObjetivo->exploracion_fisica }} @endif</textarea>
-    </div>
-  </div>
-  
-  <p>
+    
     <br>
-    <button type="submit" class="btn btn-success btn-lg btn-block" id="btn-s">
-      Guardar datos de apartado <b>Objetivo</b> 
-      @if(session('userAlerts'))
-        <span class="badge badge-secondary">
-          <i class="fas fa-check-circle"></i> Actualizado exitosamente
-        </span>
-      @endif
-    </button>
-  </p>
-</div>
-</form>
+    <div class="mb-3">
+      <label for="objetivo" class="form-label">
+        <h3>
+            <b>O</b>bjetivo:
+        </h3>
+      </label>
+      
+      <div class="row g-3">
+        <div class="col-sm-1">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> TA:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta" name="ta" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ta }} @endif">
+        </div>
+        <div class="col-sm-1">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i><br>
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ta2" name="ta2" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ta2 }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> FC:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fc" name="fc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fc }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> FR:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fr" name="fr" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fr }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Temp:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="temp" name="temp" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->temp }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Talla:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="talla" name="talla" value="{{ $valorParaInput }}">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Peso:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="calcularImc(this)" id="peso" name="peso" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->peso }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> IMC:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" id="imc" name="imc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->imc }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> SatO2:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="sat_o2" name="sat_o2" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->sat_o2 }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Hb:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hb" name="hb" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hb }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Hto:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hto" name="hto" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hto }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Vcm:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vcm" name="vcm" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vcm }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Hcm:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hcm" name="hcm" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hcm }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Erit. hipocróm. %:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="porcentaje_eritrocitos_hipocromicos" name="porcentaje_eritrocitos_hipocromicos" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->porcentaje_eritrocitos_hipocromicos }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Plaq:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="plaq" name="plaq" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->plaq }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Leuc:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="leuc" name="leuc" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->leuc }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Cr:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="cr" name="cr" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->cr }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> CKD-EPI:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ckdepi" name="ckdepi" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ckdepi }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> BUN:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bun" name="bun" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bun }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> G:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="g" name="g" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->g }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> HbA1c %:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hba1c_porcentaje" name="hba1c_porcentaje" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hba1c_porcentaje }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Insulina sérica:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="insulina_serica" name="insulina_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->insulina_serica }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> HOMA:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="homa" name="homa" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->homa }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Au:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="au" name="au" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->au }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Na:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="na" name="na" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->na }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> K:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="k" name="k" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->k }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Cl:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="cl" name="cl" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->cl }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Ca:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca" name="ca" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ca }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> P:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="p" name="p" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->p }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Mg:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="mg" name="mg" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->mg }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Alb:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="alb" name="alb" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->alb }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Col.:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="col" name="col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->col }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> TGs:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tgs" name="tgs" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tgs }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> HDL Col.:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="hdl_col" name="hdl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->hdl_col }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> LDL Col.:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ldl_col" name="ldl_col" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ldl_col }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> EGO:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ego" name="ego" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ego }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> AlbU/CrU:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="albu_cru" name="albu_cru" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->albu_cru }} @endif">
+        </div>
+      </div>
+      <br>
+      <div class="row g-3">
+        
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> TSH:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="tsh" name="tsh" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->tsh }} @endif">
+        </div>
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> Vit. D sér.:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="vit_d_serica" name="vit_d_serica" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->vit_d_serica }} @endif">
+        </div>
+
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> BNP:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="bnp" name="bnp" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->bnp }} @endif">
+        </div>
+
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> CA-125:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="ca_125" name="ca_125" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->ca_125 }} @endif">
+        </div>
+
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">
+            <i class="fas fa-check-circle text-primary d-none"></i> FK:
+          </h6>
+          <input type="text" class="form-control border border-info rounded-pill" onkeyup="resaltarInput(this)" id="fk" name="fk" value="@if($cita->getObjetivo) {{ $cita->getObjetivo->fk }} @endif">
+        </div>
+
+        <div class="col-sm-2">
+          <h6 class="font-weight-bold">PCR CMV:</h6>
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_neg" value="negativo" @if( !($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') ) checked @endif>
+              <label class="form-check-label" for="pcr_cmv_neg">Negativo</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="pcr_cmv" id="pcr_cmv_pos" value="positivo" @if($cita->getObjetivo && $cita->getObjetivo->pcr_cmv == 'positivo') checked @endif>
+              <label class="form-check-label" for="pcr_cmv_pos">Positivo</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <div class="row g-3">
+        <div class="col-sm-12">
+          <h6 class="font-weight-bold">
+            Exploraci&oacute;n fisica:
+          </h6>
+          <textarea class="form-control" id="exploracion_fisica" name="exploracion_fisica" rows="7">@if($cita->getObjetivo) {{ $cita->getObjetivo->exploracion_fisica }} @endif</textarea>
+        </div>
+      </div>
+      
+      <p>
+        <br>
+        <button type="submit" class="btn btn-success btn-lg btn-block" id="btn-s">
+          Guardar datos de apartado <b>Objetivo</b> 
+          @if(session('userAlerts'))
+            <span class="badge badge-secondary">
+              <i class="fas fa-check-circle"></i> Actualizado exitosamente
+            </span>
+          @endif
+        </button>
+      </p>
+    </div>
+  </form>
 
   {{-- modal para ver el pdf de gabinete --}}
   <div class="modal fade" id="modalPDF" tabindex="-1" role="dialog" aria-labelledby="modalPDFTitle" aria-hidden="true">
@@ -629,245 +632,219 @@
 
 @section('scripts')
 
-<script type="text/javascript" src="{{ asset('summernote-0.8.18-dist/summernote.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('summernote-0.8.18-dist/summernote.min.js') }}"></script>
 
-<script type="text/javascript">
+  <script type="text/javascript">
 
-// inicia desactivacion de boton al submit
-  const form = document.querySelector("form[action='/cita/soap02/objetivo/update']");
-  const btnLogin = document.getElementById("btn-s");
+    const form = document.querySelector("form[action='/cita/soap02/objetivo/update']");
+    const btnLogin = document.getElementById("btn-s");
 
-  form.addEventListener("submit", function (e) {
-      //e.preventDefault();
+    form.addEventListener("submit", function (e) {
+        btnLogin.disabled = true;
 
-      // deshabilitar boton
-      btnLogin.disabled = true;
-
-      // cambiar texto
-      btnLogin.innerHTML = `
-          <span class="spinner-border spinner-border-sm" role="status"></span>
-          Actualizando, espere un momento...
-      `;
-  });
-  // termina desactivacion de boton al submit
-
-  document.getElementById('file_input_pdf').addEventListener('change', function () {
-    const fileNameSpan = document.getElementById('file-name');
-    
-    if (this.files.length > 0) {
-        fileNameSpan.textContent = this.files[0].name;
-        fileNameSpan.classList.remove('text-muted');
-        fileNameSpan.classList.add('text-success', 'font-weight-bold');
-    } else {
-        fileNameSpan.textContent = "Ningún archivo";
-        fileNameSpan.classList.remove('text-success', 'font-weight-bold');
-        fileNameSpan.classList.add('text-muted');
-    }
-  }); 
-
-  document.getElementById('file_input_pdf2').addEventListener('change', function () {
-    const fileNameSpan = document.getElementById('file-name2');
-    
-    if (this.files.length > 0) {
-        fileNameSpan.textContent = this.files[0].name;
-        fileNameSpan.classList.remove('text-muted');
-        fileNameSpan.classList.add('text-success', 'font-weight-bold');
-    } else {
-        fileNameSpan.textContent = "Ningún archivo";
-        fileNameSpan.classList.remove('text-success', 'font-weight-bold');
-        fileNameSpan.classList.add('text-muted');
-    }
-  }); 
-
-  function resaltarInput(inputText){
-    
-    if(inputText.value){
-      
-      inputText.classList.add('bg-info', 'text-white', 'font-weight-bold', 'text-center')
-      var sibling = inputText.previousElementSibling;
-
-      elems = sibling.querySelectorAll('.fa-check-circle');
-      elems[0].classList.remove('d-none')
-      sibling.classList.add('text-primary');
-    
-    } else {
-      
-      inputText.classList.remove('bg-info', 'text-white', 'font-weight-bold', 'text-center')
-      var sibling = inputText.previousElementSibling;
-      
-      elems = sibling.querySelectorAll('.fa-check-circle');
-      elems[0].classList.add('d-none')
-
-      sibling.classList.remove('text-primary');
-    }
-  }
-
-  $(document).ready(function() {
-    $('#exploracion_fisica').summernote({
-      tabsize: 2,
-      height: 200
+        btnLogin.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+            Actualizando, espere un momento...
+        `;
     });
-  });
-
-  function calcularImc(input){
-
-    var talla = document.getElementById('talla');
-    var peso = document.getElementById('peso');
-
-    if (talla.value && peso.value){
-      document.getElementById('imc').value = peso.value / (talla.value * talla.value) ;
-    } else {
-      document.getElementById('imc').value = '';
-    }
-    
-  }
-
-  document.addEventListener("DOMContentLoaded", function() {
-      const inputCr = document.getElementById("cr");
-      const inputCkd = document.getElementById("ckdepi");
-
-      // valores obtenidos desde Blade
-      const generoId = "{{ $cita->getPaciente->genero_id }}";  // puede venir NULL
-      const fechaNacimiento = "{{ $cita->getPaciente->fecha_nacimiento }}"; // puede venir NULL
-
-      inputCr.addEventListener("input", function() {
-          const cr = parseFloat(inputCr.value);
-
-          // si creatinina no es válida
-          if (isNaN(cr) || cr <= 0) {
-              inputCkd.value = "";
-              return;
-          }
-
-          // si falta sexo o fecha de nacimiento → no calcular
-          if (!generoId || !fechaNacimiento) {
-              inputCkd.value = "";
-              return;
-          }
-
-          const resultado = calcularEgfCKDEPI2021(cr, generoId, fechaNacimiento);
-          inputCkd.value = resultado;
-      });
-
-      // helpers
-  function parseNumberFromInput(value) {
-    if (value === null || value === undefined) return NaN;
-    // permitir comas como separador decimal
-    const normalized = String(value).trim().replace(',', '.');
-    // eliminar caracteres no numéricos (salvo el punto y el signo negativo)
-    const cleaned = normalized.replace(/[^0-9.\-]/g, '');
-    const n = parseFloat(cleaned);
-    return isFinite(n) ? n : NaN;
-  }
-
-  function calcularHomaYActualizar() {
-    const inputG = document.getElementById('g');
-    const inputIns = document.getElementById('insulina_serica');
-    const inputHoma = document.getElementById('homa');
-
-    if (!inputG || !inputIns || !inputHoma) return;
-
-    const g = parseNumberFromInput(inputG.value);
-    const ins = parseNumberFromInput(inputIns.value);
-
-    // si cualquiera no es número válido, limpiar el campo de HOMA
-    if (isNaN(g) || isNaN(ins)) {
-      inputHoma.value = '';
-      return;
-    }
-
-    // fórmula estándar HOMA-IR (glucosa mg/dL * insulina μU/mL) / 405
-    const homa = (g * ins) / 405;
-
-    // si el resultado es finito, mostrar con 2 decimales; si no, limpiar
-    if (isFinite(homa)) {
-      // si quieres mostrar sin decimales cuando es entero, cambia toFixed
-      inputHoma.value = Number(homa.toFixed(2));
-      // opcional: resaltar el input para indicar que fue calculado
-      inputHoma.classList.add('bg-info', 'text-white', 'font-weight-bold', 'text-center');
-    } else {
-      inputHoma.value = '';
-      inputHoma.classList.remove('bg-info', 'text-white', 'font-weight-bold', 'text-center');
-    }
-  }
-
-  // obtener referencias
-  const elG = document.getElementById('g');
-  const elIns = document.getElementById('insulina_serica');
-
-  if (elG) {
-    // calcular al teclear (input) y también al perder foco
-    elG.addEventListener('input', function() {
-      // respetar tu resaltarInput existente
-      if (typeof resaltarInput === 'function') resaltarInput(elG);
-      calcularHomaYActualizar();
-    });
-    elG.addEventListener('blur', calcularHomaYActualizar);
-  }
-
-  if (elIns) {
-    elIns.addEventListener('input', function() {
-      if (typeof resaltarInput === 'function') resaltarInput(elIns);
-      calcularHomaYActualizar();
-    });
-    elIns.addEventListener('blur', calcularHomaYActualizar);
-  }
-
-  // calcular al cargar si ya hay valores (por ejemplo al editar)
-  calcularHomaYActualizar();
-  });
-
-  function calcularEgfCKDEPI2021(creatinina, generoId, fechaNacimiento) {
-
-      if (!generoId || !fechaNacimiento) {
-          return ""; // fallback seguro
-      }
-
-      // fecha válida?
-      const nacimiento = new Date(fechaNacimiento);
-      if (isNaN(nacimiento)) {
-          return "";
-      }
-
-      // calcular edad manualmente
-      const hoy = new Date();
-      let edad = hoy.getFullYear() - nacimiento.getFullYear();
-      const mes = hoy.getMonth() - nacimiento.getMonth();
-      if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-          edad--;
-      }
-
-      // Si edad es inválida
-      if (isNaN(edad) || edad <= 0 || edad > 120) {
-          return "";
-      }
-
-      // parámetros según sexo
-      let K, alpha, factorSexo;
-      if (generoId == "2") { // mujer
-          K = 0.7;
-          alpha = -0.241;
-          factorSexo = 1.012;
-      } else if (generoId == "1") { // hombre
-          K = 0.9;
-          alpha = -0.302;
-          factorSexo = 1;
+  
+    document.getElementById('file_input_pdf').addEventListener('change', function () {
+      const fileNameSpan = document.getElementById('file-name');
+      
+      if (this.files.length > 0) {
+          fileNameSpan.textContent = this.files[0].name;
+          fileNameSpan.classList.remove('text-muted');
+          fileNameSpan.classList.add('text-success', 'font-weight-bold');
       } else {
-          return ""; // género desconocido
+          fileNameSpan.textContent = "Ningún archivo";
+          fileNameSpan.classList.remove('text-success', 'font-weight-bold');
+          fileNameSpan.classList.add('text-muted');
       }
+    }); 
 
-      const scrK = creatinina / K;
-      const minVal = Math.min(scrK, 1);
-      const maxVal = Math.max(scrK, 1);
+    document.getElementById('file_input_pdf2').addEventListener('change', function () {
+      const fileNameSpan = document.getElementById('file-name2');
+      
+      if (this.files.length > 0) {
+          fileNameSpan.textContent = this.files[0].name;
+          fileNameSpan.classList.remove('text-muted');
+          fileNameSpan.classList.add('text-success', 'font-weight-bold');
+      } else {
+          fileNameSpan.textContent = "Ningún archivo";
+          fileNameSpan.classList.remove('text-success', 'font-weight-bold');
+          fileNameSpan.classList.add('text-muted');
+      }
+    }); 
 
-      const eGFR =
-          142 *
-          Math.pow(minVal, alpha) *
-          Math.pow(maxVal, -1.200) *
-          Math.pow(0.9938, edad) *
-          factorSexo;
+    function resaltarInput(inputText){
+      
+      if(inputText.value){
+        
+        inputText.classList.add('bg-info', 'text-white', 'font-weight-bold', 'text-center')
+        var sibling = inputText.previousElementSibling;
 
-      return Number(eGFR.toFixed(2));
-  }
-</script>
+        elems = sibling.querySelectorAll('.fa-check-circle');
+        elems[0].classList.remove('d-none')
+        sibling.classList.add('text-primary');
+      
+      } else {
+        
+        inputText.classList.remove('bg-info', 'text-white', 'font-weight-bold', 'text-center')
+        var sibling = inputText.previousElementSibling;
+        
+        elems = sibling.querySelectorAll('.fa-check-circle');
+        elems[0].classList.add('d-none')
+
+        sibling.classList.remove('text-primary');
+      }
+    }
+
+    $(document).ready(function() {
+      $('#exploracion_fisica').summernote({
+        tabsize: 2,
+        height: 200
+      });
+    });
+
+    function calcularImc(input){
+
+      var talla = document.getElementById('talla');
+      var peso = document.getElementById('peso');
+
+      if (talla.value && peso.value){
+        document.getElementById('imc').value = peso.value / (talla.value * talla.value) ;
+      } else {
+        document.getElementById('imc').value = '';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputCr = document.getElementById("cr");
+        const inputCkd = document.getElementById("ckdepi");
+
+        const generoId = "{{ $cita->getPaciente->genero_id }}"; 
+        const fechaNacimiento = "{{ $cita->getPaciente->fecha_nacimiento }}";
+
+        inputCr.addEventListener("input", function() {
+            const cr = parseFloat(inputCr.value);
+
+            if (isNaN(cr) || cr <= 0) {
+                inputCkd.value = "";
+                return;
+            }
+
+            if (!generoId || !fechaNacimiento) {
+                inputCkd.value = "";
+                return;
+            }
+
+            const resultado = calcularEgfCKDEPI2021(cr, generoId, fechaNacimiento);
+            inputCkd.value = resultado;
+        });
+
+        function parseNumberFromInput(value) {
+          if (value === null || value === undefined) return NaN;
+          const normalized = String(value).trim().replace(',', '.');
+          const cleaned = normalized.replace(/[^0-9.\-]/g, '');
+          const n = parseFloat(cleaned);
+          return isFinite(n) ? n : NaN;
+        }
+
+        function calcularHomaYActualizar() {
+          const inputG = document.getElementById('g');
+          const inputIns = document.getElementById('insulina_serica');
+          const inputHoma = document.getElementById('homa');
+
+          if (!inputG || !inputIns || !inputHoma) return;
+
+          const g = parseNumberFromInput(inputG.value);
+          const ins = parseNumberFromInput(inputIns.value);
+
+          if (isNaN(g) || isNaN(ins)) {
+            inputHoma.value = '';
+            return;
+          }
+
+          const homa = (g * ins) / 405;
+
+          if (isFinite(homa)) {
+            inputHoma.value = Number(homa.toFixed(2));
+            inputHoma.classList.add('bg-info', 'text-white', 'font-weight-bold', 'text-center');
+          } else {
+            inputHoma.value = '';
+            inputHoma.classList.remove('bg-info', 'text-white', 'font-weight-bold', 'text-center');
+          }
+        }
+
+        const elG = document.getElementById('g');
+        const elIns = document.getElementById('insulina_serica');
+
+        if (elG) {
+          elG.addEventListener('input', function() {
+            if (typeof resaltarInput === 'function') resaltarInput(elG);
+            calcularHomaYActualizar();
+          });
+          elG.addEventListener('blur', calcularHomaYActualizar);
+        }
+
+        if (elIns) {
+          elIns.addEventListener('input', function() {
+            if (typeof resaltarInput === 'function') resaltarInput(elIns);
+            calcularHomaYActualizar();
+          });
+          elIns.addEventListener('blur', calcularHomaYActualizar);
+        }
+
+        calcularHomaYActualizar();
+    });
+
+    function calcularEgfCKDEPI2021(creatinina, generoId, fechaNacimiento) {
+
+        if (!generoId || !fechaNacimiento) {
+            return ""; 
+        }
+
+        const nacimiento = new Date(fechaNacimiento);
+        if (isNaN(nacimiento)) {
+            return "";
+        }
+
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+
+        if (isNaN(edad) || edad <= 0 || edad > 120) {
+            return "";
+        }
+
+        let K, alpha, factorSexo;
+        if (generoId == "2") {
+            K = 0.7;
+            alpha = -0.241;
+            factorSexo = 1.012;
+        } else if (generoId == "1") { 
+            K = 0.9;
+            alpha = -0.302;
+            factorSexo = 1;
+        } else {
+            return "";
+        }
+
+        const scrK = creatinina / K;
+        const minVal = Math.min(scrK, 1);
+        const maxVal = Math.max(scrK, 1);
+
+        const eGFR =
+            142 *
+            Math.pow(minVal, alpha) *
+            Math.pow(maxVal, -1.200) *
+            Math.pow(0.9938, edad) *
+            factorSexo;
+
+        return Number(eGFR.toFixed(2));
+    }
+  </script>
 @endsection
