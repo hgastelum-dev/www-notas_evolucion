@@ -15,6 +15,7 @@ use App\Models\NotaHistoricaPlan;
 use Intervention\Image\ImageManagerStatic as Image;
 use Intervention\Image\ImageManager;
 use Carbon\Carbon;
+use App\Models\SeguroMedico;
 use Illuminate\Support\Facades\Storage;
 use Auth;
 
@@ -96,7 +97,12 @@ class PacientesController extends Controller
         } else {
             $citaEnProgreso = null;
         }
-        return view('pacientes.editar', compact(['paciente', 'primeraCita', 'citaEnProgreso']));
+
+        // catalogo completo + seguros ya asociados a este paciente
+        $segurosCatalogo = SeguroMedico::orderBy('nombre')->get(['id','nombre']);
+        $segurosPaciente = $paciente->getSegurosMedicos()->orderBy('nombre')->get(['seguros_medicos.id','seguros_medicos.nombre']);
+
+        return view('pacientes.editar', compact(['paciente', 'primeraCita', 'citaEnProgreso', 'segurosCatalogo', 'segurosPaciente']));
     }
 
     public function updateFechaIngreso(Request $request){
@@ -689,5 +695,52 @@ class PacientesController extends Controller
         $notaHistorica->delete();
 
         return redirect('/paciente/notas-hist/' . $notaHistorica->paciente_id);
+    }
+
+    // catalogo de seguros medicos + asociacion con el paciente...
+    public function insertSeguroMedico(Request $request){
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:150|unique:seguros_medicos,nombre',
+        ], [
+            'nombre.unique' => 'Ese seguro médico ya existe en el catálogo.',
+        ]);
+
+        $seguro = SeguroMedico::create(['nombre' => $request->nombre]);
+
+        if ($request->filled('paciente_id')) {
+            $paciente = Paciente::findOrFail($request->paciente_id);
+            $paciente->getSegurosMedicos()->syncWithoutDetaching([$seguro->id]);
+        }
+
+        return response()->json(['id' => $seguro->id, 'nombre' => $seguro->nombre]);
+    }
+
+    public function asociarSeguroMedico(Request $request){
+
+        $validated = $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'seguro_medico_id' => 'required|exists:seguros_medicos,id',
+        ]);
+
+        $paciente = Paciente::findOrFail($request->paciente_id);
+        $paciente->getSegurosMedicos()->syncWithoutDetaching([$request->seguro_medico_id]);
+
+        $seguro = SeguroMedico::findOrFail($request->seguro_medico_id);
+
+        return response()->json(['id' => $seguro->id, 'nombre' => $seguro->nombre]);
+    }
+
+    public function quitarSeguroMedico(Request $request){
+
+        $validated = $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'seguro_medico_id' => 'required|exists:seguros_medicos,id',
+        ]);
+
+        $paciente = Paciente::findOrFail($request->paciente_id);
+        $paciente->getSegurosMedicos()->detach($request->seguro_medico_id);
+
+        return response()->json(['ok' => true]);
     }
 }

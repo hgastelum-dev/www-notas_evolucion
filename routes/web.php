@@ -56,7 +56,10 @@ Route::group(['middleware' => ['is-active','prevent-back-history']],function(){
     Route::post('/paciente/insert', [App\Http\Controllers\PacientesController::class, 'insertPaciente']);
     Route::post('/paciente/fecha_ingreso/update', [App\Http\Controllers\PacientesController::class, 'updateFechaIngreso']);
     Route::get('/paciente/editar/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'getViewEditar']);
-    Route::post('/paciente/update', [App\Http\Controllers\PacientesController::class, 'updatePaciente']);
+    Route::post('/paciente/update', [App\Http\Controllers\PacientesController::class, 'updatePaciente']);     
+    Route::post('/seguros-medicos/insert', [App\Http\Controllers\PacientesController::class, 'insertSeguroMedico']);
+    Route::post('/paciente/seguro-medico/asociar', [App\Http\Controllers\PacientesController::class, 'asociarSeguroMedico']);
+    Route::post('/paciente/seguro-medico/quitar', [App\Http\Controllers\PacientesController::class, 'quitarSeguroMedico']);
     Route::post('/paciente/plan/inicial/analisis', [App\Http\Controllers\PacientesController::class, 'updateAnalisisPaciente']);
     Route::get('/paciente/borrar/{pacienteId}', [App\Http\Controllers\PacientesController::class, 'viewBorrarPaciente']);
     Route::post('/paciente/delete', [App\Http\Controllers\PacientesController::class, 'deletePaciente']);

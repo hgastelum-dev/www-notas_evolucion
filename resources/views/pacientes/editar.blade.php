@@ -6,6 +6,23 @@
     .form-label{
       font-weight: bold;
     }
+
+    .seguro-badge {
+      font-size: .9rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      display: inline-block;
+      padding: .5em .9em;
+    }
+
+    .seguro-badge .quitar-seguro {
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .seguro-badge .quitar-seguro:hover {
+      opacity: .7;
+    }
   </style>
 
 @endsection
@@ -124,6 +141,49 @@
       </div>
     </div>
 
+    {{-- seguros medicos --}}
+    <div class="row g-3">
+      <div class="col-md-8">
+        <br>
+        <label class="form-label">
+          <i class="fas fa-file-medical"></i> Seguros médicos
+        </label>
+
+        <div id="seguros-badges" class="mb-2">
+          @forelse($segurosPaciente as $seguro)
+            <span class="badge badge-pill badge-info seguro-badge" data-id="{{ $seguro->id }}">
+              {{ $seguro->nombre }}
+              <a href="#" class="text-white ml-2 quitar-seguro" data-id="{{ $seguro->id }}" title="Quitar seguro">&times;</a>
+            </span>
+          @empty
+            <span class="text-muted" id="sin-seguros-msg">Sin seguros médicos registrados</span>
+          @endforelse
+        </div>
+
+        <div class="form-row align-items-center">
+          <div class="col-auto" style="min-width: 260px;">
+            <select class="form-control" id="seguro_medico_select">
+              <option value="">Seleccione un seguro para agregar</option>
+              @foreach($segurosCatalogo as $seguro)
+                @if(!$segurosPaciente->contains('id', $seguro->id))
+                  <option value="{{ $seguro->id }}">{{ $seguro->nombre }}</option>
+                @endif
+              @endforeach
+            </select>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-outline-primary" type="button" id="btn-agregar-seguro">
+              <i class="fas fa-plus"></i> Agregar
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-link pl-0 mt-1" data-toggle="modal" data-target="#modalNuevoSeguro">
+          <i class="fas fa-plus-circle"></i> ¿No aparece en la lista? Registrar nuevo seguro
+        </button>
+      </div>
+    </div>
+
     <div class="row g-3">
       <div class="col-md-6">
         <br>
@@ -212,6 +272,34 @@
     </div>
   </form>
 
+  {{-- modal para registrar un seguro nuevo en el catalogo --}}
+  <div class="modal fade" id="modalNuevoSeguro" tabindex="-1" role="dialog" aria-labelledby="modalNuevoSeguroLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNuevoSeguroLabel">
+            <i class="fas fa-file-medical"></i> Nuevo seguro médico
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="nombre_nuevo_seguro">Nombre del seguro</label>
+            <input type="text" class="form-control" id="nombre_nuevo_seguro" placeholder="Ej. GNP, AXA, Seguros Monterrey...">
+          </div>
+          <div id="alerta-nuevo-seguro"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btn-guardar-nuevo-seguro">
+            <i class="fas fa-check"></i> Guardar y asociar al paciente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('scripts')
@@ -249,6 +337,119 @@
         }
       }
     }
+
+    // seguros medicos (badges + catalogo + modal)
+    const pacienteIdSeguros = {{ $paciente->id }};
+
+    function csrfToken(){
+      return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    function pintarBadgeSeguro(seguro){
+      var contenedor = document.getElementById('seguros-badges');
+      var msg = document.getElementById('sin-seguros-msg');
+      if (msg) msg.remove();
+
+      var span = document.createElement('span');
+      span.className = 'badge badge-pill badge-info seguro-badge';
+      span.dataset.id = seguro.id;
+      span.innerHTML = seguro.nombre +
+        ' <a href="#" class="text-white ml-2 quitar-seguro" data-id="' + seguro.id + '" title="Quitar seguro">&times;</a>';
+
+      contenedor.appendChild(span);
+
+      var opcion = document.querySelector('#seguro_medico_select option[value="' + seguro.id + '"]');
+      if (opcion) opcion.remove();
+    }
+
+    document.getElementById('btn-agregar-seguro').addEventListener('click', function(){
+      var select = document.getElementById('seguro_medico_select');
+      var seguroId = select.value;
+
+      if (!seguroId) return;
+
+      fetch('/paciente/seguro-medico/asociar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paciente_id: pacienteIdSeguros, seguro_medico_id: seguroId, _token: csrfToken() })
+      })
+      .then(res => res.json())
+      .then(function(seguro){
+        pintarBadgeSeguro(seguro);
+        select.value = '';
+      })
+      .catch(err => console.error('Error al asociar seguro:', err));
+    });
+
+    document.getElementById('seguros-badges').addEventListener('click', function(event){
+      if (!event.target.classList.contains('quitar-seguro')) return;
+
+      event.preventDefault();
+
+      var seguroId = event.target.dataset.id;
+      var seguroNombre = event.target.closest('.seguro-badge').textContent.replace('×', '').trim();
+      var badge = event.target.closest('.seguro-badge');
+
+      fetch('/paciente/seguro-medico/quitar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paciente_id: pacienteIdSeguros, seguro_medico_id: seguroId, _token: csrfToken() })
+      })
+      .then(res => res.json())
+      .then(function(){
+        var select = document.getElementById('seguro_medico_select');
+        var opt = document.createElement('option');
+        opt.value = seguroId;
+        opt.textContent = seguroNombre;
+        select.appendChild(opt);
+
+        badge.remove();
+
+        if (!document.querySelector('.seguro-badge')) {
+          document.getElementById('seguros-badges').innerHTML = '<span class="text-muted" id="sin-seguros-msg">Sin seguros médicos registrados</span>';
+        }
+      })
+      .catch(err => console.error('Error al quitar seguro:', err));
+    });
+
+    document.getElementById('btn-guardar-nuevo-seguro').addEventListener('click', function(){
+      var nombre = document.getElementById('nombre_nuevo_seguro').value.trim();
+      var alertaDiv = document.getElementById('alerta-nuevo-seguro');
+
+      alertaDiv.innerHTML = '';
+
+      if (!nombre) {
+        alertaDiv.innerHTML = '<div class="alert alert-danger py-2 mt-2 mb-0">Escribe el nombre del seguro.</div>';
+        return;
+      }
+
+      fetch('/seguros-medicos/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombre, paciente_id: pacienteIdSeguros, _token: csrfToken() })
+      })
+      .then(function(res){
+        if (!res.ok) {
+          return res.json().then(function(data){ throw data; });
+        }
+        return res.json();
+      })
+      .then(function(seguro){
+        pintarBadgeSeguro(seguro);
+        document.getElementById('nombre_nuevo_seguro').value = '';
+
+        $('#modalNuevoSeguro').modal('hide');
+      })
+      .catch(function(err){
+        var mensaje = (err && err.errors && err.errors.nombre) ? err.errors.nombre[0] : 'No fue posible guardar el seguro médico.';
+        alertaDiv.innerHTML = '<div class="alert alert-danger py-2 mt-2 mb-0">' + mensaje + '</div>';
+      });
+    });
+
+    $('#modalNuevoSeguro').on('hidden.bs.modal', function () {
+      document.getElementById('nombre_nuevo_seguro').value = '';
+      document.getElementById('alerta-nuevo-seguro').innerHTML = '';
+    });
 
   </script>
 

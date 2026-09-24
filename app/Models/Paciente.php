@@ -43,4 +43,13 @@ class Paciente extends Model
     public function getNotasHistoricas(){
         return $this->hasMany('App\Models\NotaHistorica', 'paciente_id');
     }
+
+    public function getSegurosMedicos(){
+        return $this->belongsToMany(
+            \App\Models\SeguroMedico::class,
+            'paciente_seguro_medico',
+            'paciente_id',
+            'seguro_medico_id'
+        )->withTimestamps();
+    }
 }
