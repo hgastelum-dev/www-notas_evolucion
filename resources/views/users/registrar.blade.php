@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.sbadmin')
 
 @section('styles')
 
@@ -30,7 +30,7 @@
   </style>
 @endsection
 
-@section('content')
+@section('container')
     
   <h3 class="mt-5"><i class="fa-solid fa-user"></i> Crear usuario</h3>
   <hr>
@@ -77,7 +77,7 @@
 
       <div class="col-md-12">
         <div class="form-check form-switch form-switch-md">
-    		  <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo" @if(old('activo') == 'on') {{ 'checked' }} @endif>
+    		  <input class="" type="checkbox" role="switch" id="activo" name="activo" @if(old('activo') == 'on') {{ 'checked' }} @endif>
     		  <label class="form-check-label" for="activo">
     		  	&nbsp; Activar acceso de usuario
     		  </label>
@@ -110,17 +110,24 @@
       		</thead>
       		<tbody>
       		@foreach( $permisos as $permiso )
-      			<tr>
-      				<td>
-      					<div class="form-check form-switch form-switch-md">
-      					  <input class="form-check-input" type="checkbox" role="switch" id="check-{{ $permiso->id }}" name="permisos[]" value="{{ $permiso->name }}">
-      					  <label class="form-check-label" for="check-{{ $permiso->id }}">
-      					  	&nbsp; {{ $permiso->name }}
-      					  </label>
-      					</div>
-      				</td>
-      			</tr>
-      		@endforeach
+              <tr @if(in_array($permiso->name, ['CitaAtender', 'CitaGestionar', 'CitaGestionarTodas'])) class="table-warning" @endif>
+                  <td>
+                      <div class="form-check form-switch form-switch-md">
+                        <input class="" type="checkbox" role="switch" id="check-{{ $permiso->id }}" name="permisos[]" value="{{ $permiso->name }}">
+                        <label class="form-check-label" for="check-{{ $permiso->id }}">
+                          &nbsp; {{ $permiso->name }}
+                          @if($permiso->name == 'CitaAtender')
+                              <span class="badge bg-primary text-white">Doctor: atender citas</span>
+                          @elseif($permiso->name == 'CitaGestionar')
+                              <span class="badge bg-primary text-white">Doctor: administrar su agenda</span>
+                          @elseif($permiso->name == 'CitaGestionarTodas')
+                              <span class="badge bg-info text-white">Recepci&oacute;n: administrar todas las agendas</span>
+                          @endif
+                        </label>
+                      </div>
+                  </td>
+              </tr>
+          @endforeach
       		</tbody>
       	</table>
       </div>

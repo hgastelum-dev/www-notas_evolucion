@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.sbadmin')
 
 @section('styles')
 
@@ -28,7 +28,7 @@
   </style>
 @endsection
 
-@section('content')
+@section('container')
     
   <h3 class="mt-5"><i class="fa-solid fa-pen-to-square"></i> Editar usuario</h3>
   <hr>
@@ -48,7 +48,7 @@
   @can('Usuarios_Eliminar')
     <p>
       <a href="/usuarios/confirm/delete/{{ $user->id }}/usuario" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Eliminar registro de usuario">
-        <i class="fa-solid fa-trash-can"></i>
+        Borrar
       </a>
     </p>
   @endcan
@@ -94,7 +94,7 @@
 
         <div class="col-md-12">
           <div class="form-check form-switch form-switch-md">
-            <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo" @if($user->activo) {{ 'checked' }} @endif>
+            <input class="" type="checkbox" role="switch" id="activo" name="activo" @if($user->activo) {{ 'checked' }} @endif>
             <label class="form-check-label" for="activo">
               &nbsp; Activar acceso de usuario
             </label>
@@ -127,7 +127,16 @@
           <tbody>
           @foreach($permisosNoAsignados as $permiso)
             <tr>
-              <td>{{ $permiso->name }}</td>
+              <td>
+                  {{ $permiso->name }}
+                  @if($permiso->name == 'CitaAtender')
+                      <span class="badge bg-primary">Doctor: atender</span>
+                  @elseif($permiso->name == 'CitaGestionar')
+                      <span class="badge bg-primary">Doctor: su agenda</span>
+                  @elseif($permiso->name == 'CitaGestionarTodas')
+                      <span class="badge bg-info text-dark">Recepci&oacute;n: todas las agendas</span>
+                  @endif
+              </td>
               <td>
                 <form method="POST" action="/usuarios/permiso/asignar">
                   
@@ -138,7 +147,7 @@
                   <a class="btn btn-success" href="/usuarios/permiso/asignar"
                         onclick="event.preventDefault();
                         this.closest('form').submit();" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Asignar permiso">
-                    <i class="fa-solid fa-check"></i>
+                    Asignar
                   </a>
                 </form>
               </td>
@@ -160,7 +169,16 @@
           <tbody>
           @foreach($user->permissions as $permiso)
             <tr>
-              <td>{{ $permiso->name }}</td>
+              <td>
+                  {{ $permiso->name }}
+                  @if($permiso->name == 'CitaAtender')
+                      <span class="badge bg-primary text-white">Doctor: atender</span>
+                  @elseif($permiso->name == 'CitaGestionar')
+                      <span class="badge bg-primary text-white">Doctor: su agenda</span>
+                  @elseif($permiso->name == 'CitaGestionarTodas')
+                      <span class="badge bg-info text-white">Recepci&oacute;n: todas las agendas</span>
+                  @endif
+              </td>
               <td>
                 <form method="POST" action="/usuarios/permiso/denegar">
                   
@@ -171,7 +189,7 @@
                   <a class="btn btn-danger" href="/usuarios/permiso/denegar"
                         onclick="event.preventDefault();
                         this.closest('form').submit();" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Revocar permiso">
-                    <i class="fa-solid fa-ban"></i>
+                    Remover
                   </a>
                 </form>
               </td>

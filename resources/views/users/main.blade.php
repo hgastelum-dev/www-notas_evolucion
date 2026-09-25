@@ -35,30 +35,35 @@
   <hr>
 
   <p class="text-end">
-  	<div class="btn-group text-end" role="group" aria-label="Acciones para gestion de usuarios">
-  	  <div class="btn-group" role="group">
-  	    <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-  	      <i class="fa-solid fa-file-arrow-down"></i> Descargar listado
-  	    </button>
-  	    <ul class="dropdown-menu">
-  	      <li>
-  	      	<a class="dropdown-item" href="usuarios/exportar">
-  	      		<i class="fa-solid fa-file-excel"></i> Excel
-  	      	</a>
-  	      </li>
-  	      <li>
-  	      	<a class="dropdown-item" href="usuarios/exportar/pdf">
-  	      		<i class="fa-solid fa-file-pdf"></i> PDF
-  	      	</a>
-  	      </li>
-  	    </ul>
-  	  </div>
-  	  @can('Usuarios_Eliminar')
-  	  <button type="button" class="btn btn-danger" id="btn-delete-multi">
-  		<i class="fa-solid fa-trash-can"></i>
-  	  </button>
-  	  @endcan
-  	</div>
+    @can('Usuarios_Crear')
+    <a href="/usuarios/registrar" class="btn btn-success">
+        <i class="fa-solid fa-user-plus"></i> Nuevo usuario
+    </a>
+    @endcan
+    <div class="btn-group text-end" role="group" aria-label="Acciones para gestion de usuarios">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-file-arrow-down"></i> Descargar listado
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a class="dropdown-item" href="usuarios/exportar">
+              <i class="fa-solid fa-file-excel"></i> Excel
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="usuarios/exportar/pdf">
+              <i class="fa-solid fa-file-pdf"></i> PDF
+            </a>
+          </li>
+        </ul>
+      </div>
+      @can('Usuarios_Eliminar')
+      <button type="button" class="btn btn-danger" id="btn-delete-multi">
+        Borrar
+      </button>
+      @endcan
+    </div>
   </p>
 
   <div class="table-responsive">
@@ -66,17 +71,18 @@
     <table class="table table-sm align-middle text-nowrap table-hover" id="table-users">
       <thead>
         <tr>
-        	<th>Nombre(s) y apellido(s)</th>
-          <th>Correo electronico</th>
-          <th>Estado</th>
-          @can('Usuarios_Eliminar')
-          <th></th>
-          <th></th>
-          @endcan
-          @if(Auth::user()->can('Usuarios_Eliminar') || Auth::user()->can('Usuarios_Editar') || Auth::user()->can('Usuarios_Gestionar_Permisos'))
-          <th></th>
-          @endif
-          <th>Fecha de registro</th>
+            <th>Nombre(s) y apellido(s)</th>
+            <th>Correo electronico</th>
+            <th>Estado</th>
+            <th>Rol</th>  
+            @can('Usuarios_Eliminar')
+            <th></th>
+            <th></th>
+            @endcan
+            @if(Auth::user()->can('Usuarios_Eliminar') || Auth::user()->can('Usuarios_Editar') || Auth::user()->can('Usuarios_Gestionar_Permisos'))
+            <th></th>
+            @endif
+            <th>Fecha de registro</th>
         </tr>
       </thead>
       <tbody>
@@ -86,29 +92,40 @@
         		<td>{{ $user->name }}</td>
         		<td>{{ $user->email }}</td>
         		<td>
-        			@if($user->activo)
-        				<i class="fa-solid fa-circle text-success"></i> Activo
-        			@else
-        				<i class="fa-solid fa-circle text-warning"></i> Inactivo
-        			@endif
-        			
-        		</td>
+                @if($user->activo)
+                    <i class="fa-solid fa-circle text-success"></i> Activo
+                @else
+                    <i class="fa-solid fa-circle text-warning"></i> Inactivo
+                @endif
+            </td>
+            <td>
+                {{-- rol clinico, derivado de los permisos reales del usuario --}}
+                @if($user->can('CitaAtender'))
+                    <span class="badge bg-primary text-white"><i class="fa-solid fa-user-doctor"></i> Doctor</span>
+                @endif
+                @if($user->can('CitaGestionarTodas'))
+                    <span class="badge bg-info text-white"><i class="fa-solid fa-headset"></i> Recepci&oacute;n</span>
+                @endif
+                @if(!$user->can('CitaAtender') && !$user->can('CitaGestionarTodas'))
+                    <span class="badge bg-secondary">Sin rol cl&iacute;nico</span>
+                @endif
+            </td>
         		@if(Auth::user()->can('Usuarios_Eliminar') || Auth::user()->can('Usuarios_Editar') || Auth::user()->can('Usuarios_Gestionar_Permisos'))
         		<td>
         			<a class="btn btn-dark" href="/usuarios/editar/{{ $user->id }}" role="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modificar usuario">
-        				<i class="fa-solid fa-wrench"></i>
+        				Editar
         			</a>
         		</td>
         		@endif
         		@can('Usuarios_Eliminar')
         		<td>
         			<a class="btn btn-danger" href="/usuarios/confirm/delete/{{ $user->id }}/usuarios" role="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Borrar usuario">
-                  <i class="fa-solid fa-trash-can"></i>
+                  Borrar
               </a>
             </td>
             <td>
         			<div class="form-check form-switch form-switch-md">
-  							<input class="form-check-input checkbox-users" type="checkbox" role="switch" id="check-{{ $user->id }}" value="{{ $user->id }}" data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-title="Seleccionar para eliminar">
+  							<input class=" checkbox-users" type="checkbox" role="switch" id="check-{{ $user->id }}" value="{{ $user->id }}" data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-title="Seleccionar para eliminar">
   							<label class="form-check-label" for="check-{{ $user->id }}"></label>
   						</div>
         		</td>

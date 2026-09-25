@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.sbadmin')
 
 @section('styles')
 
@@ -9,7 +9,7 @@
   </style>
 @endsection
 
-@section('content')
+@section('container')
     
   <h3 class="mt-5"><i class="fa-solid fa-user"></i> Borrar registro de usuario</h3>
   <hr>

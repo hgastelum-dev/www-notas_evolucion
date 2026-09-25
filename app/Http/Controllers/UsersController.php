@@ -50,7 +50,7 @@ class UsersController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:1|max:250|unique:users',
             'email' => 'required|string|email|min:1|max:255|unique:users',
-            'password' => 'required|string|min:1|max:250'
+            'password' => 'required|string|min:8|max:250'
         ]);
  
         if ( $validator->fails() ){
@@ -93,7 +93,7 @@ class UsersController extends Controller
             return view('redirecciones.permiso-denegado');
         }
 
-        $user = User::find($userId);
+        $user = User::findOrFail($userId);
 
         $permisosNoAsignados = Permission::whereNotIn('id', $user->permissions->modelKeys())->get();
 
@@ -109,17 +109,17 @@ class UsersController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:1|max:250|unique:users,name,' . $request->user_id,
             'email' => 'required|string|email|min:1|max:255|unique:users,email,' . $request->user_id,
-            'password' => 'required|string|min:1|max:250'
+            'password' => 'required|string|min:8|max:250'
         ]);
- 
+
         if ( $validator->fails() ){
             return redirect('/usuarios/editar/' . $request->user_id)
                 ->withErrors($validator);
         }
-        
+
         $fechaHoraActual = Carbon::now('America/Los_Angeles');
 
-        $user = User::find($request->user_id);
+        $user = User::findOrFail($request->user_id);
 
         $user->name = $request->name;
         $user->email = $request->email;
@@ -127,12 +127,8 @@ class UsersController extends Controller
         if($request->password != '**********'){
             $user->password = Hash::make($request->password);
         }
-        
-        if ($request->activo){
-            $user->activo = true;
-        } else {
-            $user->activo = false;
-        }
+
+        $user->activo = (bool) $request->activo;
 
         $user->updated_at = $fechaHoraActual;
 
@@ -149,7 +145,7 @@ class UsersController extends Controller
             return view('redirecciones.permiso-denegado');
         }
 
-        $user = User::find($userId);
+        $user = User::findOrFail($userId);
 
         return view('users.eliminar', compact(['user', 'link']));
     }
@@ -160,11 +156,18 @@ class UsersController extends Controller
             return view('redirecciones.permiso-denegado');
         }
 
-        $user = User::find($request->user_id);
+        // nadie puede eliminar su propia cuenta mientras tiene la sesion iniciada
+        if ((int) $request->user_id === (int) Auth::id()){
+            $request->session()->flash('userAlerts', ['titulo' => 'Operación no permitida', 'mensaje' => 'No puedes eliminar tu propia cuenta mientras tienes la sesión iniciada.', 'icono' => 'error']);
+            return redirect('/usuarios');
+        }
+
+        $user = User::findOrFail($request->user_id);
+        $nombreEliminado = $user->name;
 
         $user->delete();
 
-        $request->session()->flash('userAlerts', ['titulo' => 'Registro de usuario eliminado exitosamente:', 'mensaje' => $user->name, 'icono' => 'info']);
+        $request->session()->flash('userAlerts', ['titulo' => 'Registro de usuario eliminado exitosamente:', 'mensaje' => $nombreEliminado, 'icono' => 'info']);
 
         return redirect('/usuarios');
     }
@@ -176,17 +179,38 @@ class UsersController extends Controller
         }
 
         $usersIds = json_decode($request->users_ids);
-        $deleteConcatNames = '';
 
-        foreach($usersIds as $key => $userId){
-            $usuario = User::find($userId);
-
-            $deleteConcatNames .= $usuario->name . ' / ';
-
-            User::destroy($userId);
+        if (!is_array($usersIds) || count($usersIds) < 1){
+            $request->session()->flash('userAlerts', ['titulo' => 'Error', 'mensaje' => 'No se recibió ningún usuario para eliminar.', 'icono' => 'error']);
+            return redirect('/usuarios');
         }
 
-        $request->session()->flash('userAlerts', ['titulo' => 'Operacion realizada correctamente', 'mensaje' => 'Registros de usuario eliminados: ' . $deleteConcatNames, 'icono' => 'success']);
+        $nombresEliminados = [];
+
+        foreach($usersIds as $userId){
+
+            // nadie puede eliminarse a si mismo en un borrado masivo
+            if ((int) $userId === (int) Auth::id()){
+                continue;
+            }
+
+            $usuario = User::find($userId);
+
+            if (!$usuario){
+                continue; // id invalido o ya eliminado, se ignora en vez de tronar
+            }
+
+            $nombresEliminados[] = $usuario->name;
+
+            $usuario->delete();
+        }
+
+        if (count($nombresEliminados) < 1){
+            $request->session()->flash('userAlerts', ['titulo' => 'Aviso', 'mensaje' => 'No se eliminó ningún registro (¿intentaste eliminar tu propia cuenta o los ids ya no existían?).', 'icono' => 'warning']);
+            return redirect('/usuarios');
+        }
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Operacion realizada correctamente', 'mensaje' => 'Registros de usuario eliminados: ' . implode(' / ', $nombresEliminados), 'icono' => 'success']);
 
         return redirect('/usuarios');
     }
@@ -197,9 +221,20 @@ class UsersController extends Controller
             return view('redirecciones.permiso-denegado');
         }
 
-        $user = User::find($request->user_id);
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'permiso' => 'required|exists:permissions,name',
+        ]);
+
+        if ($validator->fails()){
+            return redirect('/usuarios');
+        }
+
+        $user = User::findOrFail($request->user_id);
 
         $user->revokePermissionTo($request->permiso);
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Permiso revocado', 'mensaje' => $request->permiso, 'icono' => 'info']);
 
         return redirect('/usuarios/editar/' . $user->id);
     }
@@ -210,9 +245,20 @@ class UsersController extends Controller
             return view('redirecciones.permiso-denegado');
         }
 
-        $user = User::find($request->user_id);
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'permiso' => 'required|exists:permissions,name',
+        ]);
+
+        if ($validator->fails()){
+            return redirect('/usuarios');
+        }
+
+        $user = User::findOrFail($request->user_id);
 
         $user->givePermissionTo($request->permiso);
+
+        $request->session()->flash('userAlerts', ['titulo' => 'Permiso asignado', 'mensaje' => $request->permiso, 'icono' => 'success']);
 
         return redirect('/usuarios/editar/' . $user->id);
     }

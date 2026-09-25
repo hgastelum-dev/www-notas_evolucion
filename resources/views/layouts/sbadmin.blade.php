@@ -102,6 +102,34 @@
                 </div>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('usuarios*') || request()->is('usuario*') ? '' : 'collapsed' }}"
+                   href="#"
+                   data-toggle="collapse"
+                   data-target="#collapseUsuarios"
+                   aria-expanded="{{ request()->is('usuarios*') ? 'true' : 'false' }}"
+                   aria-controls="collapseUsuarios">
+
+                    <i class="fas fa-clock"></i>
+                    <span>Usuarios</span>
+                </a>
+
+                <div id="collapseUsuarios"
+                     class="collapse {{ request()->is('usuarios*') ? 'show' : '' }}"
+                     aria-labelledby="headingUsuarios"
+                     data-parent="#accordionSidebar">
+
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Opciones:</h6>
+
+                        <a class="collapse-item {{ request()->is('usuarios') ? 'active' : '' }}"
+                           href="/usuarios">
+                            Gestionar usuarios
+                        </a>
+                    </div>
+                </div>
+            </li>
+
             <hr class="sidebar-divider">
 
             <div class="text-center d-none d-md-inline">
