@@ -803,16 +803,59 @@ class CitaController extends Controller {
 
     $this->assertPuedeAtenderCita($cita);
 
-    // filtrar solo tratamientos
+    // solo nivel raiz (padre_id 0); los subpuntos van anidados via getTipoPlanAnidado
     $tratamientos = $cita->getPlaneacion->filter(function ($plan) {
-        return $plan->getTipoPlan->tipo_plan == 'Tratamiento';
+        return $plan->getTipoPlan->tipo_plan == 'Tratamiento' && $plan->padre_id == 0;
     });
 
     if ($tratamientos->isEmpty()) {
         return back()->with('error', 'No hay tratamientos para generar receta');
     }
 
-    $pdf = Pdf::loadView('pdf.receta', compact('cita', 'tratamientos'));
+    // requerido para que el bloque "PLAN:" de pdf.receta se renderice
+    $planesAgrupado = $cita->getPlaneacion->groupBy(function ($item) {
+        return $item->getTipoPlan->tipo_plan;
+    })->all();
+
+    $pdf = Pdf::loadView('pdf.receta', compact('cita', 'tratamientos', 'planesAgrupado'));
+
+    return $pdf->stream('receta.pdf');
+  }
+
+  /**
+   * generar el PDF de la receta a partir del HTML editado en el editor
+   * quill del front-end... el contenido editado es de un solo uso, solo para esta
+   * impresion... si el doctor quiere que el cambio quede permanente, debe
+   * editarlo desde el flujo normal de Planeación (SOAP04), no desde aqui...
+   */
+  public function generarDesdeEditor(Request $request){
+
+    $validated = $request->validate([
+      'cita_id' => 'required|exists:citas_pacientes,id',
+      'contenido_html' => 'required|string',
+      // que tan abajo empieza el texto, para cuadrar con la hoja
+      // membretada. 0-600px de rango razonable, nunca negativo...
+      'margin_top' => 'nullable|integer|min:0|max:600',
+    ]);
+
+    $cita = CitaPaciente::with(['getPaciente'])->findOrFail($validated['cita_id']);
+
+    $this->assertPuedeAtenderCita($cita);
+
+    // whitelist de tags permitidos que quill puede generar, evita que se
+    // cuele markup arbitrario en el PDF...
+    $contenidoLimpio = strip_tags(
+      $validated['contenido_html'],
+      '<p><br><strong><b><em><i><u><s><ul><ol><li><span><h1><h2><h3><blockquote>'
+    );
+
+    $pdf = Pdf::loadView('pdf.receta_editable', [
+      'cita' => $cita,
+      'contenidoHtml' => $contenidoLimpio,
+      // 200 = el mismo valor fijo en pdf.receta, si no llega
+      // nada valido desde el front, se cae a ese default...
+      'margenTop' => $validated['margin_top'] ?? 200,
+    ])->setPaper('letter', 'portrait');
 
     return $pdf->stream('receta.pdf');
   }

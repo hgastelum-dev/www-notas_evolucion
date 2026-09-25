@@ -1,6 +1,43 @@
 @extends('citas.atender')
 
 @section('seccion-cita')
+  
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+  <style type="text/css">
+    /* vista previa tamaño carta a escala, dentro del modal del editor */
+    .preview-carta-wrapper {
+        display: flex;
+        justify-content: center;
+        background: #e9ecef;
+        padding: 15px;
+        border-radius: 4px;
+    }
+    .preview-carta-pagina {
+        position: relative;
+        width: 400px;   /* 8.5in a escala */
+        height: 517px;  /* 11in a escala, misma proporcion (400/8.5 = 517/11) */
+        background: #fff;
+        box-shadow: 0 0 6px rgba(0,0,0,.35);
+        overflow: hidden;
+    }
+    .preview-carta-contenido {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        font-size: 11px;
+        line-height: 1.35;
+        color: #212529;
+    }
+    .preview-carta-contenido p { margin: 3px 0; }
+    .preview-carta-contenido ul,
+    .preview-carta-contenido ol { margin: 2px 0 6px 18px; }
+    .preview-carta-label {
+        text-align: center;
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 6px;
+    }
+  </style>
 
   <div class="mb-3">
     <br>
@@ -78,6 +115,109 @@
           <i class="fas fa-file-pdf"></i> Ver receta
         </button>
       </div>
+
+      {{--
+        snapshot de los tratamientos actuales, en el formato que se
+        precargara en el editor quill... es de solo lectura (d-none), nunca
+        se envia a ningun lado; solo sirve para "sembrar" el editor y para
+        el boton "Restaurar original"...
+      --}}
+      <div id="receta-contenido-original" class="d-none">
+        @foreach($planesAgrupado['Tratamiento'] as $tratamiento)
+          <p><strong>{{ $tratamiento->plan }}</strong></p>
+          @if($tratamiento->getTipoPlanAnidado->count() > 0)
+            <ul>
+              @foreach($tratamiento->getTipoPlanAnidado as $hijo)
+                <li>{{ $hijo->plan }}</li>
+              @endforeach
+            </ul>
+          @endif
+        @endforeach
+      </div>
+
+      {{-- modal con el editor quill --}}
+      <div class="modal fade" id="modal-receta-editor" tabindex="-1" aria-labelledby="recetaEditorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="recetaEditorLabel">
+                <i class="fas fa-file-medical-alt"></i> Editar receta antes de imprimir
+              </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="text-muted mb-2">
+                <i class="fas fa-info-circle"></i> Estos cambios son solo para esta impresión; no se guardan en el expediente del paciente.
+              </p>
+
+              {{-- control de posicion vertical, para cuadrar con la hoja membretada --}}
+              <div class="card card-body bg-light mb-3">
+                <label class="mb-1"><b><i class="fas fa-arrows-alt-v"></i> Posición vertical del texto</b></label>
+                <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-margen-subir-5" title="Subir 5px">▲▲</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-margen-subir-1" title="Subir 1px">▲</button>
+                  <input type="number" class="form-control form-control-sm text-center" id="margen-top-receta" style="width: 90px;" value="200" min="0" max="600">
+                  <span class="text-muted">px desde arriba</span>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-margen-bajar-1" title="Bajar 1px">▼</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-margen-bajar-5" title="Bajar 5px">▼▼</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm ml-auto" id="btn-margen-guardar-default">
+                    <i class="fas fa-save"></i> Recordar en este equipo
+                  </button>
+                </div>
+                <small class="text-muted mt-1" id="margen-guardado-msg" style="display:none;">
+                  <i class="fas fa-check text-success"></i> Guardado. La próxima receta ya abrirá con esta posición.
+                </small>
+              </div>
+
+              <div class="row">
+                  <div class="col-md-7">
+                      <div id="quill-toolbar-receta">
+                        <span class="ql-formats">
+                          <button class="ql-bold"></button>
+                          <button class="ql-italic"></button>
+                          <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-list" value="ordered"></button>
+                          <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-clean"></button>
+                        </span>
+                      </div>
+                      <div id="quill-editor-receta" style="height: 350px; background: #fff;"></div>
+                  </div>
+                  <div class="col-md-5">
+                      <div class="preview-carta-wrapper">
+                          <div class="preview-carta-pagina">
+                              <div id="preview-carta-contenido" class="preview-carta-contenido"></div>
+                          </div>
+                      </div>
+                      <div class="preview-carta-label">Vista previa (hoja carta a escala)</div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="btn-restaurar-receta">
+                <i class="fas fa-undo"></i> Restaurar original
+              </button>
+              <button type="button" class="btn btn-success" id="btn-generar-pdf-receta">
+                <i class="fas fa-file-pdf"></i> Generar PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{-- form oculto que manda el HTML editado al backend, apuntando al iframe de abajo --}}
+      <form id="form-receta-editor" method="POST" action="{{ route('receta.generar.pdf') }}" target="iframe-receta" style="display:none;">
+        @csrf
+        <input type="hidden" name="cita_id" value="{{ $cita->id }}">
+        <input type="hidden" name="margin_top" id="input-margin-top">
+        <textarea name="contenido_html" id="input-contenido-receta"></textarea>
+      </form>
     @endif
 
     {{-- agrupado --}}
@@ -254,7 +394,7 @@
         </div>
 
         <div class="modal-body p-0" style="height: 80vh;">
-          <iframe id="iframe-receta" src="" width="100%" height="100%" style="border:none;"></iframe>
+          <iframe id="iframe-receta" name="iframe-receta" src="" width="100%" height="100%" style="border:none;"></iframe>
         </div>
 
       </div>
@@ -264,7 +404,8 @@
 @endsection
 
 @section('scripts')
-
+  
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <script type="text/javascript">
 
     $(function () {
@@ -346,13 +487,93 @@
       document.getElementById("form-delete-plan").submit();
     }
 
-    function abrirReceta(citaId){
-      var url = "/receta/" + citaId;
+    // editor de receta con quill... la edicion es solo para esta
+    // impresion, nunca toca los registros..
+    var quillReceta = null;
 
-      document.getElementById('iframe-receta').src = url;
+    function inicializarQuillReceta(){
+      if (quillReceta) return quillReceta;
 
-      $('#modal-receta').modal('show');
+      quillReceta = new Quill('#quill-editor-receta', {
+        theme: 'snow',
+        modules: { toolbar: '#quill-toolbar-receta' }
+      });
+
+      quillReceta.on('text-change', actualizarPreviewReceta); 
+
+      return quillReceta;
     }
+
+    function contenidoOriginalReceta(){
+      return document.getElementById('receta-contenido-original').innerHTML.trim();
+    }
+
+    // posicion vertical del texto, recordada por equipo/impresora
+    // (localStorage), no por paciente ni por cita...
+    var LS_KEY_MARGEN_RECETA = 'receta_margen_top_px';
+    // escala usada en el preview: 400px de ancho representan 8.5in (=816px a 96dpi)
+    var ESCALA_PREVIEW_CARTA = 400 / 816;
+
+    function actualizarPreviewReceta(){
+        var contenedor = document.getElementById('preview-carta-contenido');
+        if (!contenedor || !quillReceta) return;
+
+        var margenPx = parseInt(document.getElementById('margen-top-receta').value || 0, 10);
+        contenedor.style.top = Math.round(margenPx * ESCALA_PREVIEW_CARTA) + 'px';
+        contenedor.innerHTML = quillReceta.root.innerHTML;
+    }
+
+    function margenTopGuardado(){
+      var valor = localStorage.getItem(LS_KEY_MARGEN_RECETA);
+      return valor ? parseInt(valor, 10) : 200;
+    }
+
+    function ajustarMargen(delta){
+      var input = document.getElementById('margen-top-receta');
+      var nuevo = parseInt(input.value || 0, 10) + delta;
+      if (nuevo < 0) nuevo = 0;
+      input.value = nuevo;
+      actualizarPreviewReceta();
+    }
+
+    document.getElementById('btn-margen-subir-5').addEventListener('click', function(){ ajustarMargen(-5); });
+    document.getElementById('btn-margen-subir-1').addEventListener('click', function(){ ajustarMargen(-1); });
+    document.getElementById('btn-margen-bajar-1').addEventListener('click', function(){ ajustarMargen(1); });
+    document.getElementById('btn-margen-bajar-5').addEventListener('click', function(){ ajustarMargen(5); });
+    document.getElementById('margen-top-receta').addEventListener('input', actualizarPreviewReceta);
+
+    document.getElementById('btn-margen-guardar-default').addEventListener('click', function(){
+      localStorage.setItem(LS_KEY_MARGEN_RECETA, document.getElementById('margen-top-receta').value);
+
+      var msg = document.getElementById('margen-guardado-msg');
+      msg.style.display = 'inline';
+      setTimeout(function(){ msg.style.display = 'none'; }, 2500);
+    });
+
+    function abrirReceta(citaId){
+      var editor = inicializarQuillReceta();
+
+      editor.root.innerHTML = contenidoOriginalReceta();
+      document.getElementById('margen-top-receta').value = margenTopGuardado();
+      actualizarPreviewReceta();
+      $('#modal-receta-editor').modal('show');
+    }
+
+    document.getElementById('btn-restaurar-receta').addEventListener('click', function(){
+      quillReceta.root.innerHTML = contenidoOriginalReceta();
+      document.getElementById('margen-top-receta').value = margenTopGuardado();
+      actualizarPreviewReceta();
+    });
+
+    document.getElementById('btn-generar-pdf-receta').addEventListener('click', function(){
+      document.getElementById('input-contenido-receta').value = quillReceta.root.innerHTML;
+      document.getElementById('input-margin-top').value = document.getElementById('margen-top-receta').value;
+
+      $('#modal-receta-editor').modal('hide');
+      $('#modal-receta').modal('show');
+
+      document.getElementById('form-receta-editor').submit();
+    });
   </script>
   
 @endsection
