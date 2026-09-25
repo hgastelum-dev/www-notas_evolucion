@@ -354,6 +354,7 @@
   <script src="{{ asset('lib-tmp/js/fullcalendar-4.4.3/packages/core/locales/es.js') }}" type="text/javascript"></script>
   <script type="text/javascript" src="{{ asset('lib-tmp/js/sweetalert2/dist/sweetalert2.all.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('lib-tmp/js/select2/dist/js/select2.full.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('agenda.js') }}"></script>
 
   @if(session('userAlerts'))
     <script type="text/javascript">
@@ -370,9 +371,7 @@
 
   @if(isset(session('PacienteRegistrado')['mensaje']))
     <script type="text/javascript">
-      var modalSesionNueva = new bootstrap.Modal(document.getElementById('modalSesionNueva'));
-
-      modalSesionNueva.show();
+      $('#modalSesionNueva').modal('show');
 
       getPaciente(document.getElementById('paciente_id').value);
     </script>
@@ -380,12 +379,8 @@
 
   @if(session('CitaInicialOpciones'))
     <script type="text/javascript">
-      var modalInicialOpciones = new bootstrap.Modal(document.getElementById('modalInicialOpciones'));
-
-      modalInicialOpciones.show();
+      $('#modalInicialOpciones').modal('show');
     </script>
   @endif
-  
-  <script type="text/javascript" src="{{ asset('agenda.js') }}"></script>
 
 @endsection

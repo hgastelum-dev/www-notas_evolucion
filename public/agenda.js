@@ -339,11 +339,17 @@ function getPaciente(pacienteId) {
     hour12: false,
   });
 
-  document.getElementById('fecha-nueva').value = formattedDate;
-  document.getElementById('hora-inicia-nueva').value = time;
+  $('#fecha-nueva').datetimepicker('date', formattedDate);
+  $('#hora-inicia-nueva').datetimepicker('date', time);
 
   arrayNvasSesiones = [];
+  indiceEditando = null; // si cambias de paciente, cancela cualquier edicion en curso
   document.getElementById("listado-nuevas").innerHTML = "";
+
+  var botonAgregar = document.getElementById("campos-nva-sesion");
+  botonAgregar.innerHTML = '<i class="fas fa-arrow-down"></i> Agregar sesi&oacute;n';
+  botonAgregar.classList.remove('btn-warning');
+  botonAgregar.classList.add('btn-success');
   
   document.getElementById("userAlertNuevas").innerHTML = "";
 
@@ -373,6 +379,7 @@ function getPaciente(pacienteId) {
 }
 
 var arrayNvasSesiones = [];
+var indiceEditando = null;
 
 document.getElementById("campos-nva-sesion").addEventListener("click", function(event){
 
@@ -395,7 +402,12 @@ document.getElementById("campos-nva-sesion").addEventListener("click", function(
       return false;
   }
 
-  if (arrayNvasSesiones.filter(x => x.fechaNva === fechaNva).length){
+  // al validar duplicados, ignora la fila que se esta editando
+  var fechaDuplicada = arrayNvasSesiones.some(function(sesionExistente, indice){
+    return sesionExistente.fechaNva === fechaNva && indice !== indiceEditando;
+  });
+
+  if (fechaDuplicada){
         
     Swal.fire({
       position: 'top-end',
@@ -410,13 +422,29 @@ document.getElementById("campos-nva-sesion").addEventListener("click", function(
     return false;
   }
 
-  nuevaSesion = {
-    pacienteId: pacienteId, 
-    fechaNva: fechaNva,
-    horaIniciaNva: horaIniciaNva
-  }
+  // si estamos editando, actualiza esa entrada; si no, agrega una nueva
+  if (indiceEditando !== null){
 
-  arrayNvasSesiones.push(nuevaSesion);
+    arrayNvasSesiones[indiceEditando].fechaNva = fechaNva;
+    arrayNvasSesiones[indiceEditando].horaIniciaNva = horaIniciaNva;
+
+    indiceEditando = null;
+
+    var boton = document.getElementById("campos-nva-sesion");
+    boton.innerHTML = '<i class="fas fa-arrow-down"></i> Agregar sesi&oacute;n';
+    boton.classList.remove('btn-warning');
+    boton.classList.add('btn-success');
+
+  } else {
+
+    nuevaSesion = {
+      pacienteId: pacienteId, 
+      fechaNva: fechaNva,
+      horaIniciaNva: horaIniciaNva
+    }
+
+    arrayNvasSesiones.push(nuevaSesion);
+  }
 
   actualizarListado();
 });
@@ -433,18 +461,36 @@ function actualizarListado(){
         tablaSesionesNuevas += "<td><i class='fas fa-arrow-up'></i> "+arrayNvasSesiones[i].fechaNva+"</td>";
         tablaSesionesNuevas += "<td><i class='fas fa-arrow-down'></i> "+arrayNvasSesiones[i].horaIniciaNva+"</td>";
         tablaSesionesNuevas += "<td><i class='fas fa-arrow-down'></i> N/A</td>";
-        
-        tablaSesionesNuevas += "<td><button class='btn btn-danger' onclick='eliminarSesionObjeto("+i+")'><i class='fas fa-trash'></i></button></td>";
+
+        tablaSesionesNuevas += "<td>";
+        tablaSesionesNuevas += "<button class='btn btn-primary btn-sm' onclick='editarSesionObjeto("+i+")'><i class='fas fa-pencil-alt'></i></button> ";
+        tablaSesionesNuevas += "<button class='btn btn-danger btn-sm' onclick='eliminarSesionObjeto("+i+")'><i class='fas fa-trash'></i></button>";
+        tablaSesionesNuevas += "</td>";
         tablaSesionesNuevas += "</tr>";
       }
   } else {
 
-      tablaSesionesNuevas += "<tr><td colspan='3'>Favor de ingresar como minimo <b>1 sesi&oacute;n</b> a este listado</td></tr>";
+      tablaSesionesNuevas += "<tr><td colspan='4'>Favor de ingresar como minimo <b>1 sesi&oacute;n</b> a este listado</td></tr>";
   }
   
   tablaSesionesNuevas += "</table>";
 
   document.getElementById("listado-nuevas").innerHTML = tablaSesionesNuevas;
+}
+
+function editarSesionObjeto(indiceArreglo){
+
+  var sesion = arrayNvasSesiones[indiceArreglo];
+
+  $('#fecha-nueva').datetimepicker('date', sesion.fechaNva);
+  $('#hora-inicia-nueva').datetimepicker('date', sesion.horaIniciaNva);
+
+  indiceEditando = indiceArreglo;
+
+  var boton = document.getElementById("campos-nva-sesion");
+  boton.innerHTML = '<i class="fas fa-check"></i> Guardar cambios de la sesi&oacute;n';
+  boton.classList.remove('btn-success');
+  boton.classList.add('btn-warning');
 }
 
 document.getElementById("validar-guardar").addEventListener("click", function(event){
@@ -501,6 +547,22 @@ function sesionesAgendadasAviso(response){
 
 function eliminarSesionObjeto(indiceArreglo){
   arrayNvasSesiones.splice(indiceArreglo, 1);
+
+  if (indiceEditando === indiceArreglo){
+
+    // se borro justo la fila que se estaba editando: cancela el modo edicion
+    indiceEditando = null;
+
+    var boton = document.getElementById("campos-nva-sesion");
+    boton.innerHTML = '<i class="fas fa-arrow-down"></i> Agregar sesi&oacute;n';
+    boton.classList.remove('btn-warning');
+    boton.classList.add('btn-success');
+
+  } else if (indiceEditando !== null && indiceEditando > indiceArreglo){
+
+    // se borro una fila antes de la que se esta editando: recorre el indice
+    indiceEditando = indiceEditando - 1;
+  }
 
   actualizarListado();
 }
