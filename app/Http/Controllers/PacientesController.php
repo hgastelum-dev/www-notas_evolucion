@@ -87,12 +87,18 @@ class PacientesController extends Controller
     public function getViewEditar($pacienteId){
         $paciente = Paciente::find($pacienteId);
 
-        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+        $primeraCita = CitaPaciente::where('paciente_id', $paciente->id)
+          ->where('doctor_id', auth()->id())
+          ->where('cita_estado_id', '!=', 3)
+          ->orderBy('fecha')
+          ->orderBy('hora_inicio')
+          ->first();
 
         if(isset($primeraCita)){
             $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
                 ->whereNotIn('id', [$primeraCita->id])
                 ->where('paciente_id', $paciente->id)
+                ->where('doctor_id', auth()->id())
                 ->first();
         } else {
             $citaEnProgreso = null;
@@ -206,12 +212,18 @@ class PacientesController extends Controller
     public function getViewAntecedentes($pacienteId){
         $paciente = Paciente::find( $pacienteId );
 
-        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+        $primeraCita = CitaPaciente::where('paciente_id', $paciente->id)
+          ->where('doctor_id', auth()->id())
+          ->where('cita_estado_id', '!=', 3)
+          ->orderBy('fecha')
+          ->orderBy('hora_inicio')
+          ->first();
 
         if(isset($primeraCita)){
             $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
                 ->whereNotIn('id', [$primeraCita->id])
                 ->where('paciente_id', $paciente->id)
+                ->where('doctor_id', auth()->id())
                 ->first();
         } else {
             $citaEnProgreso = null;
@@ -276,12 +288,18 @@ class PacientesController extends Controller
 
         $paciente = Paciente::find( $pacienteId );
 
-        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+        $primeraCita = CitaPaciente::where('paciente_id', $paciente->id)
+          ->where('doctor_id', auth()->id())
+          ->where('cita_estado_id', '!=', 3)
+          ->orderBy('fecha')
+          ->orderBy('hora_inicio')
+          ->first();
 
         if(isset($primeraCita)){
             $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
             ->whereNotIn('id', [$primeraCita->id])
             ->where('paciente_id', $paciente->id)
+            ->where('doctor_id', auth()->id())
             ->first();
         } else {
             $citaEnProgreso = null;
@@ -316,12 +334,18 @@ class PacientesController extends Controller
 
         $paciente = Paciente::find( $pacienteId );
 
-        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+        $primeraCita = CitaPaciente::where('paciente_id', $paciente->id)
+          ->where('doctor_id', auth()->id())
+          ->where('cita_estado_id', '!=', 3)
+          ->orderBy('fecha')
+          ->orderBy('hora_inicio')
+          ->first();
 
         if(isset($primeraCita)){
             $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
                 ->whereNotIn('id', [$primeraCita->id])
                 ->where('paciente_id', $paciente->id)
+                ->where('doctor_id', auth()->id())
                 ->first();
         } else {
             $citaEnProgreso = null;
@@ -443,9 +467,10 @@ class PacientesController extends Controller
         $paciente = Paciente::find( $pacienteId );
 
         $planeacion = CitaPlaneacion::where('paciente_id', $pacienteId)
-            ->where('indicador_seguimiento', false)
-            ->where('padre_id', 0)
-            ->get();
+          ->where('doctor_id', auth()->id()) 
+          ->where('indicador_seguimiento', false)
+          ->where('padre_id', 0)
+          ->get();
 
         $grouped = $planeacion->groupBy(function ($item, $key) {
             return TipoPlaneacion::find($item['tipo_plan_id'])->tipo_plan;
@@ -453,12 +478,18 @@ class PacientesController extends Controller
          
         $planesAgrupado = $grouped->all();
 
-        $primeraCita = $paciente->getCitas->sortBy('fecha')->first();
+        $primeraCita = CitaPaciente::where('paciente_id', $paciente->id)
+          ->where('doctor_id', auth()->id())
+          ->where('cita_estado_id', '!=', 3)
+          ->orderBy('fecha')
+          ->orderBy('hora_inicio')
+          ->first();
 
         if(isset($primeraCita)){
             $citaEnProgreso = CitaPaciente::where('en_progreso', 1)
                 ->whereNotIn('id', [$primeraCita->id])
                 ->where('paciente_id', $paciente->id)
+                ->where('doctor_id', auth()->id())
                 ->first();
         } else {
             $citaEnProgreso = null;
@@ -493,6 +524,7 @@ class PacientesController extends Controller
         
         $citaPlan->indicador_seguimiento = false;
         $citaPlan->paciente_id = $request->paciente_id;
+        $citaPlan->doctor_id = Auth::id();
 
         $citaPlan->save();
         
@@ -535,7 +567,9 @@ class PacientesController extends Controller
 
         $paciente = Paciente::find($pacienteId);
 
-        $notasHistoricas = $paciente->getNotasHistoricas;
+        $notasHistoricas = $paciente->getNotasHistoricas()
+          ->where('doctor_id', auth()->id())  
+          ->get();
 
         return view('pacientes.notas_historicas', compact(['paciente', 'notasHistoricas']));
     }
@@ -586,6 +620,7 @@ class PacientesController extends Controller
         $nuevaNota->obj_exploracion_fisica = $request->exploracion_fisica;
         $nuevaNota->analisis = $request->analisis;
         $nuevaNota->paciente_id = $request->paciente_id;
+        $nuevaNota->doctor_id = Auth::id(); 
 
         $nuevaNota->created_at = Carbon::now('America/Los_Angeles');
         $nuevaNota->updated_at = Carbon::now('America/Los_Angeles');

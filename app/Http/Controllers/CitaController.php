@@ -220,8 +220,9 @@ class CitaController extends Controller {
     } elseif (count($citasConcluidas->get()) < 1) {
 
       $ultimoSoapHist = NotaHistorica::where('paciente_id', $cita->paciente_id)
-        ->orderBy('fecha', 'DESC')
-        ->first();
+          ->where('doctor_id', $cita->doctor_id) 
+          ->orderBy('fecha', 'DESC')
+          ->first();
 
       if(isset($ultimoSoapHist->getPlanHist) && count($ultimoSoapHist->getPlanHist) > 0 && $cita->user_id == 0){
                 
@@ -244,6 +245,7 @@ class CitaController extends Controller {
         
         // verificar si hay registros del plan provenientes de la historia clinica sin cita (nota inicial)
         $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+          ->where('doctor_id', $cita->doctor_id) 
           ->where('indicador_seguimiento', 0)
           ->where('cita_paciente_id', 0)
           ->where('padre_id', 0)
@@ -286,19 +288,21 @@ class CitaController extends Controller {
     }
 
     $planeacion = CitaPlaneacion::where('paciente_id', $cita->paciente_id)
+      ->where('doctor_id', $cita->doctor_id)
       ->where('indicador_seguimiento', 0)
       ->where('cita_paciente_id', 0)
       ->where('padre_id', 0)
       ->get();
     
-    $primeraCita = Paciente::find($cita->paciente_id)
-      ->getCitas
-      ->sortBy(function($citaItem) {
-          return $citaItem->fecha . ' ' . $citaItem->hora_inicio;
-      })
+    $primeraCita = CitaPaciente::where('paciente_id', $cita->paciente_id)
+      ->where('doctor_id', $cita->doctor_id)    
+      ->where('cita_estado_id', '!=', 3)         
+      ->orderBy('fecha')
+      ->orderBy('hora_inicio')
       ->first();
 
     $ultimoSoapHist = NotaHistorica::where('paciente_id', $cita->paciente_id)
+      ->where('doctor_id', $cita->doctor_id)
       ->orderBy('fecha', 'DESC')
       ->first();
 
@@ -308,7 +312,7 @@ class CitaController extends Controller {
       $totalHist = 0;
     }
         
-    if($totalHist < 1 && count($planeacion) < 1 && $cita->id == $primeraCita->id){
+    if($totalHist < 1 && count($planeacion) < 1 && $cita->id == $primeraCita->id && $cita->user_id == 0){
 
       $request->session()->flash('CitaInicialOpciones', ['titulo' => $cita->id, 'mensaje' => 'El paciente <b>' . $cita->getPaciente->nombre_s . ' ' . $cita->getPaciente->apellido_paterno . ' ' . $cita->getPaciente->apellido_materno . '</b> no cuenta con registros en su <b class="text-danger">Plan inicial</b> o <b class="text-danger">Historial de notas de evolucion</b>', 'icono' => 'info']);
 
@@ -737,46 +741,49 @@ class CitaController extends Controller {
   }
 
   public function cerrarCita(Request $request){
-        
+
     $citaPaciente = CitaPaciente::findOrFail($request->citaId);
 
     $this->assertPuedeAtenderCita($citaPaciente);
 
-    if($request->primerCita == 1){
-      
-      if(count($citaPaciente->getPlaneacion) == 0){
-
-        $userAlert = ['titulo' => 'Correcto', 'mensaje' => 'Mensaje', 'icono' => 'success', 'operacion' => 'Programadas', 'background' => 'info'];
-        
-        return $userAlert;
-      } else {
-    
-        // 4 = concluido
-        $citaPaciente->en_progreso = false;
-        $citaPaciente->cita_estado_id = 4;
-    
-        $citaPaciente->save();
-    
-        return $citaPaciente;
-      }
-    } else {
-        
-      if(!$citaPaciente->getSubjetivo || !$citaPaciente->getObjetivo || !$citaPaciente->getAnalisis || count($citaPaciente->getPlaneacion) == 0){
-
-        $userAlert = ['titulo' => 'Correcto', 'mensaje' => 'Mensaje', 'icono' => 'success', 'operacion' => 'Programadas', 'background' => 'info'];
-        
-        return $userAlert;
-      } else {
-    
-        // 4 = concluido
-        $citaPaciente->en_progreso = false;
-        $citaPaciente->cita_estado_id = 4;
-    
-        $citaPaciente->save();
-    
-        return $citaPaciente;
-      }
+    if ($citaPaciente->cita_estado_id == 4) {
+        // ya estaba concluida; evita doble-cierre o respuestas inconsistentes
+        return ['titulo' => 'Aviso', 'mensaje' => 'Esta cita ya fue concluida anteriormente.', 'icono' => 'warning', 'operacion' => '', 'background' => ''];
     }
+
+    // nunca confiar en el flag "primerCita" del front: se recalcula aqui,
+    // con la misma logica que decide el flujo inicial en iniciarCita()
+    $primeraCitaDoctor = CitaPaciente::where('paciente_id', $citaPaciente->paciente_id)
+        ->where('doctor_id', $citaPaciente->doctor_id)
+        ->where('cita_estado_id', '!=', 3)
+        ->orderBy('fecha')
+        ->orderBy('hora_inicio')
+        ->first();
+
+    $esPrimeraCitaDelDoctor = $primeraCitaDoctor && ((int) $primeraCitaDoctor->id === (int) $citaPaciente->id);
+
+    if ($esPrimeraCitaDelDoctor) {
+        // ruta "Historia clinica": el minimo aceptable es tener Planeacion
+        // capturada (diagnostico/tratamiento); no se exige S/O/A porque
+        // esta ruta sustituye al SOAP habitual en una primera valoracion
+        $completo = count($citaPaciente->getPlaneacion) > 0;
+    } else {
+        // cualquier otra cita: se exige el SOAP completo
+        $completo = $citaPaciente->getSubjetivo
+            && $citaPaciente->getObjetivo
+            && $citaPaciente->getAnalisis
+            && count($citaPaciente->getPlaneacion) > 0;
+    }
+
+    if (! $completo) {
+        return ['titulo' => 'Incompleto', 'mensaje' => 'Favor de completar la informaci&oacute;n requerida antes de concluir la cita.', 'icono' => 'warning', 'operacion' => '', 'background' => ''];
+    }
+
+    $citaPaciente->en_progreso = false;
+    $citaPaciente->cita_estado_id = 4;
+    $citaPaciente->save();
+
+    return $citaPaciente;
   }
   
   public function updateFechaSexoCkdepi (Request $request){

@@ -139,6 +139,13 @@ class AgendaController extends Controller {
 
   public function insertCitas(Request $request){
 
+    $user = Auth::user();
+
+    if (! ($user->can('CitaGestionarTodas')
+        || ($user->can('CitaGestionar') && (int)$request->doctor_id === (int)$user->id))) {
+        abort(403, 'No tiene permiso para agendar citas de este doctor.');
+    }
+
     $validated = $request->validate([
       'arrayNvasSesiones' => 'required|array|min:1',
       'arrayNvasSesiones.*.pacienteId'    => 'required|integer|exists:pacientes,id',
@@ -172,6 +179,7 @@ class AgendaController extends Controller {
 
         $citasConcluidasPosteriores = CitaPaciente::where('paciente_id', $nuevaSesion["pacienteId"])
           ->where('cita_estado_id', 4)
+          ->where('doctor_id', $request->doctor_id) 
           ->where('fecha', '>=', $nuevaSesion["fechaNva"])
           ->exists();
 
@@ -200,6 +208,9 @@ class AgendaController extends Controller {
 
   public function updateCita(Request $request){
 
+    $citaPaciente = CitaPaciente::findOrFail($request->citaId);
+    $this->assertPuedeAdministrarCita($citaPaciente); // usa el doctor_id actual de la cita, antes de cualquier cambio
+
     // 4 = concluido: esto nunca se permite desde este endpoint, solo desde
     // el flujo de atencion (CitaController::cerrarCita)... el mensaje se deja
     // igual para todos los roles porque nadie puede concluir
@@ -224,6 +235,7 @@ class AgendaController extends Controller {
 
     $citasConcluidasPosteriores = CitaPaciente::where('paciente_id', $sesion->paciente_id)
       ->where('cita_estado_id', 4)
+      ->where('doctor_id', $request->doctor_id)  
       ->whereNotIn('id', [$sesion->id])
       ->where('fecha', '>=', $request->fecha)
       ->exists();

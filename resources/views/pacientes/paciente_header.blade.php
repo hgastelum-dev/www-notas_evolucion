@@ -114,6 +114,9 @@
                             <i class="fas fa-handshake"></i> Concluir cita del paciente
                         </button>
                     @endif
+                    <a class="btn btn-info" href="/cita/soap01/subjetivo/{{ $primeraCita->id }}">
+                      <i class="fas fa-notes-medical"></i> Ir a nota de evoluci&oacute;n (SOAP) en su lugar
+                    </a>
                 </div>
             @endif
         @endif
