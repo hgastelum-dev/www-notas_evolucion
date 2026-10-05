@@ -92,7 +92,7 @@
         </div>
         <div class="modal-body">
           @php
-              $citasPrevias = $cita->getPaciente->citasConcluidasAnteriores($cita->fecha, $cita->hora_inicio)->get();
+            $citasPrevias = $cita->getPaciente->citasConcluidasAnteriores($cita->fecha, $cita->hora_inicio, $cita->doctor_id)->get();
           @endphp
 
           <div class="row">
@@ -262,7 +262,7 @@
           <div class="text-right">
               <p>
                   <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modal-notas-previas">
-                      Ver notas previas: {{ count($cita->getPaciente->citasConcluidasAnteriores($cita->fecha, $cita->hora_inicio)->get()) }}
+                    Ver notas previas: {{ count($cita->getPaciente->citasConcluidasAnteriores($cita->fecha, $cita->hora_inicio, $cita->doctor_id)->get()) }}
                   </button>
                   
                   <a class="btn btn-info" href="/paciente/plan/{{ $cita->paciente_id }}">
