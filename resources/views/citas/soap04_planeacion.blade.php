@@ -16,7 +16,8 @@
         position: relative;
         width: 400px;   /* 8.5in a escala */
         height: 517px;  /* 11in a escala, misma proporcion (400/8.5 = 517/11) */
-        background: #fff;
+        background: #fff url('{{ asset('template_receta.png') }}') no-repeat;
+        background-size: 100% 100%; /* la caja ya respeta la proporcion carta (400/517 = 8.5/11), llena sin deformar */
         box-shadow: 0 0 6px rgba(0,0,0,.35);
         overflow: hidden;
     }

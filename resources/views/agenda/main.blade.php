@@ -10,14 +10,121 @@
   <link rel="stylesheet" href="{{ asset('lib-tmp/js/select2-themes/select2-bootstrap-5-theme.min.css') }}" />
 
   <style type="text/css">
-    .fc-event-time, .fc-event-title {
-        padding: 0 1px;
-        white-space: nowrap;
-    }
+      .fc-event-time, .fc-event-title {
+          padding: 0 1px;
+          white-space: nowrap;
+      }
 
-    .fc-title {
-        white-space: normal;
-    }
+      .fc-title {
+          white-space: normal;
+      }
+      
+      .semaforo-legend {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.5rem 1.25rem;
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 0.75rem 1rem;
+          margin-bottom: 1rem;
+          font-size: 0.85rem;
+      }
+      
+      .semaforo-legend-titulo {
+          font-weight: 700;
+          color: #1f2937;
+          margin-right: 0.5rem;
+      }
+
+      .semaforo-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          color: #374151;
+      }
+
+      .agenda-selector-doctor {
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 0.75rem 1rem;
+          max-width: 320px;
+          margin-bottom: 1rem;
+      }
+
+      .agenda-selector-doctor label {
+          font-weight: 600;
+          font-size: 0.85rem;
+          color: #374151;
+          margin-bottom: 0.3rem;
+      }
+
+      .fc-toolbar h2 {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #1f2937;
+      }
+
+      .fc-button-primary {
+          background-color: #2563eb;
+          border-color: #2563eb;
+          text-transform: capitalize;
+          box-shadow: none !important;
+      }
+
+      .fc-button-primary:hover {
+          background-color: #1d4ed8;
+          border-color: #1d4ed8;
+      }
+
+      .fc-button-primary:disabled {
+          background-color: #93c5fd;
+          border-color: #93c5fd;
+          opacity: 1;
+      }
+
+      .fc-button-primary:not(:disabled).fc-button-active {
+          background-color: #1d4ed8;
+          border-color: #1d4ed8;
+      }
+
+      .fc-day-header {
+          background: #f8fafc;
+          font-weight: 600;
+          color: #374151;
+          font-size: 0.8rem;
+          padding: 0.4rem 0;
+      }
+
+      .fc-today {
+          background: #eff6ff !important;
+      }
+
+      .fc-event {
+          border: none;
+          border-radius: 4px;
+          padding: 1px 4px;
+          font-size: 0.78rem;
+      }
+
+      .fc-time-grid-event .fc-title,
+      .fc-day-grid-event .fc-title {
+          font-weight: 600;
+      }
+
+      .fc-list-item:hover td {
+          background: #f8fafc;
+      }
+
+      .fc-list-heading-main {
+          font-weight: 700;
+      }
+
+      .fc-unthemed td.fc-today {
+          background: #eff6ff;
+      }
   </style>
 
 @endsection
@@ -33,23 +140,19 @@
     <div class="card-body">
 
       {{-- semaforizacion de citas... datos informativos --}}
-      <table class="table">
-        <tr class="text-center bg-info text-white">
-          <th colspan="{{ count($citaEstados) + 1 }}">
-            <i class="fas fa-sync-alt"></i> Semaforizaci&oacute;n de citas por color
-          </th>
-        </tr>
-        <tr>
-          @foreach($citaEstados as $citaEstado)
-            <td>
-              <i class="fas fa-lightbulb" style="color: {{ $citaEstado->class_color }}"></i> = {{ $citaEstado->cita_estado }}
-            </td>
-          @endforeach
-          <td>
-            <i class="fas fa-lightbulb" style="color: purple;"></i> = En progreso
-          </td>
-        </tr>
-      </table>
+      <div class="semaforo-legend">
+        <span class="semaforo-legend-titulo">
+          <i class="fas fa-sync-alt"></i> Semaforizaci&oacute;n de citas por color:
+        </span>
+        @foreach($citaEstados as $citaEstado)
+          <span class="semaforo-chip">
+            <i class="fas fa-circle" style="color: {{ $citaEstado->class_color }}"></i> {{ $citaEstado->cita_estado }}
+          </span>
+        @endforeach
+        <span class="semaforo-chip">
+          <i class="fas fa-circle" style="color: purple;"></i> En progreso
+        </span>
+      </div>
 
       {{-- botones de accion --}}
       <p>
@@ -275,7 +378,7 @@
         </div>
       </div>
 
-      <div class="form-group" style="max-width: 300px;">
+      <div class="agenda-selector-doctor">
         <label for="doctor_id_agenda">
           <i class="fas fa-user-md"></i> Ver agenda de
         </label>
@@ -371,9 +474,11 @@
 
   @if(isset(session('PacienteRegistrado')['mensaje']))
     <script type="text/javascript">
-      $('#modalSesionNueva').modal('show');
+      $(function () {
+        $('#modalSesionNueva').modal('show');
 
-      getPaciente(document.getElementById('paciente_id').value);
+        getPaciente(document.getElementById('paciente_id').value);
+      });
     </script>
   @endif
 

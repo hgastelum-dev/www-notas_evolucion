@@ -18,12 +18,45 @@ class TableroPrincipalController extends Controller
 
     public function getViewMain(){
 
+        $hoy = \Carbon\Carbon::today()->toDateString();
+
         $citaEstados = CitaEstado::all();
-        $enProgreso = CitaPaciente::where('en_progreso', true)->count();
+
+        $citasHoy = CitaPaciente::whereDate('fecha', $hoy)
+            ->with(['getEstado', 'getUser', 'getPaciente'])
+            ->orderBy('hora_inicio')
+            ->get();
+
+        $totalCitasHoy = $citasHoy->count();
+        $enProgreso = $citasHoy->where('en_progreso', true)->count();
+
+        $citasEnProgresoLista = $citasHoy->where('en_progreso', true)->values();
+
+        $proximasCitas = $citasHoy
+            ->where('cita_estado_id', 1)
+            ->where('en_progreso', false)
+            ->where('hora_inicio', '>=', now()->format('H:i:s'))
+            ->take(5)
+            ->values();
+
+        $resumenPorDoctor = $citasHoy->groupBy('doctor_id')->map(function($citas) {
+            return [
+                'doctor' => $citas->first()->getUser,
+                'total' => $citas->count(),
+                'programadas' => $citas->where('cita_estado_id', 1)->count(),
+                'reprogramadas' => $citas->where('cita_estado_id', 2)->count(),
+                'canceladas' => $citas->where('cita_estado_id', 3)->count(),
+                'concluidas' => $citas->where('cita_estado_id', 4)->count(),
+                'en_progreso' => $citas->where('en_progreso', true)->count(),
+            ];
+        })->sortByDesc('total')->values();
 
         $pacientes = Paciente::select('id', 'nombre_s', 'apellido_paterno')->orderBy('nombre_s')->get();
 
-        return view('tablero_principal.main', compact(['citaEstados', 'enProgreso', 'pacientes']));
+        return view('tablero_principal.main', compact([
+            'citaEstados', 'citasHoy', 'enProgreso', 'pacientes',
+            'totalCitasHoy', 'citasEnProgresoLista', 'proximasCitas', 'resumenPorDoctor'
+        ]));
     }
 
     public function citasConcluidas($id)

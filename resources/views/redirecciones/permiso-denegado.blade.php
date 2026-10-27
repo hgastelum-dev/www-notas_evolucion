@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.sbadmin')
 
-@section('content')
+@section('container')
     
   <h3 class="mt-5">
   	<i class="fa-solid fa-exclamation-triangle"></i> Acceso no autorizado

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,9 +9,149 @@
     <meta name="author" content="">
 
     <title>{{ config('app.name') }}</title>
+    <link rel="icon" href="{{ asset('img/geialogo.jpg') }}">
     <link href="{{ asset('sbadmin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('fonts/fonts.css') }}" rel="stylesheet">
     <link href="{{ asset('sbadmin/css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+    <style>
+        :root {
+            --geia-primary: #2563eb;
+            --geia-primary-dark: #1d4ed8;
+            --geia-accent: #0d9488;
+            --geia-bg: #f3f5f9;
+            --geia-sidebar-bg: #ffffff;
+            --geia-text-muted: #6b7280;
+            --geia-border: #e5e7eb;
+
+            --geia-sidebar-green: #1f7a4d;
+            --geia-sidebar-green-dark: #145c38;
+            --geia-sidebar-text: #ffffff;
+            --geia-sidebar-text-muted: rgba(255, 255, 255, 0.65);
+            --geia-sidebar-hover: rgba(255, 255, 255, 0.10);
+            --geia-sidebar-active: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            background-color: var(--geia-bg);
+        }
+
+        #accordionSidebar {
+            background: var(--geia-sidebar-bg) !important;
+            border-right: 1px solid var(--geia-border);
+        }
+
+        .sidebar-brand {
+            color: var(--geia-primary-dark) !important;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .sidebar .nav-item .nav-link {
+            color: #374151;
+            border-left: 3px solid transparent;
+            transition: background-color .15s ease, border-color .15s ease;
+        }
+
+        .sidebar .nav-item .nav-link:hover {
+            background-color: #eef2ff;
+        }
+
+        .sidebar .nav-item.active > .nav-link,
+        .sidebar .nav-item .nav-link[aria-expanded="true"] {
+            border-left-color: var(--geia-primary);
+            background-color: #eef2ff;
+            color: var(--geia-primary-dark);
+            font-weight: 600;
+        }
+
+        .sidebar .collapse-item.active {
+            background-color: var(--geia-primary) !important;
+            color: #fff !important;
+        }
+
+        .sidebar-heading {
+            color: #9ca3af;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+        }
+
+        .sidebar-role-badge {
+            margin: 0.5rem 1rem 1rem;
+            padding: 0.6rem 0.8rem;
+            background: #f8fafc;
+            border: 1px solid var(--geia-border);
+            border-radius: 0.5rem;
+            text-align: left;
+        }
+
+        .sidebar-role-badge .usuario-nombre {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-role-badge .usuario-rol {
+            display: inline-block;
+            margin-top: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            background: var(--geia-accent);
+            color: #fff;
+        }
+
+        .topbar {
+            border-bottom: 1px solid var(--geia-border);
+        }
+
+        .topbar-fecha {
+            font-size: 0.8rem;
+            color: var(--geia-text-muted);
+        }
+
+        .geia-breadcrumb-bar {
+            background: #fff;
+            border-bottom: 1px solid var(--geia-border);
+            padding: 0.6rem 1.5rem;
+            margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .geia-breadcrumb-bar a {
+            color: var(--geia-primary);
+            text-decoration: none;
+        }
+
+        .geia-breadcrumb-bar a:hover {
+            text-decoration: underline;
+        }
+
+        .geia-breadcrumb-bar .separador {
+            color: #cbd5e1;
+            margin: 0 0.4rem;
+        }
+
+        .geia-breadcrumb-bar .actual {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--geia-primary);
+            border-color: var(--geia-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--geia-primary-dark);
+            border-color: var(--geia-primary-dark);
+        }
+    </style>
     @yield('styles')
 </head>
 
@@ -23,10 +163,30 @@
                 <div class="sidebar-brand-icon">
                     <img src="{{ asset('img/geialogo.jpg') }}" height="50">
                 </div>
-                <div class="sidebar-brand-text mx-3">GEIA Med.<sup></sup></div>
+                <div class="sidebar-brand-text mx-3">GEIA Med.</div>
             </a>
 
             <hr class="sidebar-divider my-0">
+
+            @php
+                $rolEtiqueta = null;
+                if (Auth::check()) {
+                    if (Auth::user()->can('CitaGestionarTodas')) {
+                        $rolEtiqueta = 'Recepción';
+                    } elseif (Auth::user()->can('CitaAtender')) {
+                        $rolEtiqueta = 'Doctor(a)';
+                    } elseif (Auth::user()->can('CitaGestionar')) {
+                        $rolEtiqueta = 'Agenda';
+                    }
+                }
+            @endphp
+
+            @if($rolEtiqueta)
+                <div class="sidebar-role-badge">
+                    <span class="usuario-nombre">{{ Auth::user()->name }}</span>
+                    <span class="usuario-rol">{{ $rolEtiqueta }}</span>
+                </div>
+            @endif
 
             <li class="nav-item {{ request()->is('tablero') ? 'active' : '' }}">
                 <a class="nav-link" href="/tablero">
@@ -110,7 +270,7 @@
                    aria-expanded="{{ request()->is('usuarios*') ? 'true' : 'false' }}"
                    aria-controls="collapseUsuarios">
 
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-user-shield"></i>
                     <span>Usuarios</span>
                 </a>
 
@@ -148,45 +308,33 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    
+                    <span class="topbar-fecha d-none d-md-inline">
+                        <i class="far fa-calendar-alt"></i>
+                        {{ \Carbon\Carbon::now()->locale('es')->translatedFormat('l, d \d\e F \d\e Y') }}
+                    </span>
+
                     <ul class="navbar-nav ml-auto">
 
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Buscar" aria-label="Buscar"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                    {{ Auth::user()->email }}
+                                <span class="mr-2 d-none d-lg-inline text-gray-700 small">
+                                    <b>{{ Auth::user()->name }}</b>
+                                    @if($rolEtiqueta)
+                                        &middot; {{ $rolEtiqueta }}
+                                    @endif
                                 </span>
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('sbadmin/img/undraw_profile.svg') }}">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <span class="dropdown-item-text small text-gray-500">
+                                    {{ Auth::user()->email }}
+                                </span>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Cerrar sesi&oacute;n
@@ -197,8 +345,58 @@
                     </ul>
 
                 </nav>
-                
+
                 <div class="container-fluid">
+
+                    @php
+                        $etiquetasRuta = [
+                            'tablero' => 'Tablero',
+                            'pacientes' => 'Pacientes',
+                            'paciente' => 'Pacientes',
+                            'alta' => 'Alta de paciente',
+                            'editar' => 'Editar',
+                            'antecedentes' => 'Antecedentes',
+                            'padecimientos' => 'Padecimiento actual',
+                            'exp-fisica' => 'Exploración física',
+                            'plan' => 'Plan inicial',
+                            'notas-hist' => 'Histórico de notas',
+                            'nota-hist' => 'Nota histórica',
+                            'agenda' => 'Agenda',
+                            'citas' => 'Agenda',
+                            'cita' => 'Agenda',
+                            'atender' => 'Atención de cita',
+                            'soap01' => 'Subjetivo',
+                            'subjetivo' => 'Subjetivo',
+                            'soap02' => 'Objetivo',
+                            'objetivo' => 'Objetivo',
+                            'soap03' => 'Análisis',
+                            'analisis' => 'Análisis',
+                            'soap04' => 'Planeación',
+                            'planeacion' => 'Planeación',
+                            'usuarios' => 'Usuarios',
+                            'registrar' => 'Registrar',
+                        ];
+
+                        $segmentos = collect(request()->segments())
+                            ->reject(fn($s) => is_numeric($s))
+                            ->map(fn($s) => $etiquetasRuta[$s] ?? ucfirst(str_replace('-', ' ', $s)))
+                            ->unique()
+                            ->values();
+                    @endphp
+
+                    @if($segmentos->count() > 0)
+                        <div class="geia-breadcrumb-bar">
+                            <a href="/tablero"><i class="fas fa-home"></i> Inicio</a>
+                            @foreach($segmentos as $i => $segmento)
+                                <span class="separador">/</span>
+                                @if($i === $segmentos->count() - 1)
+                                    <span class="actual">{{ $segmento }}</span>
+                                @else
+                                    <span>{{ $segmento }}</span>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
 
                     @yield('container')
                 </div>
@@ -206,7 +404,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>GEIA Med. &copy; Derechos Reservados, 2024</span>
+                        <span>GEIA Med. &copy; Derechos Reservados, {{ date('Y') }}</span>
                     </div>
                 </div>
             </footer>
