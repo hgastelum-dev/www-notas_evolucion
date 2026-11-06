@@ -143,7 +143,7 @@ class AgendaController extends Controller {
     $user = Auth::user();
 
     if (! ($user->can('CitaGestionarTodas')
-        || ($user->can('CitaGestionar') && (int)$request->doctor_id === (int)$user->id))) {
+        || ($user->can('CitaGestionar') && (int)$request->doctorId === (int)$user->id))) {
         abort(403, 'No tiene permiso para agendar citas de este doctor.');
     }
 
